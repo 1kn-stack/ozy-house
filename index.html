@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>Home Café ☕</title>
+  <title>OZY HOUSE ☕</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    body { font-family: 'Noto Sans KR', sans-serif; background: #faf6f0; color: #1c1007; }
+    body { font-family: 'Noto Sans KR', sans-serif; background: #fdf8f2; color: #3a2a1a; }
     .app { max-width: 480px; margin: 0 auto; min-height: 100vh; position: relative; }
     .bebas { font-family: 'Bebas Neue', cursive; }
 
@@ -17,58 +17,58 @@
     .spinning { animation: spin 1.2s linear infinite; display: inline-block; }
 
     /* Nav */
-    .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: rgba(22,12,4,.97); border-top: 1px solid #2a1808; display: flex; z-index: 100; }
-    .nav-btn { flex: 1; background: none; border: none; color: #5a4030; padding: 10px 0 14px; font-family: inherit; font-size: 11px; cursor: pointer; border-top: 2px solid transparent; }
-    .nav-btn.active { color: #c8954a; border-top-color: #c8954a; }
+    .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: #fffaf4; border-top: 1px solid #e8ddd0; display: flex; z-index: 100; }
+    .nav-btn { flex: 1; background: none; border: none; color: #c0a888; padding: 10px 0 14px; font-family: inherit; font-size: 11px; cursor: pointer; border-top: 2px solid transparent; }
+    .nav-btn.active { color: #b07840; border-top-color: #b07840; }
     .nav-icon { font-size: 18px; margin-bottom: 2px; }
 
     /* Modal */
-    .modal-bg { position: fixed; inset: 0; background: rgba(28,16,7,.72); z-index: 200; display: flex; align-items: flex-end; justify-content: center; backdrop-filter: blur(6px); }
-    .modal-box { background: #fff; border-radius: 22px 22px 0 0; width: 100%; max-width: 480px; padding: 26px 20px 40px; max-height: 90vh; overflow-y: auto; }
+    .modal-bg { position: fixed; inset: 0; background: rgba(80,50,20,.45); z-index: 200; display: flex; align-items: flex-end; justify-content: center; backdrop-filter: blur(6px); }
+    .modal-box { background: #fffaf4; border-radius: 22px 22px 0 0; width: 100%; max-width: 480px; padding: 26px 20px 40px; max-height: 90vh; overflow-y: auto; }
 
     /* Forms */
-    .inp { width: 100%; border: 1px solid #e0d8d0; border-radius: 10px; padding: 10px 12px; font-size: 13px; font-family: inherit; background: #faf8f5; color: #1c1007; outline: none; }
-    .inp:focus { border-color: #c8954a; }
+    .inp { width: 100%; border: 1px solid #e8ddd0; border-radius: 10px; padding: 10px 12px; font-size: 13px; font-family: inherit; background: #fff; color: #3a2a1a; outline: none; }
+    .inp:focus { border-color: #b07840; }
     textarea.inp { resize: none; min-height: 76px; }
     select.inp { appearance: none; }
-    .lbl { font-size: 10px; letter-spacing: 1.8px; text-transform: uppercase; color: #b0907a; display: block; margin-bottom: 5px; margin-top: 11px; }
+    .lbl { font-size: 10px; letter-spacing: 1.8px; text-transform: uppercase; color: #c0a070; display: block; margin-bottom: 5px; margin-top: 11px; }
     .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
     /* Buttons */
-    .btn-dark { width: 100%; background: #1c1007; color: #f7f3ee; border: none; border-radius: 12px; padding: 14px; font-size: 14px; font-family: inherit; font-weight: 700; cursor: pointer; margin-top: 16px; }
-    .btn-outline { background: #fff; color: #5a3e2a; border: 1px solid #d0c8bc; border-radius: 12px; padding: 11px 16px; font-size: 13px; font-family: inherit; cursor: pointer; }
+    .btn-dark { width: 100%; background: #6b4226; color: #fff8f0; border: none; border-radius: 12px; padding: 14px; font-size: 14px; font-family: inherit; font-weight: 700; cursor: pointer; margin-top: 16px; }
+    .btn-outline { background: #fff; color: #7a5a3a; border: 1px solid #e0d0be; border-radius: 12px; padding: 11px 16px; font-size: 13px; font-family: inherit; cursor: pointer; }
     .btn-danger { background: #fff; color: #c05040; border: 1px solid #f0c8c0; border-radius: 12px; padding: 11px 16px; font-size: 13px; font-family: inherit; cursor: pointer; }
 
     /* FAB */
-    .fab { position: fixed; bottom: 76px; right: calc(50% - 224px); width: 50px; height: 50px; border-radius: 50%; background: #c8954a; color: #fff; font-size: 26px; border: none; cursor: pointer; box-shadow: 0 4px 18px rgba(200,149,74,.5); z-index: 90; display: flex; align-items: center; justify-content: center; }
+    .fab { position: fixed; bottom: 76px; right: calc(50% - 224px); width: 50px; height: 50px; border-radius: 50%; background: #b07840; color: #fff; font-size: 26px; border: none; cursor: pointer; box-shadow: 0 4px 18px rgba(176,120,64,.4); z-index: 90; display: flex; align-items: center; justify-content: center; }
     @media (max-width: 480px) { .fab { right: 16px; } }
 
     /* Toast */
-    .toast { position: fixed; bottom: 84px; left: 50%; transform: translateX(-50%); background: #1c1007; color: #f7f3ee; padding: 9px 20px; border-radius: 28px; font-size: 12px; z-index: 300; pointer-events: none; white-space: nowrap; box-shadow: 0 4px 18px rgba(0,0,0,.25); }
+    .toast { position: fixed; bottom: 84px; left: 50%; transform: translateX(-50%); background: #6b4226; color: #fff8f0; padding: 9px 20px; border-radius: 28px; font-size: 12px; z-index: 300; pointer-events: none; white-space: nowrap; box-shadow: 0 4px 18px rgba(0,0,0,.15); }
 
     /* Drop zone */
-    .drop-zone { border: 2px dashed #d8cfc6; border-radius: 14px; padding: 32px 16px; text-align: center; cursor: pointer; background: #faf8f5; transition: all .2s; }
-    .drop-zone.over { border-color: #c8954a; background: #fdf6ee; }
+    .drop-zone { border: 2px dashed #e0d0be; border-radius: 14px; padding: 32px 16px; text-align: center; cursor: pointer; background: #fff; transition: all .2s; }
+    .drop-zone.over { border-color: #b07840; background: #fdf3e6; }
 
     /* Flavor chips */
-    .fchip { display: flex; flex-direction: column; align-items: center; background: #faf6f0; border: 1.5px solid #ede5d8; border-radius: 12px; padding: 10px 14px; min-width: 58px; transition: transform .15s; }
+    .fchip { display: flex; flex-direction: column; align-items: center; background: #fff8f0; border: 1.5px solid #edd8c0; border-radius: 12px; padding: 10px 14px; min-width: 58px; transition: transform .15s; }
     .fchip:hover { transform: scale(1.08); }
     .fchip-sm { padding: 7px 10px; min-width: 46px; }
 
     /* Cards */
-    .bean-card { background: #fff; border-radius: 18px; margin-bottom: 12px; box-shadow: 0 2px 16px rgba(28,16,7,.07); border: 1px solid #ede5d8; overflow: hidden; }
-    .archive-card { background: #fff; border-radius: 14px; margin-bottom: 9px; border: 1px solid #ede5d8; padding: 14px 15px; display: flex; gap: 12px; align-items: flex-start; cursor: pointer; }
+    .bean-card { background: #fff; border-radius: 18px; margin-bottom: 12px; box-shadow: 0 2px 20px rgba(100,60,20,.06); border: 1px solid #edd8c0; overflow: hidden; }
+    .archive-card { background: #fff; border-radius: 14px; margin-bottom: 9px; border: 1px solid #edd8c0; padding: 14px 15px; display: flex; gap: 12px; align-items: flex-start; cursor: pointer; }
 
     /* Stars */
-    .star { font-size: 16px; color: #e5d9cd; cursor: default; }
-    .star.on { color: #f59e0b; }
+    .star { font-size: 16px; color: #e8d8c0; cursor: default; }
+    .star.on { color: #e8a030; }
     .star.clickable { cursor: pointer; }
 
     /* Loading */
-    .loading-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 16px; color: #a08060; }
+    .loading-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 16px; color: #c0a070; }
 
     /* Sections */
-    .section-title { font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; color: #b0907a; font-weight: 600; margin-bottom: 12px; }
+    .section-title { font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; color: #c0a070; font-weight: 600; margin-bottom: 12px; }
   </style>
 </head>
 <body>
@@ -206,7 +206,7 @@ function flavorChips(flavors, sm=false) {
   return (flavors||[]).map(f => `
     <div class="fchip${sm?" fchip-sm":""}">
       <span style="font-size:${sm?20:26}px;margin-bottom:3px;">${fe(f)}</span>
-      <span style="font-size:${sm?10:11}px;color:#5a3e2a;font-weight:500;text-align:center;">${f}</span>
+      <span style="font-size:${sm?10:11}px;color:#7a5a3a;font-weight:500;text-align:center;">${f}</span>
     </div>`).join("");
 }
 
@@ -230,14 +230,14 @@ function roastBadge(r) {
 function renderMenu() {
   const avail = beans.filter(b => b.status === "available");
   return `
-    <div style="background:linear-gradient(135deg,#1c1007,#2d1a0a);padding:44px 20px 30px;text-align:center;position:relative;overflow:hidden;">
-      <div style="position:absolute;inset:0;opacity:.04;background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:12px 12px;"></div>
-      <div style="font-size:10px;letter-spacing:4px;color:#c8954a;text-transform:uppercase;margin-bottom:8px;">☕ Home Café · Today's Selection</div>
-      <div class="bebas" style="font-size:50px;color:#f7f3ee;line-height:1;margin-bottom:6px;">BEAN MENU</div>
-      <div style="color:#7a5c3a;font-size:13px;">${avail.length}종의 원두가 준비되어 있어요</div>
+    <div style="background:linear-gradient(160deg,#f5ede0,#edddc8);padding:44px 20px 30px;text-align:center;position:relative;overflow:hidden;">
+      <div style="position:absolute;inset:0;opacity:.06;background-image:repeating-linear-gradient(45deg,#b07840 0,#b07840 1px,transparent 0,transparent 50%);background-size:14px 14px;"></div>
+      <div style="font-size:10px;letter-spacing:4px;color:#b07840;text-transform:uppercase;margin-bottom:8px;">☕ OZY HOUSE · Today's Selection</div>
+      <div class="bebas" style="font-size:50px;color:#6b4226;line-height:1;margin-bottom:6px;">BEAN MENU</div>
+      <div style="color:#a07850;font-size:13px;">${avail.length}종의 원두가 준비되어 있어요</div>
     </div>
     <div style="padding:12px 12px 84px;">
-      ${avail.length===0 ? `<div style="text-align:center;padding:80px 0;color:#b0a090;font-size:14px;">☕<br><br>오늘은 원두가 없어요</div>` : ""}
+      ${avail.length===0 ? `<div style="text-align:center;padding:80px 0;color:#c0a888;font-size:14px;">☕<br><br>오늘은 원두가 없어요</div>` : ""}
       ${avail.map((b,i) => {
         const ps = gPS(b.process);
         const rc = gRC(b.roastLevel);
@@ -248,25 +248,25 @@ function renderMenu() {
             <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
               ${processBadge(b.process)} ${roastBadge(b.roastLevel)}
             </div>
-            <div style="font-size:18px;font-weight:700;color:#1c1007;line-height:1.3;margin-bottom:4px;">${b.name}</div>
-            <div style="font-size:12px;color:#8a7060;">${gFL(b.origin)} ${b.origin||""}${b.region?` · ${b.region}`:""}${b.variety?` · ${b.variety}`:""}</div>
-            ${b.tagline?`<div style="font-style:italic;font-size:12px;color:#6a4f3a;border-left:3px solid #c8954a;padding-left:10px;margin-top:9px;margin-bottom:14px;">"${b.tagline}"</div>`:`<div style="height:14px;"></div>`}
+            <div style="font-size:18px;font-weight:700;color:#3a2a1a;line-height:1.3;margin-bottom:4px;">${b.name}</div>
+            <div style="font-size:12px;color:#a08060;">${gFL(b.origin)} ${b.origin||""}${b.region?` · ${b.region}`:""}${b.variety?` · ${b.variety}`:""}</div>
+            ${b.tagline?`<div style="font-style:italic;font-size:12px;color:#8a6848;border-left:3px solid #b07840;padding-left:10px;margin-top:9px;margin-bottom:14px;">"${b.tagline}"</div>`:`<div style="height:14px;"></div>`}
           </div>
           <div style="padding:14px 18px 18px;">
-            <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#b0907a;margin-bottom:10px;">Flavor Notes</div>
+            <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#c0a070;margin-bottom:10px;">Flavor Notes</div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">${flavorChips(b.flavor)}</div>
             ${b.recipe?.hot ? `
               <div style="margin-bottom:12px;">
-                <button onclick="toggleRec('${b.id}')" style="background:none;border:1px solid #e0d8d0;border-radius:20px;padding:6px 13px;font-size:11px;color:#8a7060;cursor:pointer;font-family:inherit;">🔬 추출 레시피 ${open?"▲":"▼"}</button>
-                ${open ? `<div style="margin-top:10px;background:#faf6f0;border-radius:10px;padding:12px 14px;font-size:11px;color:#5a3e2a;line-height:1.9;">
+                <button onclick="toggleRec('${b.id}')" style="background:none;border:1px solid #e0d0be;border-radius:20px;padding:6px 13px;font-size:11px;color:#a08060;cursor:pointer;font-family:inherit;">🔬 추출 레시피 ${open?"▲":"▼"}</button>
+                ${open ? `<div style="margin-top:10px;background:#fdf6ec;border-radius:10px;padding:12px 14px;font-size:11px;color:#7a5a3a;line-height:1.9;">
                   <div><b>드리퍼</b> ${b.recipe.dripper||""} · <b>원두</b> ${b.recipe.beans||""}</div>
                   <div><b>물온도</b> ${b.recipe.waterTemp||""} · <b>분쇄도</b> ${b.recipe.grind||""}</div>
                   ${b.recipe.hot?`<div>☀️ <b>Hot</b> ${b.recipe.hot}</div>`:""}
                   ${b.recipe.iced?`<div>🧊 <b>Iced</b> ${b.recipe.iced}</div>`:""}
                 </div>` : ""}
               </div>` : ""}
-            <button onclick="openGuest('${b.id}')" style="width:100%;background:#1c1007;color:#f7f3ee;border:none;border-radius:12px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">✏️ 마셔봤어요 — 소감 남기기</button>
-            ${b.guestNotes?.length ? `<div style="margin-top:6px;font-size:11px;color:#a08060;text-align:center;">💬 ${b.guestNotes.length}명이 소감을 남겼어요</div>` : ""}
+            <button onclick="openGuest('${b.id}')" style="width:100%;background:#6b4226;color:#fff8f0;border:none;border-radius:12px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">✏️ 마셔봤어요 — 소감 남기기</button>
+            ${b.guestNotes?.length ? `<div style="margin-top:6px;font-size:11px;color:#b09070;text-align:center;">💬 ${b.guestNotes.length}명이 소감을 남겼어요</div>` : ""}
           </div>
         </div>`;
       }).join("")}
@@ -277,17 +277,17 @@ function renderMenu() {
 function renderArchive() {
   const fil = state.filter==="all" ? beans : beans.filter(b => b.status===state.filter);
   return `
-    <div style="background:#1c1007;padding:36px 20px 18px;position:sticky;top:0;z-index:50;">
-      <div class="bebas" style="font-size:32px;color:#f7f3ee;">BEAN ARCHIVE</div>
-      <div style="color:#7a5c3a;font-size:11px;margin-top:1px;">총 ${beans.length}종 기록됨</div>
+    <div style="background:linear-gradient(160deg,#f0e4d0,#e8d8be);padding:36px 20px 18px;position:sticky;top:0;z-index:50;">
+      <div class="bebas" style="font-size:32px;color:#6b4226;">BEAN ARCHIVE</div>
+      <div style="color:#a07850;font-size:11px;margin-top:1px;">총 ${beans.length}종 기록됨</div>
       <div style="display:flex;gap:7px;margin-top:12px;">
         ${[["all","전체"],["available","보유"],["empty","소진"]].map(([v,l]) =>
-          `<button onclick="setFilter('${v}')" style="background:${state.filter===v?"#c8954a":"transparent"};color:${state.filter===v?"#fff":"#7a5c3a"};border:1px solid ${state.filter===v?"#c8954a":"#3a2a18"};border-radius:20px;padding:4px 12px;font-size:11px;cursor:pointer;font-family:inherit;">${l}</button>`
+          `<button onclick="setFilter('${v}')" style="background:${state.filter===v?"#b07840":"transparent"};color:${state.filter===v?"#fff":"#a07850"};border:1px solid ${state.filter===v?"#b07840":"#d0b898"};border-radius:20px;padding:4px 12px;font-size:11px;cursor:pointer;font-family:inherit;">${l}</button>`
         ).join("")}
       </div>
     </div>
     <div style="padding:8px 12px 90px;">
-      ${fil.length===0 ? `<div style="text-align:center;padding:60px 0;color:#b0a090;">📭<br><br>아직 기록이 없어요</div>` : ""}
+      ${fil.length===0 ? `<div style="text-align:center;padding:60px 0;color:#c0a888;">📭<br><br>아직 기록이 없어요</div>` : ""}
       ${fil.map((b,i) => {
         const ps = gPS(b.process);
         return `
@@ -295,16 +295,16 @@ function renderArchive() {
           <div style="flex:1;">
             <div style="display:flex;gap:5px;margin-bottom:5px;flex-wrap:wrap;">
               <span style="background:${ps.bg};color:${ps.c};border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;">${b.process||""}</span>
-              ${b.status==="empty"?`<span style="background:#f0ece6;color:#b0a090;border-radius:20px;padding:2px 8px;font-size:10px;">소진</span>`:""}
+              ${b.status==="empty"?`<span style="background:#f5ede0;color:#c0a888;border-radius:20px;padding:2px 8px;font-size:10px;">소진</span>`:""}
             </div>
-            <div style="font-weight:700;font-size:14px;color:#1c1007;margin-bottom:3px;">${b.name}</div>
+            <div style="font-weight:700;font-size:14px;color:#3a2a1a;margin-bottom:3px;">${b.name}</div>
             <div style="font-size:11px;color:#a08060;margin-bottom:7px;">${gFL(b.origin)} ${b.origin||""}${b.region?` · ${b.region}`:""}</div>
             <div style="display:flex;gap:5px;">${(b.flavor||[]).slice(0,5).map(f=>`<span style="font-size:17px;">${fe(f)}</span>`).join("")}</div>
           </div>
           <div style="text-align:right;flex-shrink:0;">
             <div>${starsHtml(b.rating||0)}</div>
-            ${b.guestNotes?.length?`<div style="font-size:10px;color:#c8954a;margin-top:3px;">💬 ${b.guestNotes.length}</div>`:""}
-            <div style="font-size:10px;color:#c0b0a0;margin-top:4px;">${b.roastDate||""}</div>
+            ${b.guestNotes?.length?`<div style="font-size:10px;color:#b07840;margin-top:3px;">💬 ${b.guestNotes.length}</div>`:""}
+            <div style="font-size:10px;color:#c8b098;margin-top:4px;">${b.roastDate||""}</div>
           </div>
         </div>`;
       }).join("")}
@@ -319,21 +319,21 @@ function renderDetail(id) {
   const ps = gPS(b.process);
   const rc = gRC(b.roastLevel);
   return `
-    <div style="background:linear-gradient(160deg,#1c1007,#2d1a0a);padding:44px 20px 24px;">
-      <button onclick="closeDetail()" style="background:none;border:none;color:#7a5c3a;font-size:13px;cursor:pointer;padding:0;margin-bottom:16px;font-family:inherit;">← 뒤로</button>
+    <div style="background:linear-gradient(160deg,#f0e4d0,#e8d4b8);padding:44px 20px 24px;">
+      <button onclick="closeDetail()" style="background:none;border:none;color:#a07850;font-size:13px;cursor:pointer;padding:0;margin-bottom:16px;font-family:inherit;">← 뒤로</button>
       <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
         ${processBadge(b.process)} ${roastBadge(b.roastLevel)}
       </div>
-      <div class="bebas" style="font-size:28px;color:#f7f3ee;line-height:1.2;margin-bottom:6px;">${b.name.toUpperCase()}</div>
-      <div style="color:#7a5c3a;font-size:12px;">${gFL(b.origin)} ${b.origin||""}${b.region?` · ${b.region}`:""}${b.variety?` · ${b.variety}`:""}${b.altitude?` · ${b.altitude}`:""}</div>
-      ${b.producer?`<div style="color:#5a4030;font-size:11px;margin-top:3px;">by ${b.producer}</div>`:""}
+      <div class="bebas" style="font-size:28px;color:#6b4226;line-height:1.2;margin-bottom:6px;">${b.name.toUpperCase()}</div>
+      <div style="color:#a07850;font-size:12px;">${gFL(b.origin)} ${b.origin||""}${b.region?` · ${b.region}`:""}${b.variety?` · ${b.variety}`:""}${b.altitude?` · ${b.altitude}`:""}</div>
+      ${b.producer?`<div style="color:#8a6848;font-size:11px;margin-top:3px;">by ${b.producer}</div>`:""}
     </div>
     <div style="padding:20px 18px 90px;">
 
       <div style="margin-bottom:22px;">
         <div class="section-title">Flavor Notes</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">${flavorChips(b.flavor)}</div>
-        ${b.tagline?`<div style="margin-top:12px;font-style:italic;font-size:13px;color:#6a4f3a;border-left:3px solid #c8954a;padding-left:11px;">"${b.tagline}"</div>`:""}
+        ${b.tagline?`<div style="margin-top:12px;font-style:italic;font-size:13px;color:#8a6848;border-left:3px solid #b07840;padding-left:11px;">"${b.tagline}"</div>`:""}
       </div>
 
       <div style="margin-bottom:22px;">
@@ -349,15 +349,15 @@ function renderDetail(id) {
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 0;font-size:12px;margin-bottom:10px;">
             ${[["드리퍼",b.recipe.dripper],["원두량",b.recipe.beans],["물온도",b.recipe.waterTemp],["분쇄도",b.recipe.grind]].filter(([,v])=>v).map(([k,v])=>`<div><div style="color:#a08060;font-size:10px;">${k}</div><div style="font-weight:700;color:#1c1007;margin-top:1px;">${v}</div></div>`).join("")}
           </div>
-          ${b.recipe.hot?`<div style="font-size:11px;color:#5a3e2a;background:#faf6f0;border-radius:8px;padding:7px 11px;margin-bottom:5px;">☀️ <b>Hot</b> ${b.recipe.hot}</div>`:""}
-          ${b.recipe.iced?`<div style="font-size:11px;color:#5a3e2a;background:#f0f6fa;border-radius:8px;padding:7px 11px;">🧊 <b>Iced</b> ${b.recipe.iced}</div>`:""}
+          ${b.recipe.hot?`<div style="font-size:11px;color:#7a5a3a;background:#fdf6ec;border-radius:8px;padding:7px 11px;margin-bottom:5px;">☀️ <b>Hot</b> ${b.recipe.hot}</div>`:""}
+          ${b.recipe.iced?`<div style="font-size:11px;color:#7a5a3a;background:#f0f6fa;border-radius:8px;padding:7px 11px;">🧊 <b>Iced</b> ${b.recipe.iced}</div>`:""}
         </div>
       </div>` : ""}
 
       <div style="margin-bottom:22px;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
           <div class="section-title" style="margin-bottom:0;">Guest Notes (${b.guestNotes?.length||0})</div>
-          <button onclick="openGuest('${b.id}')" style="background:#c8954a;color:#fff;border:none;border-radius:20px;padding:5px 13px;font-size:11px;cursor:pointer;font-family:inherit;">+ 추가</button>
+          <button onclick="openGuest('${b.id}')" style="background:#b07840;color:#fff;border:none;border-radius:20px;padding:5px 13px;font-size:11px;cursor:pointer;font-family:inherit;">+ 추가</button>
         </div>
         ${!(b.guestNotes?.length) ? `<div style="font-size:13px;color:#b0a090;font-style:italic;">아직 게스트 소감이 없어요</div>` : ""}
         ${(b.guestNotes||[]).map(g => `
