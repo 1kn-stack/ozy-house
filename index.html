@@ -61,7 +61,65 @@ const BC = collection(db,"beans");
 const DC = collection(db,"diary");
 
 const EMO = {"무화과":"🫐","베르가못":"🍋‍🟩","복숭아":"🍑","포도":"🍇","자스민":"🌸","레몬":"🍋","홍차":"🍵","후르트링":"🥣","초콜릿":"🍫","다크초콜릿":"🍫","캐러멜":"🍮","견과류":"🌰","사과":"🍎","오렌지":"🍊","딸기":"🍓","블루베리":"🫐","체리":"🍒","망고":"🥭","파인애플":"🍍","바닐라":"🍦","허브":"🌿","장미":"🌹","아몬드":"🌰","헤이즐넛":"☕","꿀":"🍯","라즈베리":"🍓","감귤":"🍊","멜론":"🍈","자두":"🍑","살구":"🍑","패션후르츠":"🌺","시트러스":"🍋","캐모마일":"🌼","얼그레이":"🍵","크랜베리":"🍒","키위":"🥝","화이트 플로럴":"🌼","청사과":"🍏","슈가 케인":"🌾","팝콘":"🍿","수박":"🍉","white floral":"🌼","green apple":"🍏","sugar cane":"🌾","floral":"🌸","apple":"🍎","peach":"🍑","jasmine":"🌸","lemon":"🍋","orange":"🍊","strawberry":"🍓","raspberry":"🍓","blueberry":"🫐","chocolate":"🍫","caramel":"🍮","vanilla":"🍦","honey":"🍯","grape":"🍇","cherry":"🍒","mango":"🥭","melon":"🍈"};
-const fe = n => EMO[n]||EMO[n&&n.toLowerCase()]||"✨";
+// 카테고리별 키워드 부분 매칭
+const FCAT = [
+  ["🍑", ["복숭아","황도","백도","피치","살구","자두","apricot","plum","peach","nectarine"]],
+  ["🍋", ["레몬","시트러스","시트론","유자","레몬그라스","lemon","citrus","citron","yuzu"]],
+  ["🍊", ["오렌지","감귤","귤","만다린","클레멘타인","자몽","그레이프프루트","orange","mandarin","tangerine","grapefruit","clementine"]],
+  ["🍎", ["사과","적사과","홍사과","apple","red apple"]],
+  ["🍏", ["청사과","풋사과","green apple","granny"]],
+  ["🍇", ["포도","청포도","머스캣","그레이프","grape","muscat"]],
+  ["🍓", ["딸기","라즈베리","베리류","mixed berry","strawberry","raspberry","berry"]],
+  ["🫐", ["블루베리","무화과","베리","blueberry","fig","berry"]],
+  ["🍒", ["체리","크랜베리","cherry","cranberry"]],
+  ["🥭", ["망고","mango"]],
+  ["🍍", ["파인애플","pineapple"]],
+  ["🍈", ["멜론","메론","melon"]],
+  ["🍉", ["수박","watermelon"]],
+  ["🥝", ["키위","kiwi"]],
+  ["🌺", ["패션","패숀","passion","hibiscus","히비스커스"]],
+  ["🍫", ["초콜릿","초콜렛","다크초코","카카오","cacao","cocoa","chocolate"]],
+  ["🍮", ["캐러멜","카라멜","toffee","토피","butterscotch","버터스카치","caramel"]],
+  ["🍦", ["바닐라","vanilla"]],
+  ["🍯", ["꿀","벌꿀","honey","honeysuckle","허니"]],
+  ["🌾", ["곡물","시리얼","귀리","보리","grain","cereal","oat","sugar cane","슈가케인","슈가 케인"]],
+  ["🥣", ["후르트링","그래놀라","오트밀","muesli","granola"]],
+  ["🍿", ["팝콘","popcorn"]],
+  ["🌰", ["견과","헤이즐넛","아몬드","호두","땅콩","밤","nut","hazel","almond","walnut","peanut","chestnut","praline","프랄린"]],
+  ["☕", ["로스티","smoky","스모키","roasty","몰트","malt","biscuit","비스킷","브라운슈거","brown sugar"]],
+  ["🍵", ["홍차","얼그레이","녹차","우롱","보이차","earl grey","green tea","oolong"]],
+  ["🌸", ["자스민","재스민","플로럴","blossom","jasmine","floral","flower"]],
+  ["🌼", ["캐모마일","chamomile","화이트 플로럴","white floral","elderflower","엘더플라워"]],
+  ["🌹", ["장미","rose","로즈"]],
+  ["🌿", ["허브","민트","바질","타임","herb","mint","basil","thyme","lavender","라벤더"]],
+  ["🫚", ["버터","butter","cream","크림"]],
+  ["🍋‍🟩", ["베르가못","bergamot"]],
+  // 이미지에서 추가된 항목들
+  ["🍷", ["와인","포트와인","레드와인","화이트와인","wine","red wine","white wine","port","winey","발효","fermented wine"]],
+  ["🥤", ["소다","탄산","사이다","콜라","이온음료","스포츠음료","soda","sparkling","fizzy","tonic","isotonic"]],
+  ["⭐", ["스타프루츠","카람볼라","star fruit","starfruit","carambola"]],
+  ["🍬", ["젤리","사우어","하리보","풍선껌","껌","캔디","사탕","jelly","candy","sour","haribo","gummy","bubble gum","bubblegum","chewing gum"]],
+  ["🌷", ["백합","튤립","lily","tulip","lilac","라일락"]],
+  ["🥛", ["요거트","요구르트","라떼","밀크","우유","yogurt","yoghurt","milk","latte","dairy","cream cheese","크림치즈"]],
+  ["🌊", ["감칠맛","짭조름","umami","savory","salty brine","mineral","미네랄"]],
+  ["🌸", ["분홍꽃","벚꽃","sakura","blossom","pink flower"]],
+  ["🍯", ["졸인 설탕","brown sugar syrup","시럽","설탕","sugar","syrup","caramelized"]],
+  ["🥜", ["캐슈넛","캐슈","peanut butter","cashew","피넛"]],
+  ["🍋", ["레몬즙","lemon juice","lime juice","라임즙"]],
+];
+const fe = function(n){
+  if(!n) return "✨";
+  if(EMO[n]) return EMO[n];
+  var lo = n.toLowerCase();
+  if(EMO[lo]) return EMO[lo];
+  for(var i=0;i<FCAT.length;i++){
+    var kws=FCAT[i][1];
+    for(var j=0;j<kws.length;j++){
+      if(lo.indexOf(kws[j])!==-1) return FCAT[i][0];
+    }
+  }
+  return "✨";
+};
 const PS = {"내추럴":{bg:"#fff5eb",c:"#c05e00",l:"Natural"},"워시드":{bg:"#eff6ff",c:"#1d4ed8",l:"Washed"},"허니":{bg:"#fefce8",c:"#a16207",l:"Honey"},"무산소":{bg:"#faf5ff",c:"#7e22ce",l:"Anaerobic"},"무산소 워시드":{bg:"#faf5ff",c:"#7e22ce",l:"Ana.Washed"},"발효 워시드":{bg:"#f0fdf4",c:"#166534",l:"Fermented"},"플라스틱백 발효 워시드":{bg:"#f0fdf4",c:"#14532d",l:"PB Fermented"}};
 const RC = {"라이트":"#f59e0b","미디엄":"#ea580c","중약배전":"#d97706","중배전":"#ea580c","미디엄다크":"#c2410c","다크":"#431407"};
 const FL = {"에티오피아":"🇪🇹","콜롬비아":"🇨🇴","과테말라":"🇬🇹","케냐":"🇰🇪","코스타리카":"🇨🇷","파나마":"🇵🇦","브라질":"🇧🇷","인도네시아":"🇮🇩","페루":"🇵🇪","르완다":"🇷🇼","예멘":"🇾🇪"};
@@ -395,12 +453,14 @@ function rDetail(id){
       +mkLbl("고도")+mkInp(e.altitude,"editInput('altitude',this.value)")
       +mkLbl("플레이버 (쉼표 구분)")+mkInp(e.flavor,"editInput('flavor',this.value)")
       +mkLbl("한줄 설명")+mkInp(e.tagline,"editInput('tagline',this.value)")
-      +mkLbl("레시피 Hot")+mkInp(e.rHot,"editInput('rHot',this.value)")
-      +mkLbl("레시피 Iced")+mkInp(e.rIced,"editInput('rIced',this.value)")
       +'<div class="g2">'
+      +'<div>'+mkLbl("드리퍼")+mkInp(e.rDripper,"editInput('rDripper',this.value)")+'</div>'
+      +'<div>'+mkLbl("원두량")+mkInp(e.rBeans,"editInput('rBeans',this.value)")+'</div>'
       +'<div>'+mkLbl("물온도")+mkInp(e.rTemp,"editInput('rTemp',this.value)")+'</div>'
       +'<div>'+mkLbl("분쇄도")+mkInp(e.rGrind,"editInput('rGrind',this.value)")+'</div>'
       +'</div>'
+      +mkLbl("레시피 Hot")+mkInp(e.rHot,"editInput('rHot',this.value)")
+      +mkLbl("레시피 Iced")+mkInp(e.rIced,"editInput('rIced',this.value)")
       +mkLbl("나의 소감")+mkTA(e.myNote,"editInput('myNote',this.value)")
       +'<label style="'+IL+';margin-top:14px;">평점</label>'
       +'<div style="margin-top:4px;">'+stHtml(e.rating||4,"edit",24,true)+'</div>'
@@ -543,12 +603,14 @@ function rAdd(){
       + mkLbl("고도")+mkInp(e.altitude,"addInput('altitude',this.value)")
       + mkLbl("플레이버 (쉼표 구분)")+mkInp(e.flavor,"addInput('flavor',this.value)")
       + mkLbl("한줄 설명")+mkInp(e.tagline,"addInput('tagline',this.value)")
-      + mkLbl("레시피 Hot")+mkInp(e.rHot,"addInput('rHot',this.value)")
-      + mkLbl("레시피 Iced")+mkInp(e.rIced,"addInput('rIced',this.value)")
       + '<div class="g2">'
+      + '<div>'+mkLbl("드리퍼")+mkInp(e.rDripper,"addInput('rDripper',this.value)")+'</div>'
+      + '<div>'+mkLbl("원두량")+mkInp(e.rBeans,"addInput('rBeans',this.value)")+'</div>'
       + '<div>'+mkLbl("물온도")+mkInp(e.rTemp,"addInput('rTemp',this.value)")+'</div>'
       + '<div>'+mkLbl("분쇄도")+mkInp(e.rGrind,"addInput('rGrind',this.value)")+'</div>'
       + '</div>'
+      + mkLbl("레시피 Hot")+mkInp(e.rHot,"addInput('rHot',this.value)")
+      + mkLbl("레시피 Iced")+mkInp(e.rIced,"addInput('rIced',this.value)")
       + mkLbl("나의 소감")+mkTA(e.myNote,"addInput('myNote',this.value)")
       + '<label style="'+IL+';margin-top:14px;">평점</label>'
       + '<div style="margin-top:4px;">'+stHtml(e.rating||4,"add",24,true)+'</div>'
