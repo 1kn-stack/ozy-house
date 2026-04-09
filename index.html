@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Home Café ☕</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Noto Sans KR', sans-serif; background: #faf6f0; color: #1c1007; }
+    .app { max-width: 480px; margin: 0 auto; min-height: 100vh; position: relative; }
+    .bebas { font-family: 'Bebas Neue', cursive; }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .cani { animation: fadeUp .3s ease both; }
+    .spinning { animation: spin 1.2s linear infinite; display: inline-block; }
+
+    /* Nav */
+    .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: rgba(22,12,4,.97); border-top: 1px solid #2a1808; display: flex; z-index: 100; }
+    .nav-btn { flex: 1; background: none; border: none; color: #5a4030; padding: 10px 0 14px; font-family: inherit; font-size: 11px; cursor: pointer; border-top: 2px solid transparent; }
+    .nav-btn.active { color: #c8954a; border-top-color: #c8954a; }
+    .nav-icon { font-size: 18px; margin-bottom: 2px; }
+
+    /* Modal */
+    .modal-bg { position: fixed; inset: 0; background: rgba(28,16,7,.72); z-index: 200; display: flex; align-items: flex-end; justify-content: center; backdrop-filter: blur(6px); }
+    .modal-box { background: #fff; border-radius: 22px 22px 0 0; width: 100%; max-width: 480px; padding: 26px 20px 40px; max-height: 90vh; overflow-y: auto; }
+
+    /* Forms */
+    .inp { width: 100%; border: 1px solid #e0d8d0; border-radius: 10px; padding: 10px 12px; font-size: 13px; font-family: inherit; background: #faf8f5; color: #1c1007; outline: none; }
+    .inp:focus { border-color: #c8954a; }
+    textarea.inp { resize: none; min-height: 76px; }
+    select.inp { appearance: none; }
+    .lbl { font-size: 10px; letter-spacing: 1.8px; text-transform: uppercase; color: #b0907a; display: block; margin-bottom: 5px; margin-top: 11px; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    /* Buttons */
+    .btn-dark { width: 100%; background: #1c1007; color: #f7f3ee; border: none; border-radius: 12px; padding: 14px; font-size: 14px; font-family: inherit; font-weight: 700; cursor: pointer; margin-top: 16px; }
+    .btn-outline { background: #fff; color: #5a3e2a; border: 1px solid #d0c8bc; border-radius: 12px; padding: 11px 16px; font-size: 13px; font-family: inherit; cursor: pointer; }
+    .btn-danger { background: #fff; color: #c05040; border: 1px solid #f0c8c0; border-radius: 12px; padding: 11px 16px; font-size: 13px; font-family: inherit; cursor: pointer; }
+
+    /* FAB */
+    .fab { position: fixed; bottom: 76px; right: calc(50% - 224px); width: 50px; height: 50px; border-radius: 50%; background: #c8954a; color: #fff; font-size: 26px; border: none; cursor: pointer; box-shadow: 0 4px 18px rgba(200,149,74,.5); z-index: 90; display: flex; align-items: center; justify-content: center; }
+    @media (max-width: 480px) { .fab { right: 16px; } }
+
+    /* Toast */
+    .toast { position: fixed; bottom: 84px; left: 50%; transform: translateX(-50%); background: #1c1007; color: #f7f3ee; padding: 9px 20px; border-radius: 28px; font-size: 12px; z-index: 300; pointer-events: none; white-space: nowrap; box-shadow: 0 4px 18px rgba(0,0,0,.25); }
+
+    /* Drop zone */
+    .drop-zone { border: 2px dashed #d8cfc6; border-radius: 14px; padding: 32px 16px; text-align: center; cursor: pointer; background: #faf8f5; transition: all .2s; }
+    .drop-zone.over { border-color: #c8954a; background: #fdf6ee; }
+
+    /* Flavor chips */
+    .fchip { display: flex; flex-direction: column; align-items: center; background: #faf6f0; border: 1.5px solid #ede5d8; border-radius: 12px; padding: 10px 14px; min-width: 58px; transition: transform .15s; }
+    .fchip:hover { transform: scale(1.08); }
+    .fchip-sm { padding: 7px 10px; min-width: 46px; }
+
+    /* Cards */
+    .bean-card { background: #fff; border-radius: 18px; margin-bottom: 12px; box-shadow: 0 2px 16px rgba(28,16,7,.07); border: 1px solid #ede5d8; overflow: hidden; }
+    .archive-card { background: #fff; border-radius: 14px; margin-bottom: 9px; border: 1px solid #ede5d8; padding: 14px 15px; display: flex; gap: 12px; align-items: flex-start; cursor: pointer; }
+
+    /* Stars */
+    .star { font-size: 16px; color: #e5d9cd; cursor: default; }
+    .star.on { color: #f59e0b; }
+    .star.clickable { cursor: pointer; }
+
+    /* Loading */
+    .loading-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 16px; color: #a08060; }
+
+    /* Sections */
+    .section-title { font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; color: #b0907a; font-weight: 600; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="loading-screen">
+    <div class="spinning" style="font-size: 40px;">☕</div>
+    <div style="font-size: 13px;">불러오는 중...</div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getFirestore, collection, doc, getDocs, addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+// ── Firebase 초기화
+const firebaseConfig = {
+  apiKey: "AIzaSyAA_PfyKj3XQd-2Bul-NcuTILNeN2-u0iY",
+  authDomain: "ozy-house.firebaseapp.com",
+  projectId: "ozy-house",
+  storageBucket: "ozy-house.firebasestorage.app",
+  messagingSenderId: "258485203484",
+  appId: "1:258485203484:web:ff7576c9f7f8e3d1b1e5d9",
+  measurementId: "G-XM8GDT24XZ"
+};
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
+
+// ── 상수
+const FLAVOR_EMOJI = {"무화과":"🫐","베르가못":"🍋","복숭아":"🍑","포도":"🍇","자스민":"🌸","레몬":"🍋","홍차":"🍵","후르트링":"🥣","초콜릿":"🍫","다크초콜릿":"🍫","캐러멜":"🍮","견과류":"🌰","사과":"🍎","오렌지":"🍊","딸기":"🍓","블루베리":"🫐","체리":"🍒","망고":"🥭","파인애플":"🍍","바닐라":"🍦","허브":"🌿","장미":"🌹","아몬드":"🌰","헤이즐넛":"☕","꿀":"🍯","라즈베리":"🍓","감귤":"🍊","멜론":"🍈","자두":"🍑","살구":"🍑","패션후르츠":"🌺","시트러스":"🍋","캐모마일":"🌼","얼그레이":"🍵","크랜베리":"🍒","키위":"🥝","화이트 플로럴":"🌼","청사과":"🍏","슈가 케인":"🌾","팝콘":"🍿","수박":"🍉","white floral":"🌼","green apple":"🍏","sugar cane":"🌾","floral":"🌸","apple":"🍎","peach":"🍑","jasmine":"🌸","lemon":"🍋","orange":"🍊","strawberry":"🍓","raspberry":"🍓","blueberry":"🫐","chocolate":"🍫","caramel":"🍮","vanilla":"🍦","honey":"🍯","grape":"🍇","cherry":"🍒","mango":"🥭","melon":"🍈"};
+const fe = n => { if(!n) return "✨"; return FLAVOR_EMOJI[n.toLowerCase()]||FLAVOR_EMOJI[n]||"✨"; };
+const PS = {"내추럴":{bg:"#fff3e0",c:"#e65100",l:"Natural"},"워시드":{bg:"#e3f2fd",c:"#1565c0",l:"Washed"},"허니":{bg:"#fffde7",c:"#f57f17",l:"Honey"},"무산소":{bg:"#f3e5f5",c:"#6a1b9a",l:"Anaerobic"},"무산소 워시드":{bg:"#f3e5f5",c:"#6a1b9a",l:"Ana.Washed"},"발효 워시드":{bg:"#e8f5e9",c:"#2e7d32",l:"Fermented"},"플라스틱백 발효 워시드":{bg:"#e8f5e9",c:"#1b5e20",l:"PB Fermented"}};
+const RC = {"라이트":"#f9c84a","미디엄":"#e8874a","중약배전":"#d4954a","중배전":"#e8874a","미디엄다크":"#c05a28","다크":"#3a1a08"};
+const FL = {"에티오피아":"🇪🇹","콜롬비아":"🇨🇴","과테말라":"🇬🇹","케냐":"🇰🇪","코스타리카":"🇨🇷","파나마":"🇵🇦","브라질":"🇧🇷","인도네시아":"🇮🇩","페루":"🇵🇪","르완다":"🇷🇼","예멘":"🇾🇪"};
+const gPS = p => PS[p]||{bg:"#e8f5e9",c:"#2e7d32",l:p||""};
+const gFL = o => FL[o]||"🌍";
+const gRC = r => RC[r]||"#e8874a";
+
+const PARSE_PROMPT = `커피 원두 정보를 추출해서 JSON만 반환. 다른 텍스트 없이 JSON만.
+포맷: 한국어 카드, 영문 테이블(COUNTRY/REGION/PROCESS 등), 스마트스토어 등 모두 처리.
+원산지는 한국어로(Peru→페루,Ethiopia→에티오피아), 가공법 한국어(Washed→워시드,Natural→내추럴,Fermented Washed→발효 워시드,Plastic Bag Fermented Washed→플라스틱백 발효 워시드), 플레이버 한국어(White Floral→화이트 플로럴,Green Apple→청사과,Sugar Cane→슈가 케인), 배전도 한국어(Light→라이트,Medium→미디엄).
+{"name":"원두명","origin":"국가(한국어)","region":"지역","producer":"농장/생산자","variety":"품종","altitude":"고도","process":"가공법(한국어)","roastLevel":"배전도(한국어)","flavor":["플레이버1","플레이버2"],"tagline":"한줄설명","recipe":{"dripper":"","beans":"","waterTemp":"","grind":"","hot":"","iced":""}}`;
+
+// ── 상태
+let beans = [];
+let state = {
+  tab: "menu",
+  detail: null,
+  showAdd: false,
+  guestId: null,
+  filter: "all",
+  recOpen: null,
+  toast: "", toastT: null,
+  guestForm: { name:"", note:"" },
+  addStep: "upload",
+  addDrag: false,
+  addEdit: null,
+  addPreview: ""
+};
+
+// ── Firebase 실시간 연동
+const beansRef = collection(db, "beans");
+onSnapshot(query(beansRef, orderBy("createdAt", "desc")), snap => {
+  beans = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  render();
+});
+
+// ── Firebase CRUD
+async function dbAddBean(data) {
+  await addDoc(beansRef, { ...data, createdAt: serverTimestamp() });
+}
+async function dbUpdateBean(id, data) {
+  await updateDoc(doc(db, "beans", id), data);
+}
+async function dbDeleteBean(id) {
+  await deleteDoc(doc(db, "beans", id));
+}
+async function dbAddGuestNote(beanId, note) {
+  const bean = beans.find(b => b.id === beanId);
+  const notes = [...(bean.guestNotes||[]), { ...note, date: new Date().toISOString().slice(0,10) }];
+  await dbUpdateBean(beanId, { guestNotes: notes });
+}
+
+// ── Toast
+function showToast(msg) {
+  state.toast = msg;
+  if(state.toastT) clearTimeout(state.toastT);
+  state.toastT = setTimeout(() => { state.toast = ""; render(); }, 2400);
+}
+
+// ── 이미지 파싱
+async function parseImg(file) {
+  state.addStep = "parsing";
+  state.addPreview = URL.createObjectURL(file);
+  render();
+  try {
+    const b64 = await new Promise((res,rej) => {
+      const r = new FileReader();
+      r.onload = () => res(r.result.split(",")[1]);
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+    const resp = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1200,
+        messages: [{ role:"user", content:[
+          { type:"image", source:{ type:"base64", media_type: file.type||"image/jpeg", data: b64 }},
+          { type:"text", text: PARSE_PROMPT }
+        ]}]
+      })
+    });
+    const data = await resp.json();
+    const txt = data.content?.map(c=>c.text||"").join("")||"";
+    const parsed = JSON.parse(txt.replace(/```json|```/g,"").trim());
+    state.addEdit = {
+      ...parsed,
+      flavor: Array.isArray(parsed.flavor) ? parsed.flavor.join(", ") : (parsed.flavor||""),
+      myNote:"", rating:4, status:"available",
+      rDripper: parsed.recipe?.dripper||"", rBeans: parsed.recipe?.beans||"",
+      rTemp: parsed.recipe?.waterTemp||"", rGrind: parsed.recipe?.grind||"",
+      rHot: parsed.recipe?.hot||"", rIced: parsed.recipe?.iced||""
+    };
+    state.addStep = "review";
+    render();
+  } catch(e) {
+    state.addStep = "error";
+    render();
+  }
+}
+
+// ── HTML 헬퍼
+function flavorChips(flavors, sm=false) {
+  return (flavors||[]).map(f => `
+    <div class="fchip${sm?" fchip-sm":""}">
+      <span style="font-size:${sm?20:26}px;margin-bottom:3px;">${fe(f)}</span>
+      <span style="font-size:${sm?10:11}px;color:#5a3e2a;font-weight:500;text-align:center;">${f}</span>
+    </div>`).join("");
+}
+
+function starsHtml(v, editKey="") {
+  return [1,2,3,4,5].map(s =>
+    `<span class="star${s<=v?" on":""}${editKey?" clickable":""}" ${editKey?`onclick="setStar('${editKey}',${s})"`:""}>${s<=v?"★":"☆"}</span>`
+  ).join("");
+}
+
+function processBadge(p) {
+  const ps = gPS(p);
+  return `<span style="background:${ps.bg};color:${ps.c};border-radius:20px;padding:2px 10px;font-size:10px;font-weight:700;">${ps.l}</span>`;
+}
+
+function roastBadge(r) {
+  const rc = gRC(r);
+  return `<span style="background:${rc}22;color:${rc};border-radius:20px;padding:2px 10px;font-size:10px;font-weight:600;">${r}</span>`;
+}
+
+// ── 렌더: 메뉴판
+function renderMenu() {
+  const avail = beans.filter(b => b.status === "available");
+  return `
+    <div style="background:linear-gradient(135deg,#1c1007,#2d1a0a);padding:44px 20px 30px;text-align:center;position:relative;overflow:hidden;">
+      <div style="position:absolute;inset:0;opacity:.04;background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:12px 12px;"></div>
+      <div style="font-size:10px;letter-spacing:4px;color:#c8954a;text-transform:uppercase;margin-bottom:8px;">☕ Home Café · Today's Selection</div>
+      <div class="bebas" style="font-size:50px;color:#f7f3ee;line-height:1;margin-bottom:6px;">BEAN MENU</div>
+      <div style="color:#7a5c3a;font-size:13px;">${avail.length}종의 원두가 준비되어 있어요</div>
+    </div>
+    <div style="padding:12px 12px 84px;">
+      ${avail.length===0 ? `<div style="text-align:center;padding:80px 0;color:#b0a090;font-size:14px;">☕<br><br>오늘은 원두가 없어요</div>` : ""}
+      ${avail.map((b,i) => {
+        const ps = gPS(b.process);
+        const rc = gRC(b.roastLevel);
+        const open = state.recOpen === b.id;
+        return `
+        <div class="bean-card cani" style="animation-delay:${i*.07}s;">
+          <div style="background:linear-gradient(135deg,${ps.bg},#fff);padding:18px 18px 0;">
+            <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
+              ${processBadge(b.process)} ${roastBadge(b.roastLevel)}
+            </div>
+            <div style="font-size:18px;font-weight:700;color:#1c1007;line-height:1.3;margin-bottom:4px;">${b.name}</div>
+            <div style="font-size:12px;color:#8a7060;">${gFL(b.origin)} ${b.origin||""}${b.region?` · ${b.region}`:""}${b.variety?` · ${b.variety}`:""}</div>
+            ${b.tagline?`<div style="font-style:italic;font-size:12px;color:#6a4f3a;border-left:3px solid #c8954a;padding-left:10px;margin-top:9px;margin-bottom:14px;">"${b.tagline}"</div>`:`<div style="height:14px;"></div>`}
+          </div>
+          <div style="padding:14px 18px 18px;">
+            <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#b0907a;margin-bottom:10px;">Flavor Notes</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">${flavorChips(b.flavor)}</div>
+            ${b.recipe?.hot ? `
+              <div style="margin-bottom:12px;">
+                <button onclick="toggleRec('${b.id}')" style="background:none;border:1px solid #e0d8d0;border-radius:20px;padding:6px 13px;font-size:11px;color:#8a7060;cursor:pointer;font-family:inherit;">🔬 추출 레시피 ${open?"▲":"▼"}</button>
+                ${open ? `<div style="margin-top:10px;background:#faf6f0;border-radius:10px;padding:12px 14px;font-size:11px;color:#5a3e2a;line-height:1.9;">
+                  <div><b>드리퍼</b> ${b.recipe.dripper||""} · <b>원두</b> ${b.recipe.beans||""}</div>
+                  <div><b>물온도</b> ${b.recipe.waterTemp||""} · <b>분쇄도</b> ${b.recipe.grind||""}</div>
+                  ${b.recipe.hot?`<div>☀️ <b>Hot</b> ${b.recipe.hot}</div>`:""}
+                  ${b.recipe.iced?`<div>🧊 <b>Iced</b> ${b.recipe.iced}</div>`:""}
+                </div>` : ""}
+              </div>` : ""}
+            <button onclick="openGuest('${b.id}')" style="width:100%;background:#1c1007;color:#f7f3ee;border:none;border-radius:12px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">✏️ 마셔봤어요 — 소감 남기기</button>
+            ${b.guestNotes?.length ? `<div style="margin-top:6px;font-size:11px;color:#a08060;text-align:center;">💬 ${b.guestNotes.length}명이 소감을 남겼어요</div>` : ""}
+          </div>
+        </div>`;
+      }).join("")}
+    </div>`;
+}
+
+// ── 렌더: 아카이브
+function renderArchive() {
+  const fil = state.filter==="all" ? beans : beans.filter(b => b.status===state.filter);
+  return `
+    <div style="background:#1c1007;padding:36px 20px 18px;position:sticky;top:0;z-index:50;">
+      <div class="bebas" style="font-size:32px;color:#f7f3ee;">BEAN ARCHIVE</div>
+      <div style="color:#7a5c3a;font-size:11px;margin-top:1px;">총 ${beans.length}종 기록됨</div>
+      <div style="display:flex;gap:7px;margin-top:12px;">
+        ${[["all","전체"],["available","보유"],["empty","소진"]].map(([v,l]) =>
+          `<button onclick="setFilter('${v}')" style="background:${state.filter===v?"#c8954a":"transparent"};color:${state.filter===v?"#fff":"#7a5c3a"};border:1px solid ${state.filter===v?"#c8954a":"#3a2a18"};border-radius:20px;padding:4px 12px;font-size:11px;cursor:pointer;font-family:inherit;">${l}</button>`
+        ).join("")}
+      </div>
+    </div>
+    <div style="padding:8px 12px 90px;">
+      ${fil.length===0 ? `<div style="text-align:center;padding:60px 0;color:#b0a090;">📭<br><br>아직 기록이 없어요</div>` : ""}
+      ${fil.map((b,i) => {
+        const ps = gPS(b.process);
+        return `
+        <div class="archive-card cani" onclick="openDetail('${b.id}')" style="animation-delay:${i*.05}s;opacity:${b.status==="empty"?.6:1};">
+          <div style="flex:1;">
+            <div style="display:flex;gap:5px;margin-bottom:5px;flex-wrap:wrap;">
+              <span style="background:${ps.bg};color:${ps.c};border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;">${b.process||""}</span>
+              ${b.status==="empty"?`<span style="background:#f0ece6;color:#b0a090;border-radius:20px;padding:2px 8px;font-size:10px;">소진</span>`:""}
+            </div>
+            <div style="font-weight:700;font-size:14px;color:#1c1007;margin-bottom:3px;">${b.name}</div>
+            <div style="font-size:11px;color:#a08060;margin-bottom:7px;">${gFL(b.origin)} ${b.origin||""}${b.region?` · ${b.region}`:""}</div>
+            <div style="display:flex;gap:5px;">${(b.flavor||[]).slice(0,5).map(f=>`<span style="font-size:17px;">${fe(f)}</span>`).join("")}</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div>${starsHtml(b.rating||0)}</div>
+            ${b.guestNotes?.length?`<div style="font-size:10px;color:#c8954a;margin-top:3px;">💬 ${b.guestNotes.length}</div>`:""}
+            <div style="font-size:10px;color:#c0b0a0;margin-top:4px;">${b.roastDate||""}</div>
+          </div>
+        </div>`;
+      }).join("")}
+    </div>
+    <button class="fab" onclick="openAdd()">+</button>`;
+}
+
+// ── 렌더: 상세
+function renderDetail(id) {
+  const b = beans.find(x => x.id===id);
+  if(!b) return "";
+  const ps = gPS(b.process);
+  const rc = gRC(b.roastLevel);
+  return `
+    <div style="background:linear-gradient(160deg,#1c1007,#2d1a0a);padding:44px 20px 24px;">
+      <button onclick="closeDetail()" style="background:none;border:none;color:#7a5c3a;font-size:13px;cursor:pointer;padding:0;margin-bottom:16px;font-family:inherit;">← 뒤로</button>
+      <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
+        ${processBadge(b.process)} ${roastBadge(b.roastLevel)}
+      </div>
+      <div class="bebas" style="font-size:28px;color:#f7f3ee;line-height:1.2;margin-bottom:6px;">${b.name.toUpperCase()}</div>
+      <div style="color:#7a5c3a;font-size:12px;">${gFL(b.origin)} ${b.origin||""}${b.region?` · ${b.region}`:""}${b.variety?` · ${b.variety}`:""}${b.altitude?` · ${b.altitude}`:""}</div>
+      ${b.producer?`<div style="color:#5a4030;font-size:11px;margin-top:3px;">by ${b.producer}</div>`:""}
+    </div>
+    <div style="padding:20px 18px 90px;">
+
+      <div style="margin-bottom:22px;">
+        <div class="section-title">Flavor Notes</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">${flavorChips(b.flavor)}</div>
+        ${b.tagline?`<div style="margin-top:12px;font-style:italic;font-size:13px;color:#6a4f3a;border-left:3px solid #c8954a;padding-left:11px;">"${b.tagline}"</div>`:""}
+      </div>
+
+      <div style="margin-bottom:22px;">
+        <div class="section-title">My Note</div>
+        <div>${starsHtml(b.rating||0)}</div>
+        <p style="margin-top:10px;font-size:13px;color:#4a3020;line-height:1.8;font-style:italic;">${b.myNote||"아직 소감이 없어요"}</p>
+      </div>
+
+      ${b.recipe?.hot ? `
+      <div style="margin-bottom:22px;">
+        <div class="section-title">Brewing Recipe</div>
+        <div style="background:#fff;border-radius:12px;padding:14px;border:1px solid #ede5d8;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 0;font-size:12px;margin-bottom:10px;">
+            ${[["드리퍼",b.recipe.dripper],["원두량",b.recipe.beans],["물온도",b.recipe.waterTemp],["분쇄도",b.recipe.grind]].filter(([,v])=>v).map(([k,v])=>`<div><div style="color:#a08060;font-size:10px;">${k}</div><div style="font-weight:700;color:#1c1007;margin-top:1px;">${v}</div></div>`).join("")}
+          </div>
+          ${b.recipe.hot?`<div style="font-size:11px;color:#5a3e2a;background:#faf6f0;border-radius:8px;padding:7px 11px;margin-bottom:5px;">☀️ <b>Hot</b> ${b.recipe.hot}</div>`:""}
+          ${b.recipe.iced?`<div style="font-size:11px;color:#5a3e2a;background:#f0f6fa;border-radius:8px;padding:7px 11px;">🧊 <b>Iced</b> ${b.recipe.iced}</div>`:""}
+        </div>
+      </div>` : ""}
+
+      <div style="margin-bottom:22px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div class="section-title" style="margin-bottom:0;">Guest Notes (${b.guestNotes?.length||0})</div>
+          <button onclick="openGuest('${b.id}')" style="background:#c8954a;color:#fff;border:none;border-radius:20px;padding:5px 13px;font-size:11px;cursor:pointer;font-family:inherit;">+ 추가</button>
+        </div>
+        ${!(b.guestNotes?.length) ? `<div style="font-size:13px;color:#b0a090;font-style:italic;">아직 게스트 소감이 없어요</div>` : ""}
+        ${(b.guestNotes||[]).map(g => `
+          <div style="background:#fff;border-radius:11px;padding:12px 14px;margin-bottom:7px;border:1px solid #ede5d8;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+              <b style="font-size:13px;">${g.name}</b>
+              <span style="font-size:11px;color:#b0a090;">${g.date}</span>
+            </div>
+            <div style="font-size:13px;color:#5a3e2a;line-height:1.6;">${g.note}</div>
+          </div>`).join("")}
+      </div>
+
+      <div style="display:flex;gap:10px;">
+        <button class="btn-outline" onclick="toggleStatus('${b.id}')" style="flex:1;">${b.status==="available"?"소진 처리":"다시 보유"}</button>
+        <button class="btn-danger" onclick="deleteBean('${b.id}')" style="flex:1;">삭제</button>
+      </div>
+    </div>`;
+}
+
+// ── 렌더: 원두 추가 모달
+function renderAddModal() {
+  const s = state.addStep;
+  const e = state.addEdit;
+  const flavors = e?.flavor ? e.flavor.split(",").map(f=>f.trim()).filter(Boolean) : [];
+  return `
+    <div class="modal-bg" onclick="if(event.target===this)closeAdd()">
+      <div class="modal-box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <div style="font-size:17px;font-weight:700;">원두 스캔 추가 ✨</div>
+          <button onclick="closeAdd()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#888;">×</button>
+        </div>
+        <div style="font-size:12px;color:#a08060;margin-bottom:18px;">어떤 로스터리 이미지든 자동으로 인식해요</div>
+
+        ${s==="upload" ? `
+          <div class="drop-zone${state.addDrag?" over":""}" id="dz" ondragover="handleDragOver(event)" ondragleave="handleDragLeave()" ondrop="handleFileDrop(event)" onclick="document.getElementById('fi').click()">
+            <div style="font-size:36px;margin-bottom:10px;">📸</div>
+            <div style="font-weight:600;color:#2c1a0a;margin-bottom:4px;font-size:14px;">이미지를 올려주세요</div>
+            <div style="font-size:12px;color:#a08060;">드래그 or 탭해서 선택</div>
+          </div>
+          <input id="fi" type="file" accept="image/*" style="display:none;" onchange="handleFileInput(event)">
+          <div style="background:#faf6f0;border-radius:12px;padding:14px;font-size:12px;color:#6a5040;margin-top:14px;line-height:1.7;">
+            <div style="font-weight:700;margin-bottom:8px;color:#2c1a0a;">📋 인식 가능한 포맷</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              ${[["🇰🇷 한국 로스터리","플레이버 카드"],["🌍 해외 로스터리","영문 테이블 형식"],["🛒 스마트스토어","상품 상세 캡처"],["📄 기타","원두 정보 모든 이미지"]].map(([t,d])=>`<div style="background:#fff;border-radius:9px;padding:9px 10px;border:1px solid #ede5d8;"><div style="font-weight:600;margin-bottom:2px;font-size:12px;">${t}</div><div style="font-size:11px;color:#a08060;">${d}</div></div>`).join("")}
+            </div>
+          </div>` : ""}
+
+        ${s==="parsing" ? `
+          <div style="text-align:center;padding:36px 16px;">
+            ${state.addPreview?`<img src="${state.addPreview}" style="width:100%;max-height:160px;object-fit:cover;border-radius:10px;margin-bottom:18px;opacity:.75;">`:""}
+            <div class="spinning" style="font-size:40px;margin-bottom:14px;">☕</div>
+            <div style="font-weight:600;color:#2c1a0a;margin-bottom:4px;">이미지 분석 중...</div>
+            <div style="font-size:12px;color:#a08060;">어떤 언어, 어떤 포맷이든 인식해요</div>
+          </div>` : ""}
+
+        ${s==="error" ? `
+          <div style="text-align:center;padding:30px 16px;">
+            <div style="font-size:36px;margin-bottom:12px;">😔</div>
+            <div style="font-weight:600;color:#c05040;margin-bottom:8px;">분석에 실패했어요</div>
+            <div style="font-size:12px;color:#a08060;margin-bottom:16px;">이미지를 다시 확인해주세요</div>
+            <button class="btn-outline" onclick="resetScan()">다시 시도</button>
+          </div>` : ""}
+
+        ${s==="review" && e ? `
+          <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:10px 13px;margin-bottom:14px;">
+            <div style="font-size:11px;color:#166534;font-weight:600;margin-bottom:4px;">✅ 분석 완료 — 확인 후 저장해주세요</div>
+            <div style="font-size:11px;color:#4a8060;">${gFL(e.origin)} ${e.origin||""} · ${e.process||""} · ${e.roastLevel||""}</div>
+          </div>
+          ${flavors.length ? `
+            <div style="margin-bottom:14px;">
+              <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#b0907a;margin-bottom:8px;">감지된 플레이버</div>
+              <div style="display:flex;gap:7px;flex-wrap:wrap;">${flavorChips(flavors, true)}</div>
+            </div>` : ""}
+          <label class="lbl">원두 이름</label>
+          <input class="inp" id="e_name" value="${e.name||""}" oninput="editInput('name',this.value)">
+          <div class="grid2">
+            <div><label class="lbl">원산지</label><input class="inp" value="${e.origin||""}" oninput="editInput('origin',this.value)"></div>
+            <div><label class="lbl">지역</label><input class="inp" value="${e.region||""}" oninput="editInput('region',this.value)"></div>
+            <div><label class="lbl">가공방식</label><input class="inp" value="${e.process||""}" oninput="editInput('process',this.value)"></div>
+            <div><label class="lbl">배전도</label><input class="inp" value="${e.roastLevel||""}" oninput="editInput('roastLevel',this.value)"></div>
+          </div>
+          <label class="lbl">농장 / 생산자</label><input class="inp" value="${e.producer||""}" oninput="editInput('producer',this.value)">
+          <label class="lbl">품종</label><input class="inp" value="${e.variety||""}" oninput="editInput('variety',this.value)">
+          <label class="lbl">고도</label><input class="inp" value="${e.altitude||""}" oninput="editInput('altitude',this.value)">
+          <label class="lbl">플레이버 (쉼표 구분)</label><input class="inp" value="${e.flavor||""}" oninput="editInput('flavor',this.value)">
+          <label class="lbl">한줄 설명</label><input class="inp" value="${e.tagline||""}" oninput="editInput('tagline',this.value)">
+          ${e.rHot!==undefined ? `
+            <label class="lbl">레시피 Hot</label><input class="inp" value="${e.rHot||""}" oninput="editInput('rHot',this.value)">
+            <label class="lbl">레시피 Iced</label><input class="inp" value="${e.rIced||""}" oninput="editInput('rIced',this.value)">
+            <div class="grid2">
+              <div><label class="lbl">물온도</label><input class="inp" value="${e.rTemp||""}" oninput="editInput('rTemp',this.value)"></div>
+              <div><label class="lbl">분쇄도</label><input class="inp" value="${e.rGrind||""}" oninput="editInput('rGrind',this.value)"></div>
+            </div>` : ""}
+          <label class="lbl">나의 소감</label>
+          <textarea class="inp" oninput="editInput('myNote',this.value)">${e.myNote||""}</textarea>
+          <label class="lbl" style="margin-top:13px;">평점</label>
+          <div id="stars-add" style="margin-top:4px;">${starsHtml(e.rating||4,"add")}</div>
+          <div style="display:flex;gap:10px;margin-top:18px;">
+            <button class="btn-outline" onclick="resetScan()" style="flex:1;">다시 스캔</button>
+            <button onclick="saveBean()" style="flex:2;background:#1c1007;color:#f7f3ee;border:none;border-radius:12px;padding:13px;font-size:13px;font-family:inherit;font-weight:700;cursor:pointer;">저장하기 🫘</button>
+          </div>` : ""}
+      </div>
+    </div>`;
+}
+
+// ── 렌더: 게스트 모달
+function renderGuestModal() {
+  const b = beans.find(x => x.id===state.guestId);
+  if(!b) return "";
+  return `
+    <div class="modal-bg" onclick="if(event.target===this)closeGuest()">
+      <div class="modal-box" style="max-height:70vh;">
+        <div style="font-size:17px;font-weight:700;margin-bottom:4px;">소감 남기기 ✏️</div>
+        <div style="font-size:12px;color:#a08060;margin-bottom:18px;">${b.name}</div>
+        <label class="lbl">이름</label>
+        <input class="inp" placeholder="이름을 입력해주세요" value="${state.guestForm.name}" oninput="guestInput('name',this.value)" style="margin-bottom:12px;">
+        <label class="lbl">한 마디</label>
+        <textarea class="inp" placeholder="이 커피 어떠셨나요? 🍑" oninput="guestInput('note',this.value)">${state.guestForm.note}</textarea>
+        <button class="btn-dark" onclick="submitGuest()">기록하기</button>
+      </div>
+    </div>`;
+}
+
+// ── 렌더: 하단 내비
+function renderNav() {
+  return `
+    <nav class="bottom-nav">
+      ${[["menu","메뉴판","☕"],["archive","아카이브","📚"]].map(([v,l,i]) =>
+        `<button class="nav-btn${state.tab===v?" active":""}" onclick="setTab('${v}')">
+          <div class="nav-icon">${i}</div>${l}
+        </button>`).join("")}
+    </nav>`;
+}
+
+// ── 메인 렌더
+function render() {
+  const app = document.getElementById("app");
+  let body = "";
+  if(state.detail) body = renderDetail(state.detail);
+  else if(state.tab==="menu") body = renderMenu();
+  else body = renderArchive();
+
+  app.innerHTML =
+    body +
+    renderNav() +
+    (state.showAdd ? renderAddModal() : "") +
+    (state.guestId ? renderGuestModal() : "") +
+    (state.toast ? `<div class="toast">${state.toast}</div>` : "");
+}
+
+// ── 전역 이벤트 핸들러
+window.setTab = t => { state.tab=t; state.detail=null; render(); };
+window.setFilter = f => { state.filter=f; render(); };
+window.openDetail = id => { state.detail=id; render(); };
+window.closeDetail = () => { state.detail=null; render(); };
+window.toggleRec = id => { state.recOpen = state.recOpen===id ? null : id; render(); };
+window.openGuest = id => { state.guestId=id; render(); };
+window.closeGuest = () => { state.guestId=null; state.guestForm={name:"",note:""}; render(); };
+window.openAdd = () => { state.showAdd=true; state.addStep="upload"; state.addEdit=null; state.addPreview=""; render(); };
+window.closeAdd = () => { state.showAdd=false; render(); };
+window.resetScan = () => { state.addStep="upload"; state.addEdit=null; state.addPreview=""; render(); };
+window.guestInput = (k,v) => { state.guestForm[k]=v; };
+window.editInput = (k,v) => { if(state.addEdit) state.addEdit[k]=v; };
+window.setStar = (key, v) => { if(key==="add" && state.addEdit) { state.addEdit.rating=v; render(); } };
+
+window.handleDragOver = e => { e.preventDefault(); state.addDrag=true; render(); };
+window.handleDragLeave = () => { state.addDrag=false; render(); };
+window.handleFileDrop = e => { e.preventDefault(); state.addDrag=false; const f=e.dataTransfer.files[0]; if(f&&f.type.startsWith("image/")) parseImg(f); };
+window.handleFileInput = e => { const f=e.target.files[0]; if(f) parseImg(f); };
+
+window.submitGuest = async () => {
+  const f = state.guestForm;
+  if(!f.name.trim()||!f.note.trim()) return;
+  await dbAddGuestNote(state.guestId, f);
+  state.guestId=null; state.guestForm={name:"",note:""};
+  showToast("소감이 기록됐어요 ✨");
+};
+
+window.saveBean = async () => {
+  const e = state.addEdit;
+  if(!e||!e.name.trim()) return;
+  const nb = {
+    name: e.name||"", origin: e.origin||"", region: e.region||"",
+    producer: e.producer||"", variety: e.variety||"", altitude: e.altitude||"",
+    process: e.process||"", roastLevel: e.roastLevel||"",
+    flavor: typeof e.flavor==="string" ? e.flavor.split(",").map(x=>x.trim()).filter(Boolean) : (e.flavor||[]),
+    tagline: e.tagline||"",
+    recipe: { dripper:e.rDripper||"", beans:e.rBeans||"", waterTemp:e.rTemp||"", grind:e.rGrind||"", hot:e.rHot||"", iced:e.rIced||"" },
+    myNote: e.myNote||"", rating: e.rating||4, status: "available",
+    guestNotes: [], roastDate: new Date().toISOString().slice(0,10)
+  };
+  await dbAddBean(nb);
+  state.showAdd=false;
+  showToast("원두 추가 완료! 🫘");
+};
+
+window.toggleStatus = async id => {
+  const b = beans.find(x=>x.id===id);
+  const newStatus = b.status==="available" ? "empty" : "available";
+  await dbUpdateBean(id, { status: newStatus });
+  showToast(newStatus==="available" ? "다시 보유로 변경됐어요" : "소진 처리됐어요");
+};
+
+window.deleteBean = async id => {
+  await dbDeleteBean(id);
+  state.detail=null;
+  showToast("삭제했어요");
+};
+
+</script>
+</body>
+</html>
