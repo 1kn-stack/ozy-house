@@ -473,16 +473,21 @@ function rAdd(){
     var hint = isMobile
       ? '탭해서 갤러리 선택'
       : '드래그 · 탭해서 선택 · <b style="color:#ff9f0a;">Ctrl+V 붙여넣기</b>';
-    html+='<div id="dz-main" class="dz'+(S.addDrag?' over':'')+'" tabindex="0" ondragover="handleDragOver(event)" ondragleave="handleDragLeave()" ondrop="handleFileDrop(event)" onclick="document.getElementById(\'fi\').click()" onpaste="handleDzPaste(event)">'
+    // contenteditable: 모바일 길게누르기 붙여넣기 + PC Ctrl+V 모두 지원
+    // 파일 선택은 별도 버튼으로 분리 (드롭존 클릭 시 키보드 올라오는 문제 방지)
+    html+='<div class="dz'+(S.addDrag?' over':'')+'" ondragover="handleDragOver(event)" ondragleave="handleDragLeave()" ondrop="handleFileDrop(event)" style="position:relative;padding:0;">'
+      +'<div id="dz-main" contenteditable="true" onpaste="handleDzPaste(event)" oninput="this.innerHTML=\'\'" style="position:absolute;inset:0;opacity:0;cursor:default;"></div>'
+      +'<div style="padding:36px 20px;text-align:center;pointer-events:none;">'
       +'<div style="font-size:40px;margin-bottom:10px;">📸</div>'
-      +'<div style="font-weight:600;color:#1c1c1e;margin-bottom:6px;font-size:15px;">이미지를 올려주세요</div>'
-      +'<div style="font-size:12px;color:#8e8e93;line-height:1.8;">'+hint+'</div>'
+      +'<div style="font-weight:600;color:#1c1c1e;margin-bottom:6px;font-size:15px;">이미지를 붙여넣으세요</div>'
+      +'<div style="font-size:12px;color:#8e8e93;line-height:1.8;">'+(isMobile?'이 영역을 <b style="color:#ff9f0a;">길게 눌러</b> 붙여넣기':'<b style="color:#ff9f0a;">Ctrl+V</b> 또는 드래그')+'</div>'
+      +'</div>'
       +'</div>'
       +'<input id="fi" type="file" accept="image/*" style="display:none;" onchange="handleFileInput(event)"/>'
-      // 모바일 전용: 카메라 직접 촬영 버튼
+      +'<button onclick="document.getElementById(\'fi\').click()" style="width:100%;background:#f5f5f7;color:#3a3a3c;border:1.5px solid #d1d1d6;border-radius:14px;padding:13px;font-size:14px;font-family:inherit;font-weight:600;cursor:pointer;margin-top:12px;">🗂 갤러리에서 선택</button>'
       +(isMobile
         ? '<input id="fi-cam" type="file" accept="image/*" capture="environment" style="display:none;" onchange="handleFileInput(event)"/>'
-          +'<button onclick="document.getElementById(\'fi-cam\').click()" style="width:100%;background:#ff9f0a;color:#fff;border:none;border-radius:14px;padding:14px;font-size:14px;font-family:inherit;font-weight:700;cursor:pointer;margin-top:12px;">📷 카메라로 바로 찍기</button>'
+          +'<button onclick="document.getElementById(\'fi-cam\').click()" style="width:100%;background:#ff9f0a;color:#fff;border:none;border-radius:14px;padding:13px;font-size:14px;font-family:inherit;font-weight:700;cursor:pointer;margin-top:8px;">📷 카메라로 찍기</button>'
         : ''
       )
       +'<div style="background:#f5f5f7;border-radius:14px;padding:16px;font-size:12px;color:#636366;margin-top:14px;line-height:1.8;">'
