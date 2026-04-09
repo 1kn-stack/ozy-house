@@ -3,408 +3,648 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Home Café — Bean Menu</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<title>OZY HOUSE</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Noto Sans KR',sans-serif;background:#faf6f0;max-width:420px;margin:0 auto;min-height:100vh;}
+:root{
+  --bg:#f5f5f7;--card:#fff;--h1:#2c2c2e;--h2:#3a3a3c;
+  --ac:#ff9f0a;--acs:#fff9f0;
+  --t1:#1c1c1e;--t2:#636366;--t3:#8e8e93;
+  --ib:#d1d1d6;--ibg:#f5f5f7;
+  --nav:rgba(28,28,30,0.97);
+}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100vh;color:var(--t1);}
+#app{max-width:480px;margin:0 auto;min-height:100vh;background:var(--bg);}
+@media(min-width:768px){
+  body{background:#e5e5ea;}
+  #app{margin:32px auto;border-radius:24px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,0.18);min-height:auto;}
+  .bnav{border-radius:0 0 24px 24px;}
+}
 .bebas{font-family:'Bebas Neue',cursive;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
-.cani{animation:fadeUp .3s ease both;}
-.fchip{transition:transform .15s;cursor:default;}
-.fchip:hover{transform:scale(1.08);}
-.modal-bg{position:fixed;inset:0;background:rgba(28,16,7,.72);z-index:100;display:flex;align-items:flex-end;backdrop-filter:blur(6px);}
-.modal-box{background:#fff;border-radius:22px 22px 0 0;width:100%;max-width:420px;margin:0 auto;padding:26px 20px 36px;max-height:88vh;overflow-y:auto;}
-.inp{width:100%;border:1px solid #e0d8d0;border-radius:10px;padding:10px 12px;font-size:13px;font-family:inherit;background:#faf8f5;color:#2c1a0a;outline:none;}
-.inp:focus{border-color:#c8954a;}
-.lbl{font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:#b0907a;display:block;margin-bottom:5px;margin-top:11px;}
-.btn-primary{width:100%;background:#1c1007;color:#f7f3ee;border:none;border-radius:12px;padding:14px;font-size:14px;font-family:inherit;font-weight:700;cursor:pointer;margin-top:16px;}
-.btn-secondary{background:#fff;color:#5a3e2a;border:1px solid #d0c8bc;border-radius:12px;padding:11px 16px;font-size:13px;font-family:inherit;cursor:pointer;}
-.star{font-size:18px;cursor:pointer;color:#e5d9cd;transition:color .1s;}
-.star.on{color:#f59e0b;}
-.bottom-nav{position:sticky;bottom:0;background:rgba(22,12,4,.97);border-top:1px solid #2a1808;display:flex;z-index:50;}
-.nav-btn{flex:1;background:none;border:none;color:#5a4030;padding:10px 0 14px;font-family:inherit;font-size:11px;cursor:pointer;border-top:2px solid transparent;}
-.nav-btn.active{color:#c8954a;border-top-color:#c8954a;}
-.drop-zone{border:2px dashed #d8cfc6;border-radius:14px;padding:32px 16px;text-align:center;cursor:pointer;background:#faf8f5;transition:all .2s;}
-.drop-zone.over{border-color:#c8954a;background:#fdf6ee;}
-.toast{position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:#1c1007;color:#f7f3ee;padding:9px 20px;border-radius:28px;font-size:12px;z-index:200;pointer-events:none;white-space:nowrap;box-shadow:0 4px 18px rgba(0,0,0,.22);}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-textarea.inp{resize:none;min-height:76px;}
+.cani{animation:fadeUp .28s ease both;}
+.fchip{transition:transform .15s;cursor:default;}.fchip:hover{transform:scale(1.06);}
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;display:flex;align-items:flex-end;backdrop-filter:blur(8px);}
+.mbox{background:var(--card);border-radius:24px 24px 0 0;width:100%;max-width:480px;margin:0 auto;padding:28px 22px 40px;max-height:90vh;overflow-y:auto;}
+.inp{width:100%;border:1px solid var(--ib);border-radius:12px;padding:11px 14px;font-size:14px;font-family:inherit;background:var(--ibg);color:var(--t1);outline:none;transition:border-color .15s;-webkit-appearance:none;box-sizing:border-box;}
+.inp:focus{border-color:var(--ac);}
+.lbl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);display:block;margin-bottom:6px;margin-top:14px;}
+.btnp{width:100%;background:var(--h1);color:#fff;border:none;border-radius:14px;padding:15px;font-size:15px;font-family:inherit;font-weight:700;cursor:pointer;margin-top:18px;}
+.btns{background:var(--card);color:var(--t2);border:1px solid var(--ib);border-radius:12px;padding:11px 18px;font-size:13px;font-family:inherit;cursor:pointer;}
+.star{font-size:18px;cursor:pointer;color:#d1d1d6;transition:color .1s;display:inline-block;line-height:1;}.star.on{color:#ff9f0a;}
+.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--nav);border-top:0.5px solid rgba(255,255,255,0.08);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom);max-width:480px;margin:0 auto;}
+@media(min-width:768px){.bnav{left:50%;transform:translateX(-50%);right:auto;width:480px;}}
+.nbtn{flex:1;background:none;border:none;color:#636366;padding:10px 0 13px;font-family:inherit;font-size:11px;cursor:pointer;border-top:2px solid transparent;}
+.nbtn.on{color:#ff9f0a;border-top-color:#ff9f0a;}
+.dz{border:2px dashed var(--ib);border-radius:16px;padding:36px 20px;text-align:center;cursor:pointer;background:var(--ibg);transition:all .2s;}
+.dz.over{border-color:var(--ac);background:var(--acs);}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--h1);color:#fff;padding:10px 22px;border-radius:30px;font-size:13px;z-index:300;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.2);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+textarea.inp{resize:none;min-height:80px;}
 </style>
 </head>
 <body>
 <div id="app"></div>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// ── API 키 설정 (여기에 붙여넣으세요)
-const ANTHROPIC_KEY = ""; // Cloudflare Worker에서 처리
+const WK = "https://ozy-house-proxy.okgo-levelup.workers.dev";
+const AH = "ac2a41af69b8320d2205a77620e8ed776df54a41b707004272f028807f467c17";
+async function hp(pw){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pw));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
 
-// ── Firebase 설정
-const firebaseConfig = {
-  apiKey: "AIzaSyAA_PfyKj3XQd-2Bul-NcuTILNeN2-u0iY",
-  authDomain: "ozy-house.firebaseapp.com",
-  projectId: "ozy-house",
-  storageBucket: "ozy-house.firebasestorage.app",
-  messagingSenderId: "258485203484",
-  appId: "1:258485203484:web:ff7576c9f7f8e3d1b1e5d9"
-};
+const app = initializeApp({apiKey:"AIzaSyAA_PfyKj3XQd-2Bul-NcuTILNeN2-u0iY",authDomain:"ozy-house.firebaseapp.com",projectId:"ozy-house",storageBucket:"ozy-house.firebasestorage.app",messagingSenderId:"258485203484",appId:"1:258485203484:web:ff7576c9f7f8e3d1b1e5d9"});
+const db = getFirestore(app);
+const BC = collection(db,"beans");
+const DC = collection(db,"diary");
 
-const fireApp = initializeApp(firebaseConfig);
-const db = getFirestore(fireApp);
-const beansCol = collection(db, "beans");
-
-// ── 상수
-const FLAVOR_EMOJI = {"무화과":"🫐","베르가못":"🍋","복숭아":"🍑","포도":"🍇","자스민":"🌸","레몬":"🍋","홍차":"🍵","후르트링":"🥣","초콜릿":"🍫","다크초콜릿":"🍫","캐러멜":"🍮","견과류":"🌰","사과":"🍎","오렌지":"🍊","딸기":"🍓","블루베리":"🫐","체리":"🍒","망고":"🥭","파인애플":"🍍","바닐라":"🍦","허브":"🌿","장미":"🌹","아몬드":"🌰","헤이즐넛":"☕","꿀":"🍯","라즈베리":"🍓","감귤":"🍊","멜론":"🍈","자두":"🍑","살구":"🍑","패션후르츠":"🌺","시트러스":"🍋","캐모마일":"🌼","얼그레이":"🍵","크랜베리":"🍒","키위":"🥝","화이트 플로럴":"🌼","청사과":"🍏","슈가 케인":"🌾","팝콘":"🍿","수박":"🍉","white floral":"🌼","green apple":"🍏","sugar cane":"🌾","floral":"🌸","apple":"🍎","peach":"🍑","jasmine":"🌸","lemon":"🍋","orange":"🍊","strawberry":"🍓","raspberry":"🍓","blueberry":"🫐","chocolate":"🍫","caramel":"🍮","vanilla":"🍦","honey":"🍯","grape":"🍇","cherry":"🍒","mango":"🥭","melon":"🍈"};
-const fe = n => { if(!n) return "✨"; return FLAVOR_EMOJI[n.toLowerCase()]||FLAVOR_EMOJI[n]||"✨"; };
-const PS = {"내추럴":{bg:"#fff3e0",c:"#e65100",l:"Natural"},"워시드":{bg:"#e3f2fd",c:"#1565c0",l:"Washed"},"허니":{bg:"#fffde7",c:"#f57f17",l:"Honey"},"무산소":{bg:"#f3e5f5",c:"#6a1b9a",l:"Anaerobic"},"무산소 워시드":{bg:"#f3e5f5",c:"#6a1b9a",l:"Ana.Washed"},"발효 워시드":{bg:"#e8f5e9",c:"#2e7d32",l:"Fermented"},"플라스틱백 발효 워시드":{bg:"#e8f5e9",c:"#1b5e20",l:"PB Fermented"}};
-const RC = {"라이트":"#f9c84a","미디엄":"#e8874a","중약배전":"#d4954a","중배전":"#e8874a","미디엄다크":"#c05a28","다크":"#3a1a08"};
+const EMO = {"무화과":"🫐","베르가못":"🍋‍🟩","복숭아":"🍑","포도":"🍇","자스민":"🌸","레몬":"🍋","홍차":"🍵","후르트링":"🥣","초콜릿":"🍫","다크초콜릿":"🍫","캐러멜":"🍮","견과류":"🌰","사과":"🍎","오렌지":"🍊","딸기":"🍓","블루베리":"🫐","체리":"🍒","망고":"🥭","파인애플":"🍍","바닐라":"🍦","허브":"🌿","장미":"🌹","아몬드":"🌰","헤이즐넛":"☕","꿀":"🍯","라즈베리":"🍓","감귤":"🍊","멜론":"🍈","자두":"🍑","살구":"🍑","패션후르츠":"🌺","시트러스":"🍋","캐모마일":"🌼","얼그레이":"🍵","크랜베리":"🍒","키위":"🥝","화이트 플로럴":"🌼","청사과":"🍏","슈가 케인":"🌾","팝콘":"🍿","수박":"🍉","white floral":"🌼","green apple":"🍏","sugar cane":"🌾","floral":"🌸","apple":"🍎","peach":"🍑","jasmine":"🌸","lemon":"🍋","orange":"🍊","strawberry":"🍓","raspberry":"🍓","blueberry":"🫐","chocolate":"🍫","caramel":"🍮","vanilla":"🍦","honey":"🍯","grape":"🍇","cherry":"🍒","mango":"🥭","melon":"🍈"};
+const fe = n => EMO[n]||EMO[n&&n.toLowerCase()]||"✨";
+const PS = {"내추럴":{bg:"#fff5eb",c:"#c05e00",l:"Natural"},"워시드":{bg:"#eff6ff",c:"#1d4ed8",l:"Washed"},"허니":{bg:"#fefce8",c:"#a16207",l:"Honey"},"무산소":{bg:"#faf5ff",c:"#7e22ce",l:"Anaerobic"},"무산소 워시드":{bg:"#faf5ff",c:"#7e22ce",l:"Ana.Washed"},"발효 워시드":{bg:"#f0fdf4",c:"#166534",l:"Fermented"},"플라스틱백 발효 워시드":{bg:"#f0fdf4",c:"#14532d",l:"PB Fermented"}};
+const RC = {"라이트":"#f59e0b","미디엄":"#ea580c","중약배전":"#d97706","중배전":"#ea580c","미디엄다크":"#c2410c","다크":"#431407"};
 const FL = {"에티오피아":"🇪🇹","콜롬비아":"🇨🇴","과테말라":"🇬🇹","케냐":"🇰🇪","코스타리카":"🇨🇷","파나마":"🇵🇦","브라질":"🇧🇷","인도네시아":"🇮🇩","페루":"🇵🇪","르완다":"🇷🇼","예멘":"🇾🇪"};
-const gPS = p => PS[p]||{bg:"#e8f5e9",c:"#2e7d32",l:p||""};
+const gPS = p => PS[p]||{bg:"#f5f5f7",c:"#636366",l:p||""};
 const gFL = o => FL[o]||"🌍";
-const gRC = r => RC[r]||"#e8874a";
+const gRC = r => RC[r]||"#ea580c";
 
-// ── 상태
-let beans = [];
-let state = {tab:"menu",detail:null,showAdd:false,guestId:null,filter:"all",recOpen:null,toast:"",toastT:null,guestForm:{name:"",note:""},addStep:"upload",addDrag:false,addEdit:null,addPreview:""};
-
-// ── Firebase 실시간 동기화
-onSnapshot(beansCol, snap => {
-  beans = snap.docs.map(d => ({id:d.id, ...d.data()}));
-  render();
-});
-
-// ── Firebase CRUD
-const fbAdd = async bean => { const {id,...data}=bean; await addDoc(beansCol,data); };
-const fbUpdate = async (id,data) => { await updateDoc(doc(db,"beans",id),data); };
-const fbDelete = async id => { await deleteDoc(doc(db,"beans",id)); };
-
-// ── 토스트
-function showToast(msg) {
-  state.toast=msg;
-  if(state.toastT) clearTimeout(state.toastT);
-  state.toastT=setTimeout(()=>{state.toast="";render();},2400);
-  render();
-}
-
-// ── 헬퍼
-function flavorChips(flavors,size="big") {
-  const p=size==="big"?"10px 14px":"7px 10px", es=size==="big"?"26px":"20px", ts=size==="big"?"11px":"10px", mw=size==="big"?"58px":"46px";
-  return (flavors||[]).map(f=>`<div class="fchip" style="display:flex;flex-direction:column;align-items:center;background:#faf6f0;border:1.5px solid #ede5d8;border-radius:12px;padding:${p};min-width:${mw};"><span style="font-size:${es};margin-bottom:3px;">${fe(f)}</span><span style="font-size:${ts};color:#5a3e2a;font-weight:500;text-align:center;">${f}</span></div>`).join("");
-}
-function starsHtml(v,id="",size=16,editable=false) {
-  return [1,2,3,4,5].map(s=>`<span class="star${s<=v?" on":""}" style="font-size:${size}px;" ${editable?`onclick="setStar('${id}',${s})"`:""}">★</span>`).join("");
-}
-
-// ── 전역 핸들러
-window.setStar=(id,v)=>{if(id==="add"&&state.addEdit){state.addEdit.rating=v;render();}};
-window.toggleRec=id=>{state.recOpen=state.recOpen===id?null:id;render();};
-window.openDetail=id=>{state.detail=id;render();};
-window.closeDetail=()=>{state.detail=null;render();};
-window.setTab=t=>{state.tab=t;state.detail=null;render();};
-window.setFilter=f=>{state.filter=f;render();};
-window.openGuest=id=>{state.guestId=id;render();};
-window.closeGuest=()=>{state.guestId=null;state.guestForm={name:"",note:""};render();};
-window.openAdd=()=>{state.showAdd=true;state.addStep="upload";state.addEdit=null;state.addPreview="";render();};
-window.closeAdd=()=>{state.showAdd=false;render();};
-window.resetScan=()=>{state.addStep="upload";state.addEdit=null;state.addPreview="";render();};
-window.guestInput=(k,v)=>{state.guestForm[k]=v;};
-window.addInput=(k,v)=>{if(state.addEdit)state.addEdit[k]=v;};
-
-window.submitGuest=async()=>{
-  const f=state.guestForm;
-  if(!f.name.trim()||!f.note.trim()) return;
-  const bean=beans.find(b=>b.id===state.guestId); if(!bean) return;
-  const updated=[...(bean.guestNotes||[]),{...f,date:new Date().toISOString().slice(0,10)}];
-  await fbUpdate(state.guestId,{guestNotes:updated});
-  state.guestId=null;state.guestForm={name:"",note:""};
-  showToast("소감이 기록됐어요 ✨");
+let beans=[], diaries=[];
+let S = {
+  tab:"menu", detail:null, editMode:false, editData:null,
+  showAdd:false, addStep:"upload", addEdit:null, addPreview:"", addDrag:false,
+  guestId:null, guestForm:{name:"",note:""},
+  filter:"all", recOpen:null,
+  showPw:false, pwAction:null, pwErr:false,
+  showDiary:false, diaryForm:{mood:"☀️",beanId:"",note:"",rating:4,brewType:"hot"}, diaryEditId:null,
+  toast:"", toastT:null
 };
 
-window.toggleStatus=async id=>{
-  const bean=beans.find(b=>b.id===id); if(!bean) return;
-  const next=bean.status==="available"?"empty":"available";
-  await fbUpdate(id,{status:next});
-  showToast(next==="available"?"다시 보유로 변경됐어요":"소진 처리됐어요");
+onSnapshot(BC, s=>{beans=s.docs.map(d=>({id:d.id,...d.data()}));render();});
+onSnapshot(DC, s=>{diaries=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>b.date.localeCompare(a.date));render();});
+
+const fuB = async (id,data) => updateDoc(doc(db,"beans",id),data);
+const fdB = async id => deleteDoc(doc(db,"beans",id));
+const fdD = async id => deleteDoc(doc(db,"diary",id));
+
+function showToast(m){S.toast=m;if(S.toastT)clearTimeout(S.toastT);S.toastT=setTimeout(()=>{S.toast="";render();},2400);render();}
+
+function fchips(flavors,sz){
+  sz=sz||"big";
+  const p=sz==="big"?"10px 14px":"7px 10px",es=sz==="big"?"26px":"20px",ts=sz==="big"?"11px":"10px",mw=sz==="big"?"58px":"44px";
+  return (flavors||[]).map(function(f){return '<div class="fchip" style="display:flex;flex-direction:column;align-items:center;background:#f5f5f7;border:1px solid rgba(0,0,0,0.06);border-radius:14px;padding:'+p+';min-width:'+mw+'"><span style="font-size:'+es+';margin-bottom:3px;">'+fe(f)+'</span><span style="font-size:'+ts+';color:#3a3a3c;font-weight:500;text-align:center;">'+f+'</span></div>';}).join("");
+}
+function stHtml(v,id,sz,ed){
+  return [1,2,3,4,5].map(function(s){return '<span class="star'+(s<=v?" on":"")+'" style="font-size:'+(sz||16)+'px;" '+(ed?'onclick="setStar(\''+id+'\','+s+')"':'')+'>★</span>';}).join("");
+}
+
+// ── 핸들러
+window.setStar = function(id,v){
+  if(id==="add"&&S.addEdit){S.addEdit.rating=v;render();}
+  if(id==="edit"&&S.editData){S.editData.rating=v;render();}
+  if(id==="diary"){S.diaryForm.rating=v;render();}
+};
+window.toggleRec = function(id){S.recOpen=S.recOpen===id?null:id;render();};
+window.setTab = function(t){S.tab=t;S.detail=null;S.editMode=false;render();};
+window.setFilter = function(f){S.filter=f;render();};
+window.openDetail = function(id){S.detail=id;S.editMode=false;render();};
+window.closeDetail = function(){S.detail=null;S.editMode=false;render();};
+
+window.requirePw = function(action){S.showPw=true;S.pwAction=action;S.pwErr=false;render();setTimeout(function(){var el=document.getElementById("pw-inp");if(el)el.focus();},100);};
+window.closePw = function(){S.showPw=false;S.pwAction=null;S.pwErr=false;render();};
+window.submitPw = async function(){
+  var val=(document.getElementById("pw-inp")||{}).value||"";
+  var h=await hp(val);
+  if(h===AH){S.showPw=false;S.pwErr=false;var a=S.pwAction;S.pwAction=null;render();if(a)a();}
+  else{S.pwErr=true;render();setTimeout(function(){var el=document.getElementById("pw-inp");if(el){el.value="";el.focus();}},50);}
 };
 
-window.deleteBean=async id=>{
-  await fbDelete(id);state.detail=null;showToast("삭제했어요");
+window.openEdit = function(id){
+  requirePw(function(){
+    S.detail=id;S.editMode=true;
+    var b=beans.find(function(x){return x.id===id;});
+    if(b) S.editData=Object.assign({},b,{
+      flavor:Array.isArray(b.flavor)?b.flavor.join(", "):(b.flavor||""),
+      rDripper:(b.recipe&&b.recipe.dripper)||"",rBeans:(b.recipe&&b.recipe.beans)||"",
+      rTemp:(b.recipe&&b.recipe.waterTemp)||"",rGrind:(b.recipe&&b.recipe.grind)||"",
+      rHot:(b.recipe&&b.recipe.hot)||"",rIced:(b.recipe&&b.recipe.iced)||""
+    });
+    render();
+  });
+};
+window.closeEdit = function(){S.editMode=false;render();};
+window.editInput = function(k,v){if(S.editData)S.editData[k]=v;};
+window.saveEdit = async function(){
+  var e=S.editData;if(!e)return;
+  var u=Object.assign({},e,{
+    flavor:typeof e.flavor==="string"?e.flavor.split(",").map(function(x){return x.trim();}).filter(Boolean):e.flavor,
+    recipe:{dripper:e.rDripper||"",beans:e.rBeans||"",waterTemp:e.rTemp||"",grind:e.rGrind||"",hot:e.rHot||"",iced:e.rIced||""}
+  });
+  ["rDripper","rBeans","rTemp","rGrind","rHot","rIced","id"].forEach(function(k){delete u[k];});
+  await fuB(e.id,u);S.editMode=false;showToast("수정됐어요 ✅");
 };
 
-window.saveBean=async()=>{
-  const e=state.addEdit; if(!e||!e.name.trim()) return;
-  const nb={...e,
-    flavor:typeof e.flavor==="string"?e.flavor.split(",").map(x=>x.trim()).filter(Boolean):e.flavor,
+window.toggleStatus = function(id){
+  requirePw(async function(){
+    var b=beans.find(function(x){return x.id===id;});if(!b)return;
+    var next=b.status==="available"?"empty":"available";
+    var upd={status:next};
+    if(next==="empty")upd.emptyDate=new Date().toISOString().slice(0,10);
+    await fuB(id,upd);
+    showToast(next==="available"?"다시 보유로 변경됐어요":"소진 처리됐어요");
+  });
+};
+window.deleteBean = function(id){
+  requirePw(async function(){await fdB(id);S.detail=null;showToast("삭제했어요");});
+};
+
+window.openAdd = function(){
+  requirePw(function(){S.showAdd=true;S.addStep="upload";S.addEdit=null;S.addPreview="";render();});
+};
+window.closeAdd = function(){S.showAdd=false;render();};
+window.resetScan = function(){S.addStep="upload";S.addEdit=null;S.addPreview="";render();};
+window.addInput = function(k,v){if(S.addEdit)S.addEdit[k]=v;};
+window.saveBean = async function(){
+  var e=S.addEdit;if(!e||!e.name.trim())return;
+  var nb=Object.assign({},e,{
+    flavor:typeof e.flavor==="string"?e.flavor.split(",").map(function(x){return x.trim();}).filter(Boolean):e.flavor,
     recipe:{dripper:e.rDripper||"",beans:e.rBeans||"",waterTemp:e.rTemp||"",grind:e.rGrind||"",hot:e.rHot||"",iced:e.rIced||""},
-    guestNotes:[],roastDate:new Date().toISOString().slice(0,10),status:e.status||"available"
-  };
-  ["rDripper","rBeans","rTemp","rGrind","rHot","rIced"].forEach(k=>delete nb[k]);
-  await fbAdd(nb);
-  state.showAdd=false;showToast("원두 추가 완료! 🫘");
+    guestNotes:[],status:e.status||"available"
+  });
+  ["rDripper","rBeans","rTemp","rGrind","rHot","rIced"].forEach(function(k){delete nb[k];});
+  await addDoc(BC,nb);S.showAdd=false;showToast("원두 추가 완료! 🫘");
+};
+window.handleFileDrop = function(e){e.preventDefault();S.addDrag=false;var f=e.dataTransfer.files[0];if(f&&f.type.startsWith("image/"))parseImg(f);else render();};
+window.handleDragOver = function(e){e.preventDefault();S.addDrag=true;render();};
+window.handleDragLeave = function(){S.addDrag=false;render();};
+window.handleFileInput = function(e){var f=e.target.files[0];if(f)parseImg(f);};
+
+window.openGuest = function(id){S.guestId=id;render();};
+window.closeGuest = function(){S.guestId=null;S.guestForm={name:"",note:""};render();};
+window.guestInput = function(k,v){S.guestForm[k]=v;};
+window.submitGuest = async function(){
+  var f=S.guestForm;if(!f.name.trim()||!f.note.trim())return;
+  var b=beans.find(function(x){return x.id===S.guestId;});if(!b)return;
+  var notes=(b.guestNotes||[]).concat([{name:f.name,note:f.note,date:new Date().toISOString().slice(0,10)}]);
+  await fuB(S.guestId,{guestNotes:notes});
+  S.guestId=null;S.guestForm={name:"",note:""};showToast("소감이 기록됐어요 ✨");
+};
+window.deleteGuest = function(beanId, idx){
+  requirePw(async function(){
+    var b=beans.find(function(x){return x.id===beanId;});if(!b)return;
+    var updated=(b.guestNotes||[]).filter(function(_,i){return i!==idx;});
+    await fuB(beanId,{guestNotes:updated});
+    showToast("소감이 삭제됐어요");
+  });
 };
 
-window.handleFileDrop=e=>{e.preventDefault();state.addDrag=false;const f=e.dataTransfer.files[0];if(f&&f.type.startsWith("image/"))parseImg(f);else render();};
-window.handleDragOver=e=>{e.preventDefault();state.addDrag=true;render();};
-window.handleDragLeave=()=>{state.addDrag=false;render();};
-window.handleFileInput=e=>{const f=e.target.files[0];if(f)parseImg(f);};
-
-async function parseImg(file) {
-  state.addStep="parsing";state.addPreview=URL.createObjectURL(file);render();
-  try {
-    const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(file);});
-    const resp=await fetch("https://ozy-house-proxy.okgo-levelup.workers.dev",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:1200,messages:[{role:"user",content:[
-        {type:"image",source:{type:"base64",media_type:file.type||"image/jpeg",data:b64}},
-        {type:"text",text:`커피 원두 정보를 추출해서 JSON만 반환. 다른 텍스트 없이 JSON만.
-포맷: 한국어 카드, 영문 테이블(COUNTRY/REGION/PROCESS 등), 스마트스토어 등 모두 처리.
-원산지는 한국어로(Peru→페루,Ethiopia→에티오피아), 가공법 한국어(Washed→워시드,Natural→내추럴,Fermented Washed→발효 워시드,Plastic Bag Fermented Washed→플라스틱백 발효 워시드), 플레이버 한국어(White Floral→화이트 플로럴,Green Apple→청사과,Sugar Cane→슈가 케인), 배전도 한국어(Light→라이트,Medium→미디엄).
-{"name":"원두명","origin":"국가(한국어)","region":"지역","producer":"농장/생산자","variety":"품종","altitude":"고도","process":"가공법(한국어)","roastLevel":"배전도(한국어)","flavor":["플레이버1","플레이버2"],"tagline":"한줄설명","recipe":{"dripper":"","beans":"","waterTemp":"","grind":"","hot":"","iced":""}}`
-      }]}]})
-      });
-    if(!resp.ok){const errBody=await resp.text();console.error("API error:",resp.status,errBody);throw new Error("API "+resp.status);}
-    const data=await resp.json();
-    const txt=data.content?.map(c=>c.text||"").join("")||"";
-    if(!txt)throw new Error("Empty response from API");
-    const parsed=JSON.parse(txt.replace(/```json|```/g,"").trim());
-    state.addEdit={...parsed,flavor:Array.isArray(parsed.flavor)?parsed.flavor.join(", "):(parsed.flavor||""),myNote:"",rating:4,status:"available",rDripper:parsed.recipe?.dripper||"",rBeans:parsed.recipe?.beans||"",rTemp:parsed.recipe?.waterTemp||"",rGrind:parsed.recipe?.grind||"",rHot:parsed.recipe?.hot||"",rIced:parsed.recipe?.iced||""};
-    state.addStep="review";render();
-  } catch(err) {
-    console.error(err);state.addStep="error";render();
+window.openDiary = function(){
+  requirePw(function(){
+    S.showDiary=true;S.diaryEditId=null;
+    var avail=beans.find(function(b){return b.status==="available";});
+    S.diaryForm={mood:"☀️",beanId:avail?avail.id:"",note:"",rating:4,brewType:"hot"};
+    render();setTimeout(function(){var el=document.getElementById("diary-note");if(el)el.focus();},100);
+  });
+};
+window.openDiaryEdit = function(id){
+  requirePw(function(){
+    var d=diaries.find(function(x){return x.id===id;});if(!d)return;
+    S.diaryEditId=id;
+    S.diaryForm={mood:d.mood||"☀️",beanId:d.beanId||"",note:d.note||"",rating:d.rating||4,brewType:d.brewType||"hot"};
+    S.showDiary=true;
+    render();setTimeout(function(){var el=document.getElementById("diary-note");if(el)el.focus();},100);
+  });
+};
+window.closeDiary = function(){S.showDiary=false;S.diaryEditId=null;render();};
+window.diaryInput = function(k,v){S.diaryForm[k]=v;if(k!=="note")render();};
+window.saveDiary = async function(){
+  var f=S.diaryForm;if(!f.note.trim())return;
+  var b=beans.find(function(x){return x.id===f.beanId;});
+  var data={mood:f.mood,beanId:f.beanId,beanName:(b&&b.name)||"",note:f.note,rating:f.rating,brewType:f.brewType||"hot"};
+  if(S.diaryEditId){
+    await updateDoc(doc(db,"diary",S.diaryEditId),data);
+    S.diaryEditId=null;showToast("일기가 수정됐어요 ✅");
+  } else {
+    data.date=new Date().toISOString().slice(0,10);data.ts=Date.now();
+    await addDoc(DC,data);showToast("일기가 기록됐어요 ☕");
   }
+  S.showDiary=false;render();
+};
+window.deleteDiary = function(id){requirePw(async function(){await fdD(id);showToast("삭제했어요");});};
+
+async function parseImg(file){
+  S.addStep="parsing";S.addPreview=URL.createObjectURL(file);render();
+  try{
+    var b64=await new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(r.result.split(",")[1]);};r.onerror=rej;r.readAsDataURL(file);});
+    var resp=await fetch(WK,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:1200,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:file.type||"image/jpeg",data:b64}},{type:"text",text:'커피 원두 정보를 추출해서 JSON만 반환. 다른 텍스트 없이 JSON만.\n원산지 한국어(Peru→페루,Ethiopia→에티오피아), 가공법 한국어(Washed→워시드,Natural→내추럴), 플레이버 한국어, 배전도 한국어(Light→라이트,Medium→미디엄).\n{"name":"","origin":"","region":"","producer":"","variety":"","altitude":"","process":"","roastLevel":"","flavor":[],"tagline":"","recipe":{"dripper":"","beans":"","waterTemp":"","grind":"","hot":"","iced":""}}'}]}]})});
+    var data=await resp.json();
+    if(!resp.ok)throw new Error("API "+resp.status);
+    var txt=data.content.map(function(c){return c.text||"";}).join("");
+    var parsed=JSON.parse(txt.replace(/```json|```/g,"").trim());
+    S.addEdit=Object.assign({},parsed,{
+      flavor:Array.isArray(parsed.flavor)?parsed.flavor.join(", "):(parsed.flavor||""),
+      myNote:"",rating:4,status:"available",roastDate:"",startDate:"",
+      rDripper:(parsed.recipe&&parsed.recipe.dripper)||"",rBeans:(parsed.recipe&&parsed.recipe.beans)||"",
+      rTemp:(parsed.recipe&&parsed.recipe.waterTemp)||"",rGrind:(parsed.recipe&&parsed.recipe.grind)||"",
+      rHot:(parsed.recipe&&parsed.recipe.hot)||"",rIced:(parsed.recipe&&parsed.recipe.iced)||""
+    });
+    S.addStep="review";render();
+  }catch(err){console.error(err);S.addStep="error";render();}
 }
 
-// ── 렌더 함수들
-function renderMenu() {
-  const avail=beans.filter(b=>b.status==="available");
-  return `<div style="background:linear-gradient(135deg,#1c1007,#2d1a0a);padding:40px 20px 28px;text-align:center;position:relative;overflow:hidden;">
-    <div style="position:absolute;inset:0;opacity:.04;background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:12px 12px;"></div>
-    <div style="font-size:10px;letter-spacing:4px;color:#c8954a;text-transform:uppercase;margin-bottom:8px;">☕ Home Café · Today's Selection</div>
-    <div class="bebas" style="font-size:48px;color:#f7f3ee;line-height:1;margin-bottom:6px;">BEAN MENU</div>
-    <div style="color:#7a5c3a;font-size:13px;">${avail.length}종의 원두가 준비되어 있어요</div>
-  </div>
-  <div style="padding:12px 12px 80px;">
-    ${avail.length===0?`<div style="text-align:center;padding:70px 0;color:#b0a090;font-size:14px;">☕<br><br>오늘은 원두가 없어요</div>`:""}
-    ${avail.map((b,i)=>{
-      const ps=gPS(b.process),rc=gRC(b.roastLevel),open=state.recOpen===b.id;
-      return `<div class="cani" style="background:#fff;border-radius:18px;margin-bottom:12px;box-shadow:0 2px 16px rgba(28,16,7,.07);border:1px solid #ede5d8;overflow:hidden;animation-delay:${i*.07}s;">
-        <div style="background:linear-gradient(135deg,${ps.bg},#fff);padding:18px 18px 0;">
-          <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
-            <span style="background:${ps.bg};color:${ps.c};border-radius:20px;padding:2px 10px;font-size:10px;font-weight:700;">${ps.l}</span>
-            <span style="background:${rc}22;color:${rc};border-radius:20px;padding:2px 10px;font-size:10px;font-weight:600;">${b.roastLevel||""}</span>
-          </div>
-          <div style="font-size:18px;font-weight:700;color:#1c1007;line-height:1.3;margin-bottom:4px;">${b.name||""}</div>
-          <div style="font-size:12px;color:#8a7060;margin-bottom:${b.tagline?0:14}px;">${gFL(b.origin)} ${b.origin||""}${b.region?` · ${b.region}`:""}${b.variety?` · ${b.variety}`:""}</div>
-          ${b.tagline?`<div style="font-style:italic;font-size:12px;color:#6a4f3a;border-left:3px solid #c8954a;padding-left:10px;margin-top:8px;margin-bottom:14px;">"${b.tagline}"</div>`:""}
-        </div>
-        <div style="padding:14px 18px 18px;">
-          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#b0907a;margin-bottom:10px;">Flavor Notes</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">${flavorChips(b.flavor)}</div>
-          ${b.recipe?.hot?`<div style="margin-bottom:12px;">
-            <button onclick="toggleRec('${b.id}')" style="background:none;border:1px solid #e0d8d0;border-radius:20px;padding:6px 13px;font-size:11px;color:#8a7060;cursor:pointer;font-family:inherit;">🔬 추출 레시피 ${open?"▲":"▼"}</button>
-            ${open?`<div style="margin-top:10px;background:#faf6f0;border-radius:10px;padding:12px 14px;font-size:11px;color:#5a3e2a;line-height:1.9;">
-              <div><b>드리퍼</b> ${b.recipe.dripper||""} · <b>원두</b> ${b.recipe.beans||""}</div>
-              <div><b>물온도</b> ${b.recipe.waterTemp||""} · <b>분쇄도</b> ${b.recipe.grind||""}</div>
-              ${b.recipe.hot?`<div>☀️ <b>Hot</b> ${b.recipe.hot}</div>`:""}
-              ${b.recipe.iced?`<div>🧊 <b>Iced</b> ${b.recipe.iced}</div>`:""}
-            </div>`:""}
-          </div>`:""}
-          <button onclick="openGuest('${b.id}')" style="width:100%;background:#1c1007;color:#f7f3ee;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">✏️ 마셔봤어요 — 소감 남기기</button>
-          ${b.guestNotes?.length?`<div style="margin-top:6px;font-size:11px;color:#a08060;text-align:center;">💬 ${b.guestNotes.length}명이 소감을 남겼어요</div>`:""}
-        </div>
-      </div>`;
-    }).join("")}
-  </div>`;
+// ── 렌더 헬퍼
+var HG = 'background:linear-gradient(160deg,#2c2c2e,#3a3a3c)';
+var IS = 'width:100%;border:1px solid #d1d1d6;border-radius:12px;padding:10px 13px;font-size:13px;font-family:inherit;background:#f5f5f7;color:#1c1c1e;outline:none;box-sizing:border-box;';
+var IL = 'font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#8e8e93;display:block;margin-bottom:5px;margin-top:13px;';
+
+function mkLbl(t){return '<label style="'+IL+'">'+t+'</label>';}
+function mkInp(val,fn){return '<input style="'+IS+'" value="'+esc(val)+'" oninput="'+fn+'">';}
+function mkDate(val,fn){return '<input type="date" style="'+IS+'" value="'+esc(val)+'" onchange="'+fn+'">';}
+function mkTA(val,fn,ph){return '<textarea style="'+IS+'resize:none;min-height:80px;" oninput="'+fn+'" placeholder="'+esc(ph||"")+'">'+esc(val)+'</textarea>';}
+function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+
+function rGuestNotes(notes, beanId){
+  if(!notes||!notes.length) return '<div style="font-size:13px;color:#8e8e93;font-style:italic;">아직 게스트 소감이 없어요</div>';
+  return notes.map(function(g,gi){
+    return '<div style="background:#fff;border-radius:14px;padding:14px;margin-bottom:8px;border:0.5px solid rgba(0,0,0,0.06);">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">'
+      +'<div><b style="font-size:13px;">'+esc(g.name)+'</b><span style="font-size:11px;color:#8e8e93;margin-left:8px;">'+esc(g.date)+'</span></div>'
+      +'<button onclick="deleteGuest(\''+beanId+'\','+gi+')" style="background:none;border:none;font-size:11px;color:#c7c7cc;cursor:pointer;font-family:inherit;padding:0;">삭제</button>'
+      +'</div>'
+      +'<div style="font-size:13px;color:#3a3a3c;line-height:1.6;">'+esc(g.note)+'</div>'
+      +'</div>';
+  }).join("");
 }
 
-function renderArchive() {
-  const fil=state.filter==="all"?beans:beans.filter(b=>b.status===state.filter);
-  return `<div style="background:#1c1007;padding:36px 20px 18px;position:sticky;top:0;z-index:50;">
-    <div class="bebas" style="font-size:32px;color:#f7f3ee;">BEAN ARCHIVE</div>
-    <div style="color:#7a5c3a;font-size:11px;margin-top:1px;">총 ${beans.length}종 기록됨</div>
-    <div style="display:flex;gap:7px;margin-top:12px;">
-      ${[["all","전체"],["available","보유"],["empty","소진"]].map(([v,l])=>`<button onclick="setFilter('${v}')" style="background:${state.filter===v?"#c8954a":"transparent"};color:${state.filter===v?"#fff":"#7a5c3a"};border:1px solid ${state.filter===v?"#c8954a":"#3a2a18"};border-radius:20px;padding:4px 12px;font-size:11px;cursor:pointer;font-family:inherit;">${l}</button>`).join("")}
-    </div>
-  </div>
-  <div style="padding:8px 12px 90px;">
-    ${fil.length===0?`<div style="text-align:center;padding:60px 0;color:#b0a090;">📭<br><br>아직 기록이 없어요</div>`:""}
-    ${fil.map((b,i)=>{
-      const ps=gPS(b.process);
-      return `<div class="cani" onclick="openDetail('${b.id}')" style="background:#fff;border-radius:14px;margin-bottom:9px;border:1px solid #ede5d8;padding:14px 15px;display:flex;gap:12px;align-items:flex-start;cursor:pointer;opacity:${b.status==="empty"?.6:1};animation-delay:${i*.05}s;">
-        <div style="flex:1;">
-          <div style="display:flex;gap:5px;margin-bottom:5px;flex-wrap:wrap;">
-            <span style="background:${ps.bg};color:${ps.c};border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;">${b.process||""}</span>
-            ${b.status==="empty"?`<span style="background:#f0ece6;color:#b0a090;border-radius:20px;padding:2px 8px;font-size:10px;">소진</span>`:""}
-          </div>
-          <div style="font-weight:700;font-size:14px;color:#1c1007;margin-bottom:3px;">${b.name||""}</div>
-          <div style="font-size:11px;color:#a08060;margin-bottom:7px;">${gFL(b.origin)} ${b.origin||""}${b.region?` · ${b.region}`:""}</div>
-          <div style="display:flex;gap:5px;">${(b.flavor||[]).slice(0,5).map(f=>`<span style="font-size:17px;">${fe(f)}</span>`).join("")}</div>
-        </div>
-        <div style="text-align:right;flex-shrink:0;">
-          <div>${starsHtml(b.rating||0,"",12)}</div>
-          ${b.guestNotes?.length?`<div style="font-size:10px;color:#c8954a;margin-top:3px;">💬 ${b.guestNotes.length}</div>`:""}
-          <div style="font-size:10px;color:#c0b0a0;margin-top:4px;">${b.roastDate||""}</div>
-        </div>
-      </div>`;
-    }).join("")}
-  </div>
-  <button onclick="openAdd()" style="position:fixed;bottom:74px;right:16px;width:50px;height:50px;border-radius:50%;background:#c8954a;color:#fff;font-size:24px;border:none;cursor:pointer;box-shadow:0 4px 18px rgba(200,149,74,.45);z-index:60;display:flex;align-items:center;justify-content:center;">+</button>`;
+function rMenu(){
+  var avail=beans.filter(function(b){return b.status==="available";});
+  var html='<div style="'+HG+';padding:52px 22px 32px;text-align:center;position:relative;overflow:hidden;">'
+    +'<div style="position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(255,159,10,0.12),transparent 70%);border-radius:50%;pointer-events:none;"></div>'
+    +'<div class="bebas" style="font-size:58px;color:#fff;line-height:1;margin-bottom:6px;letter-spacing:2px;">OZY HOUSE</div>'
+    +'<div style="font-size:12px;letter-spacing:3px;color:rgba(255,255,255,0.45);text-transform:uppercase;margin-bottom:10px;">Bean Lineup</div>'
+    +'<div style="font-size:12px;color:rgba(255,255,255,0.25);">'+avail.length+'종의 원두가 준비되어 있어요</div>'
+    +'</div><div style="padding:14px 14px 88px;">';
+  if(!avail.length) html+='<div style="text-align:center;padding:80px 0;color:#8e8e93;">☕<br><br>오늘은 원두가 없어요</div>';
+  avail.forEach(function(b,i){
+    var ps=gPS(b.process),rc=gRC(b.roastLevel),open=S.recOpen===b.id;
+    html+='<div class="cani" onclick="openDetail(\''+b.id+'\')" style="background:#fff;border-radius:20px;margin-bottom:14px;box-shadow:0 2px 16px rgba(0,0,0,0.07);border:0.5px solid rgba(0,0,0,0.06);overflow:hidden;animation-delay:'+(i*.07)+'s;cursor:pointer;">'
+      +'<div style="background:linear-gradient(135deg,'+ps.bg+',#fff);padding:18px 18px 0;">'
+      +'<div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">'
+      +'<span style="background:'+ps.bg+';color:'+ps.c+';border-radius:20px;padding:3px 11px;font-size:11px;font-weight:600;">'+ps.l+'</span>'
+      +'<span style="background:'+rc+'18;color:'+rc+';border-radius:20px;padding:3px 11px;font-size:11px;font-weight:600;">'+(b.roastLevel||"")+'</span>'
+      +'</div>'
+      +'<div style="font-size:18px;font-weight:700;color:#1c1c1e;line-height:1.3;margin-bottom:4px;">'+(b.name||"")+'</div>'
+      +'<div style="font-size:12px;color:#8e8e93;margin-bottom:'+(b.tagline?0:16)+'px;">'+gFL(b.origin)+' '+(b.origin||"")+(b.region?" · "+b.region:"")+(b.variety?" · "+b.variety:"")+'</div>'
+      +(b.tagline?'<div style="font-style:italic;font-size:12px;color:#636366;border-left:2px solid #ff9f0a;padding-left:10px;margin-top:8px;margin-bottom:16px;">"'+esc(b.tagline)+'"</div>':"")
+      +'</div><div style="padding:14px 18px 18px;">'
+      +'<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#8e8e93;margin-bottom:10px;">Flavor Notes</div>'
+      +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">'+fchips(b.flavor)+'</div>';
+    if(b.recipe&&b.recipe.hot){
+      html+='<div style="margin-bottom:12px;"><button onclick="event.stopPropagation();toggleRec(\''+b.id+'\')" style="background:none;border:1px solid #d1d1d6;border-radius:20px;padding:7px 14px;font-size:12px;color:#636366;cursor:pointer;font-family:inherit;">🔬 추출 레시피 '+(open?"▲":"▼")+'</button>';
+      if(open) html+='<div style="margin-top:10px;background:#f5f5f7;border-radius:12px;padding:13px 15px;font-size:12px;color:#3a3a3c;line-height:1.9;"><div><b>드리퍼</b> '+(b.recipe.dripper||"")+' · <b>원두</b> '+(b.recipe.beans||"")+'</div><div><b>물온도</b> '+(b.recipe.waterTemp||"")+' · <b>분쇄도</b> '+(b.recipe.grind||"")+'</div>'+(b.recipe.hot?'<div>☀️ <b>Hot</b> '+b.recipe.hot+'</div>':"")+(b.recipe.iced?'<div>🧊 <b>Iced</b> '+b.recipe.iced+'</div>':"")+'</div>';
+      html+='</div>';
+    }
+    html+='<button onclick="event.stopPropagation();openGuest(\''+b.id+'\')" style="width:100%;background:#2c2c2e;color:#fff;border:none;border-radius:14px;padding:14px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">✏️ 마셔봤어요 — 소감 남기기</button>'
+      +((b.guestNotes&&b.guestNotes.length)?'<div style="margin-top:8px;font-size:12px;color:#8e8e93;text-align:center;">💬 '+b.guestNotes.length+'명이 소감을 남겼어요</div>':"")
+      +'</div></div>';
+  });
+  return html+'</div>';
 }
 
-function renderDetail(id) {
-  const b=beans.find(x=>x.id===id); if(!b) return "";
-  const ps=gPS(b.process),rc=gRC(b.roastLevel);
-  return `<div style="background:linear-gradient(160deg,#1c1007,#2d1a0a);padding:40px 20px 24px;">
-    <button onclick="closeDetail()" style="background:none;border:none;color:#7a5c3a;font-size:13px;cursor:pointer;padding:0;margin-bottom:16px;font-family:inherit;">← 뒤로</button>
-    <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
-      <span style="background:${ps.bg};color:${ps.c};border-radius:20px;padding:3px 11px;font-size:11px;font-weight:700;">${ps.l}</span>
-      <span style="background:${rc}33;color:${rc};border-radius:20px;padding:3px 11px;font-size:11px;font-weight:600;">${b.roastLevel||""}</span>
-    </div>
-    <div class="bebas" style="font-size:28px;color:#f7f3ee;line-height:1.2;margin-bottom:6px;">${(b.name||"").toUpperCase()}</div>
-    <div style="color:#7a5c3a;font-size:12px;">${gFL(b.origin)} ${b.origin||""}${b.region?` · ${b.region}`:""}${b.variety?` · ${b.variety}`:""}${b.altitude?` · ${b.altitude}`:""}</div>
-    ${b.producer?`<div style="color:#5a4030;font-size:11px;margin-top:3px;">by ${b.producer}</div>`:""}
-  </div>
-  <div style="padding:20px 18px 90px;">
-    <div style="margin-bottom:20px;">
-      <div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#b0907a;font-weight:600;margin-bottom:10px;">FLAVOR NOTES</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">${flavorChips(b.flavor||[])}</div>
-      ${b.tagline?`<div style="margin-top:12px;font-style:italic;font-size:13px;color:#6a4f3a;border-left:3px solid #c8954a;padding-left:11px;">"${b.tagline}"</div>`:""}
-    </div>
-    <div style="margin-bottom:20px;">
-      <div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#b0907a;font-weight:600;margin-bottom:10px;">MY NOTE</div>
-      <div>${starsHtml(b.rating||0,"",17)}</div>
-      <p style="margin-top:10px;font-size:13px;color:#4a3020;line-height:1.8;font-style:italic;">${b.myNote||"아직 소감이 없어요"}</p>
-    </div>
-    ${b.recipe?.hot?`<div style="margin-bottom:20px;">
-      <div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#b0907a;font-weight:600;margin-bottom:10px;">BREWING RECIPE</div>
-      <div style="background:#fff;border-radius:12px;padding:14px;border:1px solid #ede5d8;">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 0;font-size:12px;margin-bottom:10px;">
-          ${[["드리퍼",b.recipe.dripper],["원두량",b.recipe.beans],["물온도",b.recipe.waterTemp],["분쇄도",b.recipe.grind]].filter(([,v])=>v).map(([k,v])=>`<div><div style="color:#a08060;font-size:10px;">${k}</div><div style="font-weight:700;color:#1c1007;margin-top:1px;">${v}</div></div>`).join("")}
-        </div>
-        ${b.recipe.hot?`<div style="font-size:11px;color:#5a3e2a;background:#faf6f0;border-radius:8px;padding:7px 11px;margin-bottom:5px;">☀️ <b>Hot</b> ${b.recipe.hot}</div>`:""}
-        ${b.recipe.iced?`<div style="font-size:11px;color:#5a3e2a;background:#f0f6fa;border-radius:8px;padding:7px 11px;">🧊 <b>Iced</b> ${b.recipe.iced}</div>`:""}
-      </div>
-    </div>`:""}
-    <div style="margin-bottom:20px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-        <div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#b0907a;font-weight:600;">GUEST NOTES (${b.guestNotes?.length||0})</div>
-        <button onclick="openGuest('${b.id}')" style="background:#c8954a;color:#fff;border:none;border-radius:20px;padding:5px 13px;font-size:11px;cursor:pointer;font-family:inherit;">+ 추가</button>
-      </div>
-      ${!(b.guestNotes?.length)?`<div style="font-size:13px;color:#b0a090;font-style:italic;">아직 게스트 소감이 없어요</div>`:""}
-      ${(b.guestNotes||[]).map(g=>`<div style="background:#fff;border-radius:11px;padding:12px 14px;margin-bottom:7px;border:1px solid #ede5d8;">
-        <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><b style="font-size:13px;">${g.name}</b><span style="font-size:11px;color:#b0a090;">${g.date}</span></div>
-        <div style="font-size:13px;color:#5a3e2a;line-height:1.6;">${g.note}</div>
-      </div>`).join("")}
-    </div>
-    <div style="display:flex;gap:10px;">
-      <button class="btn-secondary" onclick="toggleStatus('${b.id}')" style="flex:1;">${b.status==="available"?"소진 처리":"다시 보유"}</button>
-      <button class="btn-secondary" onclick="deleteBean('${b.id}')" style="flex:1;color:#c05040;border-color:#f0c8c0;">삭제</button>
-    </div>
-  </div>`;
+function rArchive(){
+  var fil=S.filter==="all"?beans:beans.filter(function(b){return b.status===S.filter;});
+  var html='<div style="'+HG+';padding:52px 22px 20px;position:sticky;top:0;z-index:50;">'
+    +'<div class="bebas" style="font-size:36px;color:#fff;">BEAN ARCHIVE</div>'
+    +'<div style="color:rgba(255,255,255,0.35);font-size:12px;margin-top:2px;">총 '+beans.length+'종 기록됨</div>'
+    +'<div style="display:flex;gap:8px;margin-top:14px;">'
+    +['all','available','empty'].map(function(v,i){return '<button onclick="setFilter(\''+v+'\')" style="background:'+(S.filter===v?'#ff9f0a':'rgba(255,255,255,0.08)')+';color:'+(S.filter===v?'#fff':'rgba(255,255,255,0.5)')+';border:none;border-radius:20px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:inherit;font-weight:'+(S.filter===v?'600':'400')+';">'+['전체','보유','소진'][i]+'</button>';}).join("")
+    +'</div></div><div style="padding:10px 14px 96px;">';
+  if(!fil.length) html+='<div style="text-align:center;padding:60px 0;color:#8e8e93;"><div style="font-size:36px;margin-bottom:12px;">📭</div>아직 기록이 없어요</div>';
+  fil.forEach(function(b,i){
+    var ps=gPS(b.process);
+    html+='<div class="cani" onclick="openDetail(\''+b.id+'\')" style="background:#fff;border-radius:16px;margin-bottom:10px;border:0.5px solid rgba(0,0,0,0.06);padding:16px;display:flex;gap:12px;align-items:flex-start;cursor:pointer;opacity:'+(b.status==="empty"?.5:1)+';animation-delay:'+(i*.05)+'s;box-shadow:0 1px 8px rgba(0,0,0,0.05);">'
+      +'<div style="flex:1;">'
+      +'<div style="display:flex;gap:5px;margin-bottom:6px;flex-wrap:wrap;">'
+      +'<span style="background:'+ps.bg+';color:'+ps.c+';border-radius:20px;padding:2px 9px;font-size:10px;font-weight:600;">'+(b.process||"")+'</span>'
+      +(b.status==="empty"?'<span style="background:#f5f5f7;color:#8e8e93;border-radius:20px;padding:2px 9px;font-size:10px;">소진</span>':"")
+      +'</div>'
+      +'<div style="font-weight:700;font-size:15px;color:#1c1c1e;margin-bottom:3px;">'+(b.name||"")+'</div>'
+      +'<div style="font-size:11px;color:#8e8e93;margin-bottom:8px;">'+gFL(b.origin)+' '+(b.origin||"")+(b.region?" · "+b.region:"")+'</div>'
+      +'<div style="display:flex;gap:4px;">'+(b.flavor||[]).slice(0,5).map(function(f){return '<span style="font-size:18px;">'+fe(f)+'</span>';}).join("")+'</div>'
+      +'</div>'
+      +'<div style="text-align:right;flex-shrink:0;">'
+      +stHtml(b.rating||0,"",13)
+      +((b.guestNotes&&b.guestNotes.length)?'<div style="font-size:10px;color:#ff9f0a;margin-top:4px;">💬 '+b.guestNotes.length+'</div>':"")
+      +'<div style="font-size:10px;color:#c7c7cc;margin-top:4px;">'+(b.roastDate||"")+'</div>'
+      +'</div></div>';
+  });
+  return html+'</div><button onclick="openAdd()" style="position:fixed;bottom:80px;right:20px;width:52px;height:52px;border-radius:50%;background:#ff9f0a;color:#fff;font-size:26px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(255,159,10,0.4);z-index:80;display:flex;align-items:center;justify-content:center;">+</button>';
 }
 
-function renderAddModal() {
-  const s=state.addStep,e=state.addEdit;
-  const flavors=e?.flavor?e.flavor.split(",").map(f=>f.trim()).filter(Boolean):[];
-  return `<div class="modal-bg" onclick="if(event.target===this)closeAdd()">
-    <div class="modal-box">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-        <div style="font-size:17px;font-weight:700;">원두 스캔 추가 ✨</div>
-        <button onclick="closeAdd()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#888;">×</button>
-      </div>
-      <div style="font-size:12px;color:#a08060;margin-bottom:18px;">어떤 로스터리 이미지든 자동으로 인식해요</div>
-      ${s==="upload"?`
-        <div class="drop-zone${state.addDrag?" over":""}" ondragover="handleDragOver(event)" ondragleave="handleDragLeave()" ondrop="handleFileDrop(event)" onclick="document.getElementById('fi').click()">
-          <div style="font-size:36px;margin-bottom:10px;">📸</div>
-          <div style="font-weight:600;color:#2c1a0a;margin-bottom:4px;font-size:14px;">이미지를 올려주세요</div>
-          <div style="font-size:12px;color:#a08060;">드래그 or 탭해서 선택</div>
-        </div>
-        <input id="fi" type="file" accept="image/*" style="display:none;" onchange="handleFileInput(event)"/>
-        <div style="background:#faf6f0;border-radius:12px;padding:14px;font-size:12px;color:#6a5040;margin-top:14px;line-height:1.7;">
-          <div style="font-weight:700;margin-bottom:8px;color:#2c1a0a;">📋 인식 가능한 포맷</div>
-          <div class="grid2">${[["🇰🇷 한국 로스터리","플레이버 카드"],["🌍 해외 로스터리","영문 테이블 형식"],["🛒 스마트스토어","상품 상세 캡처"],["📄 기타","원두 정보 모든 이미지"]].map(([t,d])=>`<div style="background:#fff;border-radius:9px;padding:9px 10px;border:1px solid #ede5d8;"><div style="font-weight:600;margin-bottom:2px;font-size:12px;">${t}</div><div style="font-size:11px;color:#a08060;">${d}</div></div>`).join("")}</div>
-        </div>`:""}
-      ${s==="parsing"?`
-        <div style="text-align:center;padding:36px 16px;">
-          ${state.addPreview?`<img src="${state.addPreview}" style="width:100%;max-height:160px;object-fit:cover;border-radius:10px;margin-bottom:18px;opacity:.75;">`:""}
-          <div style="font-size:40px;animation:spin 1.2s linear infinite;display:inline-block;margin-bottom:14px;">☕</div>
-          <div style="font-weight:600;color:#2c1a0a;margin-bottom:4px;">이미지 분석 중...</div>
-          <div style="font-size:12px;color:#a08060;">어떤 언어, 어떤 포맷이든 인식해요</div>
-        </div>`:""}
-      ${s==="error"?`
-        <div style="text-align:center;padding:30px 16px;">
-          <div style="font-size:36px;margin-bottom:12px;">😔</div>
-          <div style="font-weight:600;color:#c05040;margin-bottom:8px;">분석에 실패했어요</div>
-          <div style="font-size:12px;color:#a08060;margin-bottom:16px;">이미지를 다시 확인해주세요</div>
-          <button onclick="resetScan()" class="btn-secondary">다시 시도</button>
-        </div>`:""}
-      ${s==="review"&&e?`
-        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:10px 13px;margin-bottom:14px;">
-          <div style="font-size:11px;color:#166534;font-weight:600;margin-bottom:4px;">✅ 분석 완료 — 확인 후 수정해주세요</div>
-          <div style="font-size:11px;color:#4a8060;">${gFL(e.origin)} ${e.origin||""} · ${e.process||""} · ${e.roastLevel||""}</div>
-        </div>
-        ${flavors.length?`<div style="margin-bottom:14px;"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#b0907a;margin-bottom:8px;">감지된 플레이버</div><div style="display:flex;gap:7px;flex-wrap:wrap;">${flavorChips(flavors,"small")}</div></div>`:""}
-        <label class="lbl">원두 이름</label><input class="inp" value="${e.name||""}" oninput="addInput('name',this.value)">
-        <div class="grid2">
-          <div><label class="lbl">원산지</label><input class="inp" value="${e.origin||""}" oninput="addInput('origin',this.value)"></div>
-          <div><label class="lbl">지역</label><input class="inp" value="${e.region||""}" oninput="addInput('region',this.value)"></div>
-          <div><label class="lbl">가공방식</label><input class="inp" value="${e.process||""}" oninput="addInput('process',this.value)"></div>
-          <div><label class="lbl">배전도</label><input class="inp" value="${e.roastLevel||""}" oninput="addInput('roastLevel',this.value)"></div>
-        </div>
-        <label class="lbl">농장/생산자</label><input class="inp" value="${e.producer||""}" oninput="addInput('producer',this.value)">
-        <label class="lbl">품종</label><input class="inp" value="${e.variety||""}" oninput="addInput('variety',this.value)">
-        <label class="lbl">고도</label><input class="inp" value="${e.altitude||""}" oninput="addInput('altitude',this.value)">
-        <label class="lbl">플레이버 (쉼표 구분)</label><input class="inp" value="${e.flavor||""}" oninput="addInput('flavor',this.value)">
-        <label class="lbl">한줄 설명</label><input class="inp" value="${e.tagline||""}" oninput="addInput('tagline',this.value)">
-        <label class="lbl">레시피 Hot</label><input class="inp" value="${e.rHot||""}" oninput="addInput('rHot',this.value)">
-        <div class="grid2">
-          <div><label class="lbl">물온도</label><input class="inp" value="${e.rTemp||""}" oninput="addInput('rTemp',this.value)"></div>
-          <div><label class="lbl">분쇄도</label><input class="inp" value="${e.rGrind||""}" oninput="addInput('rGrind',this.value)"></div>
-        </div>
-        <label class="lbl">나의 소감</label>
-        <textarea class="inp" oninput="addInput('myNote',this.value)">${e.myNote||""}</textarea>
-        <label class="lbl" style="margin-top:13px;">평점</label>
-        <div>${starsHtml(e.rating||4,"add",22,true)}</div>
-        <div style="display:flex;gap:10px;margin-top:18px;">
-          <button onclick="resetScan()" class="btn-secondary" style="flex:1;">다시 스캔</button>
-          <button onclick="saveBean()" style="flex:2;background:#1c1007;color:#f7f3ee;border:none;border-radius:12px;padding:13px;font-size:13px;font-family:inherit;font-weight:700;cursor:pointer;">저장하기 🫘</button>
-        </div>`:""}
-    </div>
-  </div>`;
+function rDetail(id){
+  var b=beans.find(function(x){return x.id===id;});if(!b)return "";
+  var ps=gPS(b.process),rc=gRC(b.roastLevel);
+
+  if(S.editMode&&S.editData){
+    var e=S.editData;
+    return '<div style="'+HG+';padding:52px 22px 24px;">'
+      +'<button onclick="closeEdit()" style="background:rgba(255,255,255,0.1);border:none;color:rgba(255,255,255,0.7);font-size:13px;cursor:pointer;padding:6px 14px;border-radius:20px;margin-bottom:16px;font-family:inherit;">← 취소</button>'
+      +'<div class="bebas" style="font-size:28px;color:#fff;">수정하기</div>'
+      +'<div style="color:rgba(255,255,255,0.35);font-size:12px;margin-top:4px;">'+esc(b.name)+'</div>'
+      +'</div><div style="padding:20px 20px 100px;">'
+      +mkLbl("원두 이름")+mkInp(e.name,"editInput('name',this.value)")
+      +'<div class="g2">'
+      +'<div>'+mkLbl("원산지")+mkInp(e.origin,"editInput('origin',this.value)")+'</div>'
+      +'<div>'+mkLbl("지역")+mkInp(e.region,"editInput('region',this.value)")+'</div>'
+      +'<div>'+mkLbl("가공방식")+mkInp(e.process,"editInput('process',this.value)")+'</div>'
+      +'<div>'+mkLbl("배전도")+mkInp(e.roastLevel,"editInput('roastLevel',this.value)")+'</div>'
+      +'<div>'+mkLbl("로스팅 일자")+mkDate(e.roastDate,"editInput('roastDate',this.value)")+'</div>'
+      +'<div>'+mkLbl("소비 시작일")+mkDate(e.startDate,"editInput('startDate',this.value)")+'</div>'
+      +'</div>'
+      +mkLbl("품종")+mkInp(e.variety,"editInput('variety',this.value)")
+      +mkLbl("고도")+mkInp(e.altitude,"editInput('altitude',this.value)")
+      +mkLbl("플레이버 (쉼표 구분)")+mkInp(e.flavor,"editInput('flavor',this.value)")
+      +mkLbl("한줄 설명")+mkInp(e.tagline,"editInput('tagline',this.value)")
+      +mkLbl("레시피 Hot")+mkInp(e.rHot,"editInput('rHot',this.value)")
+      +mkLbl("레시피 Iced")+mkInp(e.rIced,"editInput('rIced',this.value)")
+      +'<div class="g2">'
+      +'<div>'+mkLbl("물온도")+mkInp(e.rTemp,"editInput('rTemp',this.value)")+'</div>'
+      +'<div>'+mkLbl("분쇄도")+mkInp(e.rGrind,"editInput('rGrind',this.value)")+'</div>'
+      +'</div>'
+      +mkLbl("나의 소감")+mkTA(e.myNote,"editInput('myNote',this.value)")
+      +'<label style="'+IL+';margin-top:14px;">평점</label>'
+      +'<div style="margin-top:4px;">'+stHtml(e.rating||4,"edit",24,true)+'</div>'
+      +'<button onclick="saveEdit()" style="width:100%;background:#ff9f0a;color:#fff;border:none;border-radius:14px;padding:15px;font-size:15px;font-family:inherit;font-weight:700;cursor:pointer;margin-top:20px;">저장하기 ✅</button>'
+      +'</div>';
+  }
+
+  var dateInfo="";
+  if(b.roastDate) dateInfo+='<div style="font-size:12px;color:#8e8e93;">🗓 로스팅 <b style="color:#3a3a3c;">'+b.roastDate+'</b></div>';
+  if(b.startDate) dateInfo+='<div style="font-size:12px;color:#8e8e93;">☕ 소비 시작 <b style="color:#3a3a3c;">'+b.startDate+'</b></div>';
+  if(b.status==="empty"&&b.emptyDate) dateInfo+='<div style="font-size:12px;color:#8e8e93;">✅ 소진 <b style="color:#3a3a3c;">'+b.emptyDate+'</b></div>';
+
+  return '<div style="'+HG+';padding:52px 22px 28px;">'
+    +'<button onclick="closeDetail()" style="background:rgba(255,255,255,0.1);border:none;color:rgba(255,255,255,0.7);font-size:13px;cursor:pointer;padding:6px 14px;border-radius:20px;margin-bottom:20px;font-family:inherit;">← 뒤로</button>'
+    +'<div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">'
+    +'<span style="background:'+ps.bg+';color:'+ps.c+';border-radius:20px;padding:3px 12px;font-size:11px;font-weight:600;">'+ps.l+'</span>'
+    +'<span style="background:'+rc+'22;color:'+rc+';border-radius:20px;padding:3px 12px;font-size:11px;font-weight:600;">'+(b.roastLevel||"")+'</span>'
+    +'</div>'
+    +'<div class="bebas" style="font-size:30px;color:#fff;line-height:1.2;margin-bottom:6px;">'+(b.name||"").toUpperCase()+'</div>'
+    +'<div style="color:rgba(255,255,255,0.4);font-size:12px;">'+gFL(b.origin)+' '+(b.origin||"")+(b.region?" · "+b.region:"")+(b.variety?" · "+b.variety:"")+(b.altitude?" · "+b.altitude:"")+'</div>'
+    +(b.producer?'<div style="color:rgba(255,255,255,0.3);font-size:11px;margin-top:3px;">by '+esc(b.producer)+'</div>':"")
+    +'</div><div style="padding:22px 20px 100px;">'
+    +(dateInfo?'<div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;">'+dateInfo+'</div>':"")
+    +'<div style="margin-bottom:24px;">'
+    +'<div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#8e8e93;font-weight:600;margin-bottom:12px;">FLAVOR NOTES</div>'
+    +'<div style="display:flex;gap:10px;flex-wrap:wrap;">'+fchips(b.flavor||[])+'</div>'
+    +(b.tagline?'<div style="margin-top:14px;font-style:italic;font-size:13px;color:#636366;border-left:2px solid #ff9f0a;padding-left:12px;line-height:1.6;">"'+esc(b.tagline)+'"</div>':"")
+    +'</div>'
+    +'<div style="margin-bottom:24px;">'
+    +'<div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#8e8e93;font-weight:600;margin-bottom:12px;">MY NOTE</div>'
+    +stHtml(b.rating||0,"",18)
+    +'<p style="margin-top:10px;font-size:14px;color:#3a3a3c;line-height:1.8;font-style:italic;">'+(b.myNote||"아직 소감이 없어요")+'</p>'
+    +'</div>'
+    +(b.recipe&&b.recipe.hot?'<div style="margin-bottom:24px;">'
+      +'<div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#8e8e93;font-weight:600;margin-bottom:12px;">BREWING RECIPE</div>'
+      +'<div style="background:#fff;border-radius:16px;padding:16px;border:0.5px solid rgba(0,0,0,0.06);">'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 0;font-size:13px;margin-bottom:12px;">'
+      +[["드리퍼",b.recipe.dripper],["원두량",b.recipe.beans],["물온도",b.recipe.waterTemp],["분쇄도",b.recipe.grind]].filter(function(x){return x[1];}).map(function(x){return '<div><div style="color:#8e8e93;font-size:10px;margin-bottom:2px;">'+x[0]+'</div><div style="font-weight:600;color:#1c1c1e;">'+x[1]+'</div></div>';}).join("")
+      +'</div>'
+      +(b.recipe.hot?'<div style="font-size:12px;color:#3a3a3c;background:#f5f5f7;border-radius:10px;padding:9px 12px;margin-bottom:6px;">☀️ <b>Hot</b> '+b.recipe.hot+'</div>':"")
+      +(b.recipe.iced?'<div style="font-size:12px;color:#3a3a3c;background:#eff6ff;border-radius:10px;padding:9px 12px;">🧊 <b>Iced</b> '+b.recipe.iced+'</div>':"")
+      +'</div></div>':"")
+    +'<div style="margin-bottom:24px;">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">'
+    +'<div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#8e8e93;font-weight:600;">GUEST NOTES ('+(b.guestNotes||[]).length+')</div>'
+    +'<button onclick="openGuest(\''+b.id+'\')" style="background:#ff9f0a;color:#fff;border:none;border-radius:20px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;">+ 추가</button>'
+    +'</div>'
+    +rGuestNotes(b.guestNotes||[], b.id)
+    +'</div>'
+    +'<div style="display:flex;gap:8px;">'
+    +'<button class="btns" onclick="openEdit(\''+b.id+'\')" style="flex:1;border-color:#ff9f0a;color:#ff9f0a;">✏️ 수정</button>'
+    +'<button class="btns" onclick="toggleStatus(\''+b.id+'\')" style="flex:1;">'+(b.status==="available"?"소진 처리":"다시 보유")+'</button>'
+    +'<button class="btns" onclick="deleteBean(\''+b.id+'\')" style="flex:1;color:#ff3b30;border-color:#ffd7d5;">삭제</button>'
+    +'</div></div>';
 }
 
-function renderGuestModal() {
-  const b=beans.find(x=>x.id===state.guestId); if(!b) return "";
-  return `<div class="modal-bg" onclick="if(event.target===this)closeGuest()">
-    <div class="modal-box" style="max-height:70vh;">
-      <div style="font-size:17px;font-weight:700;margin-bottom:4px;">소감 남기기 ✏️</div>
-      <div style="font-size:12px;color:#a08060;margin-bottom:18px;">${b.name}</div>
-      <label class="lbl">이름</label>
-      <input class="inp" placeholder="이름을 입력해주세요" value="${state.guestForm.name}" oninput="guestInput('name',this.value)" style="margin-bottom:12px;">
-      <label class="lbl">한 마디</label>
-      <textarea class="inp" placeholder="이 커피 어떠셨나요? 🍑" oninput="guestInput('note',this.value)">${state.guestForm.note}</textarea>
-      <button class="btn-primary" onclick="submitGuest()">기록하기</button>
-    </div>
-  </div>`;
+function rAdd(){
+  var s=S.addStep,e=S.addEdit;
+  var fl=e&&e.flavor?e.flavor.split(",").map(function(f){return f.trim();}).filter(Boolean):[];
+  var html='<div class="mbg" onclick="if(event.target===this)closeAdd()"><div class="mbox">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
+    +'<div style="font-size:18px;font-weight:700;">원두 스캔 추가 ✨</div>'
+    +'<button onclick="closeAdd()" style="background:#f5f5f7;border:none;width:30px;height:30px;border-radius:50%;font-size:18px;cursor:pointer;color:#636366;display:flex;align-items:center;justify-content:center;">×</button>'
+    +'</div><div style="font-size:13px;color:#8e8e93;margin-bottom:20px;">어떤 로스터리 이미지든 자동으로 인식해요</div>';
+
+  if(s==="upload"){
+    html+='<div class="dz'+(S.addDrag?" over":"")+'" ondragover="handleDragOver(event)" ondragleave="handleDragLeave()" ondrop="handleFileDrop(event)" onclick="document.getElementById(\'fi\').click()">'
+      +'<div style="font-size:40px;margin-bottom:12px;">📸</div>'
+      +'<div style="font-weight:600;color:#1c1c1e;margin-bottom:4px;font-size:15px;">이미지를 올려주세요</div>'
+      +'<div style="font-size:13px;color:#8e8e93;">드래그 or 탭해서 선택</div>'
+      +'</div><input id="fi" type="file" accept="image/*" style="display:none;" onchange="handleFileInput(event)"/>'
+      +'<div style="background:#f5f5f7;border-radius:14px;padding:16px;font-size:12px;color:#636366;margin-top:14px;line-height:1.8;">'
+      +'<div style="font-weight:600;margin-bottom:8px;color:#1c1c1e;">📋 인식 가능한 포맷</div>'
+      +'<div class="g2">'+[["🇰🇷 한국 로스터리","플레이버 카드"],["🌍 해외 로스터리","영문 테이블"],["🛒 스마트스토어","상품 상세 캡처"],["📄 기타","원두 정보 이미지"]].map(function(x){return '<div style="background:#fff;border-radius:10px;padding:10px;border:0.5px solid rgba(0,0,0,0.08);"><div style="font-weight:600;margin-bottom:2px;font-size:12px;">'+x[0]+'</div><div style="font-size:11px;color:#8e8e93;">'+x[1]+'</div></div>';}).join("")+'</div></div>';
+  }
+  if(s==="parsing"){
+    html+='<div style="text-align:center;padding:40px 16px;">'
+      +(S.addPreview?'<img src="'+S.addPreview+'" style="width:100%;max-height:180px;object-fit:cover;border-radius:14px;margin-bottom:20px;opacity:.7;">':"")
+      +'<div style="font-size:44px;animation:spin 1.2s linear infinite;display:inline-block;margin-bottom:16px;">☕</div>'
+      +'<div style="font-weight:600;color:#1c1c1e;font-size:15px;">이미지 분석 중...</div></div>';
+  }
+  if(s==="error"){
+    html+='<div style="text-align:center;padding:30px 16px;">'
+      +'<div style="font-size:40px;margin-bottom:14px;">😔</div>'
+      +'<div style="font-weight:600;color:#ff3b30;margin-bottom:8px;">분석에 실패했어요</div>'
+      +'<button onclick="resetScan()" class="btns">다시 시도</button></div>';
+  }
+  if(s==="review"&&e){
+    html+='<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:12px 14px;margin-bottom:16px;">'
+      +'<div style="font-size:12px;color:#166534;font-weight:600;margin-bottom:4px;">✅ 분석 완료 — 확인 후 수정해주세요</div>'
+      +'<div style="font-size:12px;color:#4a8060;">'+gFL(e.origin)+' '+(e.origin||"")+' · '+(e.process||"")+' · '+(e.roastLevel||"")+'</div></div>';
+    if(fl.length) html+='<div style="margin-bottom:14px;"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#8e8e93;margin-bottom:8px;">감지된 플레이버</div><div style="display:flex;gap:7px;flex-wrap:wrap;">'+fchips(fl,"small")+'</div></div>';
+    html+=mkLbl("원두 이름")+mkInp(e.name,"addInput('name',this.value)")
+      +'<div class="g2">'
+      +'<div>'+mkLbl("원산지")+mkInp(e.origin,"addInput('origin',this.value)")+'</div>'
+      +'<div>'+mkLbl("지역")+mkInp(e.region,"addInput('region',this.value)")+'</div>'
+      +'<div>'+mkLbl("가공방식")+mkInp(e.process,"addInput('process',this.value)")+'</div>'
+      +'<div>'+mkLbl("배전도")+mkInp(e.roastLevel,"addInput('roastLevel',this.value)")+'</div>'
+      +'<div>'+mkLbl("로스팅 일자")+mkDate(e.roastDate,"addInput('roastDate',this.value)")+'</div>'
+      +'<div>'+mkLbl("소비 시작일")+mkDate(e.startDate,"addInput('startDate',this.value)")+'</div>'
+      +'</div>'
+      +mkLbl("품종")+mkInp(e.variety,"addInput('variety',this.value)")
+      +mkLbl("고도")+mkInp(e.altitude,"addInput('altitude',this.value)")
+      +mkLbl("플레이버 (쉼표 구분)")+mkInp(e.flavor,"addInput('flavor',this.value)")
+      +mkLbl("한줄 설명")+mkInp(e.tagline,"addInput('tagline',this.value)")
+      +mkLbl("레시피 Hot")+mkInp(e.rHot,"addInput('rHot',this.value)")
+      +mkLbl("레시피 Iced")+mkInp(e.rIced,"addInput('rIced',this.value)")
+      +'<div class="g2">'
+      +'<div>'+mkLbl("물온도")+mkInp(e.rTemp,"addInput('rTemp',this.value)")+'</div>'
+      +'<div>'+mkLbl("분쇄도")+mkInp(e.rGrind,"addInput('rGrind',this.value)")+'</div>'
+      +'</div>'
+      +mkLbl("나의 소감")+mkTA(e.myNote,"addInput('myNote',this.value)")
+      +'<label style="'+IL+';margin-top:14px;">평점</label>'
+      +'<div style="margin-top:4px;">'+stHtml(e.rating||4,"add",24,true)+'</div>'
+      +'<div style="display:flex;gap:10px;margin-top:20px;">'
+      +'<button onclick="resetScan()" class="btns" style="flex:1;">다시 스캔</button>'
+      +'<button onclick="saveBean()" style="flex:2;background:#2c2c2e;color:#fff;border:none;border-radius:14px;padding:14px;font-size:14px;font-family:inherit;font-weight:700;cursor:pointer;">저장하기 🫘</button>'
+      +'</div>';
+  }
+  return html+'</div></div>';
 }
 
-function render() {
-  let body="";
-  if(state.detail) body=renderDetail(state.detail);
-  else if(state.tab==="menu") body=renderMenu();
-  else body=renderArchive();
+function rGuest(){
+  var b=beans.find(function(x){return x.id===S.guestId;});if(!b)return "";
+  return '<div class="mbg" onclick="if(event.target===this)closeGuest()"><div class="mbox" style="max-height:72vh;">'
+    +'<div style="font-size:18px;font-weight:700;margin-bottom:4px;">소감 남기기 ✏️</div>'
+    +'<div style="font-size:13px;color:#8e8e93;margin-bottom:20px;">'+esc(b.name)+'</div>'
+    +mkLbl("이름")+'<input class="inp" placeholder="이름을 입력해주세요" value="'+esc(S.guestForm.name)+'" oninput="guestInput(\'name\',this.value)" style="margin-bottom:4px;">'
+    +mkLbl("한 마디")+'<textarea class="inp" placeholder="이 커피 어떠셨나요? 🍑" oninput="guestInput(\'note\',this.value)" style="resize:none;min-height:80px;">'+esc(S.guestForm.note)+'</textarea>'
+    +'<button class="btnp" onclick="submitGuest()">기록하기</button>'
+    +'</div></div>';
+}
+
+function rDiary(){
+  var today=new Date().toISOString().slice(0,10);
+  var te=diaries.find(function(d){return d.date===today;});
+  var MC={"☀️":"#fff9c4","🌧":"#e3f2fd","😴":"#f3e5f5","🎉":"#fff3e0","❄️":"#e0f7fa","🌙":"#ede7f6"};
+  var streak=0,dd=new Date();
+  while(true){var ds=dd.toISOString().slice(0,10);if(diaries.find(function(x){return x.date===ds;})){streak++;dd.setDate(dd.getDate()-1);}else break;}
+  var sm=streak===0?"오늘 첫 기록을 남겨보세요 ☕":streak<3?streak+"일 연속 기록 중 ☕":streak<7?streak+"일 연속! 커피 루틴이 생겼어요 🔥":streak+"일 연속!! 진짜 커피 집사예요 🏆";
+
+  var html='<div style="'+HG+';padding:52px 22px 28px;">'
+    +'<div class="bebas" style="font-size:36px;color:#fff;">COFFEE DIARY</div>'
+    +'<div style="color:rgba(255,255,255,0.35);font-size:12px;margin-top:2px;">나의 커피 기록</div>'
+    +'<div style="margin-top:16px;background:rgba(255,159,10,0.15);border:1px solid rgba(255,159,10,0.3);border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:10px;">'
+    +'<span style="font-size:24px;">'+(streak>=7?"🏆":streak>=3?"🔥":"☕")+'</span>'
+    +'<div><div style="color:#ff9f0a;font-size:13px;font-weight:600;">'+sm+'</div>'
+    +'<div style="color:rgba(255,255,255,0.3);font-size:11px;margin-top:2px;">총 '+diaries.length+'개의 기록</div></div>'
+    +'</div></div><div style="padding:14px 14px 96px;">';
+
+  if(!te){
+    html+='<div style="background:#fff;border-radius:20px;margin-bottom:14px;padding:22px;box-shadow:0 2px 16px rgba(0,0,0,0.07);text-align:center;">'
+      +'<div style="font-size:32px;margin-bottom:8px;">✍️</div>'
+      +'<div style="font-weight:700;font-size:15px;color:#1c1c1e;margin-bottom:4px;">오늘의 커피 기록</div>'
+      +'<div style="font-size:13px;color:#8e8e93;margin-bottom:16px;">오늘 마신 커피를 기록해보세요</div>'
+      +'<button onclick="openDiary()" style="background:#2c2c2e;color:#fff;border:none;border-radius:14px;padding:13px 28px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">+ 오늘 기록하기</button>'
+      +'</div>';
+  } else {
+    var mc=MC[te.mood]||"#f5f5f7";
+    var btag=te.brewType?'<div style="display:inline-flex;align-items:center;gap:5px;background:'+(te.brewType==="iced"?"#eff6ff":"#fff5eb")+';color:'+(te.brewType==="iced"?"#1d4ed8":"#c05e00")+';border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;margin-bottom:8px;">'+(te.brewType==="iced"?"🧊 Iced":"☀️ Hot")+'</div>':"";
+    html+='<div style="background:#fff;border-radius:20px;margin-bottom:14px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.07);">'
+      +'<div style="background:'+mc+';padding:16px 18px;display:flex;justify-content:space-between;align-items:center;">'
+      +'<div><div style="font-size:11px;color:#8e8e93;">오늘 · '+te.date+'</div>'
+      +'<div style="font-size:15px;font-weight:700;color:#1c1c1e;">'+te.mood+' 오늘의 한 잔</div>'
+      +(te.beanName?'<div style="font-size:12px;color:#ff9f0a;margin-top:2px;">☕ '+esc(te.beanName)+'</div>':"")
+      +'</div><span style="font-size:28px;">'+te.mood+'</span></div>'
+      +'<div style="padding:14px 18px 16px;">'
+      +btag
+      +'<div style="font-size:14px;color:#3a3a3c;line-height:1.8;">'+esc(te.note)+'</div>'
+      +'<div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center;">'
+      +'<div style="display:flex;gap:2px;">'+stHtml(te.rating||0,"",14)+'</div>'
+      +'<div style="display:flex;gap:12px;">'
+      +'<button onclick="openDiaryEdit(\''+te.id+'\')" style="background:none;border:none;font-size:11px;color:#ff9f0a;font-weight:600;cursor:pointer;font-family:inherit;">수정</button>'
+      +'<button onclick="deleteDiary(\''+te.id+'\')" style="background:none;border:none;font-size:11px;color:#c7c7cc;cursor:pointer;font-family:inherit;">삭제</button>'
+      +'</div></div></div></div>';
+  }
+
+  var prev=diaries.filter(function(d){return d.date!==today;});
+  if(prev.length) html+='<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#8e8e93;margin:20px 2px 10px;">이전 기록</div>';
+  prev.forEach(function(d,i){
+    var mc=MC[d.mood]||"#f5f5f7";
+    var btag=d.brewType?'<div style="display:inline-flex;align-items:center;gap:5px;background:'+(d.brewType==="iced"?"#eff6ff":"#fff5eb")+';color:'+(d.brewType==="iced"?"#1d4ed8":"#c05e00")+';border-radius:20px;padding:2px 9px;font-size:10px;font-weight:600;margin-bottom:7px;">'+(d.brewType==="iced"?"🧊 Iced":"☀️ Hot")+'</div>':"";
+    html+='<div class="cani" style="background:#fff;border-radius:16px;margin-bottom:10px;overflow:hidden;border:0.5px solid rgba(0,0,0,0.06);box-shadow:0 1px 8px rgba(0,0,0,0.05);animation-delay:'+(i*.04)+'s;">'
+      +'<div style="background:'+mc+';padding:12px 16px;display:flex;justify-content:space-between;align-items:center;">'
+      +'<div><div style="font-size:11px;color:#8e8e93;">'+d.date+'</div>'
+      +(d.beanName?'<div style="font-size:12px;color:#636366;font-weight:500;">☕ '+esc(d.beanName)+'</div>':"")
+      +'</div><span style="font-size:24px;">'+d.mood+'</span></div>'
+      +'<div style="padding:12px 16px 14px;">'
+      +btag
+      +'<div style="font-size:13px;color:#3a3a3c;line-height:1.7;">'+esc(d.note)+'</div>'
+      +'<div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;">'
+      +'<div style="display:flex;gap:2px;">'+stHtml(d.rating||0,"",13)+'</div>'
+      +'<div style="display:flex;gap:12px;">'
+      +'<button onclick="openDiaryEdit(\''+d.id+'\')" style="background:none;border:none;font-size:11px;color:#ff9f0a;font-weight:600;cursor:pointer;font-family:inherit;">수정</button>'
+      +'<button onclick="deleteDiary(\''+d.id+'\')" style="background:none;border:none;font-size:11px;color:#c7c7cc;cursor:pointer;font-family:inherit;">삭제</button>'
+      +'</div></div></div></div>';
+  });
+  if(!diaries.length) html+='<div style="text-align:center;padding:40px 0;color:#8e8e93;"><div style="font-size:36px;margin-bottom:12px;">📝</div>아직 기록이 없어요</div>';
+  return html+'</div>';
+}
+
+function rDiaryModal(){
+  var f=S.diaryForm;
+  var moods=[["☀️","맑음"],["🌧","비오는날"],["😴","피곤해"],["🎉","특별한날"],["❄️","추운날"],["🌙","늦은밤"]];
+  var avail=beans.filter(function(b){return b.status==="available";});
+  var isEdit=!!S.diaryEditId;
+
+  var html='<div class="mbg" onclick="if(event.target===this)closeDiary()"><div class="mbox">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
+    +'<div style="font-size:18px;font-weight:700;">'+(isEdit?"일기 수정 ✏️":"오늘의 기록 ✍️")+'</div>'
+    +'<button onclick="closeDiary()" style="background:#f5f5f7;border:none;width:30px;height:30px;border-radius:50%;font-size:18px;cursor:pointer;color:#636366;display:flex;align-items:center;justify-content:center;">×</button>'
+    +'</div>'
+    +'<div style="font-size:13px;color:#8e8e93;margin-bottom:20px;">'+new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'short'})+'</div>'
+    +'<label style="'+IL+'">오늘의 기분</label>'
+    +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px;">'
+    +moods.map(function(x){var m=x[0],l=x[1],on=f.mood===m;return '<button onclick="diaryInput(\'mood\',\''+m+'\')" style="display:flex;flex-direction:column;align-items:center;padding:10px 12px;border-radius:14px;border:2px solid '+(on?'#ff9f0a':'#e5e5ea')+';background:'+(on?'#fff9f0':'#fff')+';cursor:pointer;font-family:inherit;min-width:52px;"><span style="font-size:22px;">'+m+'</span><span style="font-size:10px;color:'+(on?'#ff9f0a':'#8e8e93')+';margin-top:3px;font-weight:'+(on?'600':'400')+';">'+l+'</span></button>';}).join("")
+    +'</div>'
+    +'<label style="'+IL+'">추출 방식</label>'
+    +'<div style="display:flex;gap:10px;margin-bottom:4px;">'
+    +'<button onclick="diaryInput(\'brewType\',\'hot\')" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:14px;border:2.5px solid '+(f.brewType==='hot'?'#ff9f0a':'#e5e5ea')+';background:'+(f.brewType==='hot'?'#fff9f0':'#fafafa')+';cursor:pointer;font-family:inherit;font-size:15px;font-weight:700;color:'+(f.brewType==='hot'?'#c05e00':'#c7c7cc')+';box-shadow:'+(f.brewType==='hot'?'0 0 0 4px rgba(255,159,10,0.12)':'none')+';">☀️ Hot</button>'
+    +'<button onclick="diaryInput(\'brewType\',\'iced\')" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:14px;border:2.5px solid '+(f.brewType==='iced'?'#1d4ed8':'#e5e5ea')+';background:'+(f.brewType==='iced'?'#eff6ff':'#fafafa')+';cursor:pointer;font-family:inherit;font-size:15px;font-weight:700;color:'+(f.brewType==='iced'?'#1d4ed8':'#c7c7cc')+';box-shadow:'+(f.brewType==='iced'?'0 0 0 4px rgba(29,78,216,0.1)':'none')+';">🧊 Iced</button>'
+    +'</div>';
+
+  if(avail.length){
+    html+='<label style="'+IL+'">오늘 마신 원두</label>'
+      +'<select onchange="diaryInput(\'beanId\',this.value)" style="'+IS+'appearance:none;">'
+      +'<option value="">선택 안함</option>'
+      +avail.map(function(b){return '<option value="'+b.id+'"'+(f.beanId===b.id?" selected":"")+'>'+esc(b.name)+'</option>';}).join("")
+      +'</select>';
+  }
+
+  html+=mkLbl("오늘의 한 마디")
+    +'<textarea id="diary-note" oninput="diaryInput(\'note\',this.value)" placeholder="오늘 커피는 어땠나요? ☕" style="'+IS+'resize:none;min-height:100px;">'+esc(f.note)+'</textarea>'
+    +'<label style="'+IL+';margin-top:14px;">오늘의 커피 점수</label>'
+    +'<div style="display:flex;gap:4px;margin-top:4px;">'
+    +[1,2,3,4,5].map(function(s){return '<span onclick="setStar(\'diary\','+s+')" style="font-size:28px;cursor:pointer;color:'+(s<=f.rating?'#ff9f0a':'#d1d1d6')+';transition:color .1s;">★</span>';}).join("")
+    +'</div>'
+    +'<button onclick="saveDiary()" style="width:100%;background:#2c2c2e;color:#fff;border:none;border-radius:14px;padding:15px;font-size:15px;font-family:inherit;font-weight:700;cursor:pointer;margin-top:20px;">'+(isEdit?"수정 완료 ✅":"기록하기 ☕")+'</button>'
+    +'</div></div>';
+  return html;
+}
+
+function rPw(){
+  return '<div class="mbg" style="align-items:center;justify-content:center;" onclick="if(event.target===this)closePw()">'
+    +'<div style="background:#fff;border-radius:22px;width:calc(100% - 48px);max-width:320px;padding:28px 24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.2);">'
+    +'<div style="font-size:32px;margin-bottom:12px;">🔐</div>'
+    +'<div style="font-size:17px;font-weight:700;color:#1c1c1e;margin-bottom:6px;">관리자 확인</div>'
+    +'<div style="font-size:13px;color:#8e8e93;margin-bottom:20px;">비밀번호를 입력해주세요</div>'
+    +'<input id="pw-inp" type="password" placeholder="비밀번호" style="width:100%;border:'+(S.pwErr?"2px solid #ff3b30":"1px solid #d1d1d6")+';border-radius:12px;padding:12px 14px;font-size:16px;font-family:inherit;background:#f5f5f7;color:#1c1c1e;outline:none;text-align:center;letter-spacing:4px;box-sizing:border-box;" onkeydown="if(event.key===\'Enter\')submitPw()">'
+    +(S.pwErr?'<div style="font-size:12px;color:#ff3b30;margin-top:8px;">비밀번호가 맞지 않아요</div>':"")
+    +'<div style="display:flex;gap:10px;margin-top:18px;">'
+    +'<button onclick="closePw()" style="flex:1;background:#f5f5f7;color:#636366;border:none;border-radius:12px;padding:13px;font-size:14px;font-family:inherit;cursor:pointer;">취소</button>'
+    +'<button onclick="submitPw()" style="flex:1;background:#2c2c2e;color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-family:inherit;font-weight:700;cursor:pointer;">확인</button>'
+    +'</div></div></div>';
+}
+
+function rNav(){
+  return '<div class="bnav">'+[["menu","메뉴판","☕"],["archive","아카이브","📚"],["diary","일기","📝"]].map(function(x){return '<button class="nbtn'+(S.tab===x[0]?" on":"")+'" onclick="setTab(\''+x[0]+'\')"><div style="font-size:20px;margin-bottom:2px;">'+x[2]+'</div>'+x[1]+'</button>';}).join("")+'</div>';
+}
+
+function render(){
+  var body="";
+  if(S.detail) body=rDetail(S.detail);
+  else if(S.tab==="menu") body=rMenu();
+  else if(S.tab==="diary") body=rDiary();
+  else body=rArchive();
   document.getElementById("app").innerHTML=
-    body+`<div class="bottom-nav">${[["menu","메뉴판","☕"],["archive","아카이브","📚"]].map(([v,l,i])=>`<button class="nav-btn${state.tab===v?" active":""}" onclick="setTab('${v}')"><div style="font-size:18px;margin-bottom:2px;">${i}</div>${l}</button>`).join("")}</div>`+
-    (state.showAdd?renderAddModal():"")+
-    (state.guestId?renderGuestModal():"")+
-    (state.toast?`<div class="toast">${state.toast}</div>`:"");
+    body+rNav()
+    +(S.showAdd?rAdd():"")
+    +(S.guestId?rGuest():"")
+    +(S.showDiary?rDiaryModal():"")
+    +(S.showPw?rPw():"")
+    +(S.toast?'<div class="toast">'+S.toast+'</div>':"");
 }
-
 render();
 </script>
 </body>
