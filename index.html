@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -160,7 +159,7 @@ async function parseImg(file) {
     const resp=await fetch("https://ozy-house-proxy.okgo-levelup.workers.dev",{
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1200,messages:[{role:"user",content:[
+      body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:1200,messages:[{role:"user",content:[
         {type:"image",source:{type:"base64",media_type:file.type||"image/jpeg",data:b64}},
         {type:"text",text:`커피 원두 정보를 추출해서 JSON만 반환. 다른 텍스트 없이 JSON만.
 포맷: 한국어 카드, 영문 테이블(COUNTRY/REGION/PROCESS 등), 스마트스토어 등 모두 처리.
