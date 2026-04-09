@@ -50,16 +50,16 @@ textarea.inp{resize:none;min-height:80px;}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
- 
+
 const WK = "https://ozy-house-proxy.okgo-levelup.workers.dev";
 const AH = "ac2a41af69b8320d2205a77620e8ed776df54a41b707004272f028807f467c17";
 async function hp(pw){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pw));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
- 
+
 const app = initializeApp({apiKey:"AIzaSyAA_PfyKj3XQd-2Bul-NcuTILNeN2-u0iY",authDomain:"ozy-house.firebaseapp.com",projectId:"ozy-house",storageBucket:"ozy-house.firebasestorage.app",messagingSenderId:"258485203484",appId:"1:258485203484:web:ff7576c9f7f8e3d1b1e5d9"});
 const db = getFirestore(app);
 const BC = collection(db,"beans");
 const DC = collection(db,"diary");
- 
+
 const EMO = {"무화과":"🫐","베르가못":"🍋‍🟩","복숭아":"🍑","포도":"🍇","자스민":"🌸","레몬":"🍋","홍차":"🍵","후르트링":"🥣","초콜릿":"🍫","다크초콜릿":"🍫","캐러멜":"🍮","견과류":"🌰","사과":"🍎","오렌지":"🍊","딸기":"🍓","블루베리":"🫐","체리":"🍒","망고":"🥭","파인애플":"🍍","바닐라":"🍦","허브":"🌿","장미":"🌹","아몬드":"🌰","헤이즐넛":"☕","꿀":"🍯","라즈베리":"🍓","감귤":"🍊","멜론":"🍈","자두":"🍑","살구":"🍑","패션후르츠":"🌺","시트러스":"🍋","캐모마일":"🌼","얼그레이":"🍵","크랜베리":"🍒","키위":"🥝","화이트 플로럴":"🌼","청사과":"🍏","슈가 케인":"🌾","팝콘":"🍿","수박":"🍉","white floral":"🌼","green apple":"🍏","sugar cane":"🌾","floral":"🌸","apple":"🍎","peach":"🍑","jasmine":"🌸","lemon":"🍋","orange":"🍊","strawberry":"🍓","raspberry":"🍓","blueberry":"🫐","chocolate":"🍫","caramel":"🍮","vanilla":"🍦","honey":"🍯","grape":"🍇","cherry":"🍒","mango":"🥭","melon":"🍈"};
 const fe = n => EMO[n]||EMO[n&&n.toLowerCase()]||"✨";
 const PS = {"내추럴":{bg:"#fff5eb",c:"#c05e00",l:"Natural"},"워시드":{bg:"#eff6ff",c:"#1d4ed8",l:"Washed"},"허니":{bg:"#fefce8",c:"#a16207",l:"Honey"},"무산소":{bg:"#faf5ff",c:"#7e22ce",l:"Anaerobic"},"무산소 워시드":{bg:"#faf5ff",c:"#7e22ce",l:"Ana.Washed"},"발효 워시드":{bg:"#f0fdf4",c:"#166534",l:"Fermented"},"플라스틱백 발효 워시드":{bg:"#f0fdf4",c:"#14532d",l:"PB Fermented"}};
@@ -68,7 +68,7 @@ const FL = {"에티오피아":"🇪🇹","콜롬비아":"🇨🇴","과테말라
 const gPS = p => PS[p]||{bg:"#f5f5f7",c:"#636366",l:p||""};
 const gFL = o => FL[o]||"🌍";
 const gRC = r => RC[r]||"#ea580c";
- 
+
 let beans=[], diaries=[], cachedStreak=0;
 let S = {
   tab:"menu", detail:null, editMode:false, editData:null,
@@ -79,7 +79,7 @@ let S = {
   showDiary:false, diaryForm:{mood:"☀️",beanId:"",note:"",rating:4,brewType:"hot"}, diaryEditId:null,
   toast:"", toastT:null
 };
- 
+
 // ── [수정] streak 계산을 렌더 외부에서 캐싱
 function calcStreak(ds){
   var streak=0, dd=new Date();
@@ -90,20 +90,20 @@ function calcStreak(ds){
   }
   return streak;
 }
- 
+
 onSnapshot(BC, s=>{beans=s.docs.map(d=>({id:d.id,...d.data()}));render();});
 onSnapshot(DC, s=>{
   diaries=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>b.date.localeCompare(a.date));
   cachedStreak=calcStreak(diaries); // [수정] 데이터 변경 시에만 재계산
   render();
 });
- 
+
 const fuB = async (id,data) => updateDoc(doc(db,"beans",id),data);
 const fdB = async id => deleteDoc(doc(db,"beans",id));
 const fdD = async id => deleteDoc(doc(db,"diary",id));
- 
+
 function showToast(m){S.toast=m;if(S.toastT)clearTimeout(S.toastT);S.toastT=setTimeout(()=>{S.toast="";render();},2400);render();}
- 
+
 function fchips(flavors,sz){
   sz=sz||"big";
   const p=sz==="big"?"10px 14px":"7px 10px",es=sz==="big"?"26px":"20px",ts=sz==="big"?"11px":"10px",mw=sz==="big"?"58px":"44px";
@@ -112,7 +112,7 @@ function fchips(flavors,sz){
 function stHtml(v,id,sz,ed){
   return [1,2,3,4,5].map(function(s){return '<span class="star'+(s<=v?" on":"")+'" style="font-size:'+(sz||16)+'px;" '+(ed?'onclick="setStar(\''+id+'\','+s+')"':'')+'>★</span>';}).join("");
 }
- 
+
 // ── 핸들러
 window.setStar = function(id,v){
   if(id==="add"&&S.addEdit){S.addEdit.rating=v;render();}
@@ -124,7 +124,7 @@ window.setTab = function(t){S.tab=t;S.detail=null;S.editMode=false;render();};
 window.setFilter = function(f){S.filter=f;render();};
 window.openDetail = function(id){S.detail=id;S.editMode=false;render();};
 window.closeDetail = function(){S.detail=null;S.editMode=false;render();};
- 
+
 window.requirePw = function(action){S.showPw=true;S.pwAction=action;S.pwErr=false;render();setTimeout(function(){var el=document.getElementById("pw-inp");if(el)el.focus();},100);};
 window.closePw = function(){S.showPw=false;S.pwAction=null;S.pwErr=false;render();};
 window.submitPw = async function(){
@@ -133,7 +133,7 @@ window.submitPw = async function(){
   if(h===AH){S.showPw=false;S.pwErr=false;var a=S.pwAction;S.pwAction=null;render();if(a)a();}
   else{S.pwErr=true;render();setTimeout(function(){var el=document.getElementById("pw-inp");if(el){el.value="";el.focus();}},50);}
 };
- 
+
 window.openEdit = function(id){
   requirePw(function(){
     S.detail=id;S.editMode=true;
@@ -158,7 +158,7 @@ window.saveEdit = async function(){
   ["rDripper","rBeans","rTemp","rGrind","rHot","rIced","id"].forEach(function(k){delete u[k];});
   await fuB(e.id,u);S.editMode=false;showToast("수정됐어요 ✅");
 };
- 
+
 window.toggleStatus = function(id){
   requirePw(async function(){
     var b=beans.find(function(x){return x.id===id;});if(!b)return;
@@ -172,7 +172,7 @@ window.toggleStatus = function(id){
 window.deleteBean = function(id){
   requirePw(async function(){await fdB(id);S.detail=null;showToast("삭제했어요");});
 };
- 
+
 window.openManual = function(){
   S.addManual=true;
   S.addEdit={name:"",roaster:"",origin:"",region:"",producer:"",variety:"",altitude:"",
@@ -183,7 +183,7 @@ window.openManual = function(){
 };
 window.closeManual = function(){S.addManual=false;S.addStep="upload";S.addEdit=null;render();};
 window.openAdd = function(){
-  requirePw(function(){S.showAdd=true;S.addStep="upload";S.addEdit=null;S.addPreview="";render();});
+  requirePw(function(){S.showAdd=true;S.addStep="upload";S.addEdit=null;S.addPreview="";render();setTimeout(function(){var dz=document.getElementById("dz-main");if(dz)dz.focus();},100);});
 };
 window.closeAdd = function(){S.showAdd=false;render();};
 window.resetScan = function(){S.addStep="upload";S.addEdit=null;S.addPreview="";render();};
@@ -202,9 +202,10 @@ window.handleFileDrop = function(e){e.preventDefault();S.addDrag=false;var f=e.d
 window.handleDragOver = function(e){e.preventDefault();S.addDrag=true;render();};
 window.handleDragLeave = function(){S.addDrag=false;render();};
 window.handleFileInput = function(e){var f=e.target.files[0];if(f)parseImg(f);};
- 
+
+window.handleDzPaste = function(e){e.stopPropagation();var items=(e.clipboardData||{items:[]}).items||[];for(var i=0;i<items.length;i++){if(items[i].type.indexOf("image")!==-1){var file=items[i].getAsFile();if(file){parseImg(file);return;}}}};
 // [수정] window.handlePaste 제거 — 하단 document.addEventListener('paste') 하나로 통합
- 
+
 window.openGuest = function(id){S.guestId=id;render();};
 window.closeGuest = function(){S.guestId=null;S.guestForm={name:"",note:""};render();};
 window.guestInput = function(k,v){S.guestForm[k]=v;};
@@ -223,7 +224,7 @@ window.deleteGuest = function(beanId, idx){
     showToast("소감이 삭제됐어요");
   });
 };
- 
+
 window.openDiary = function(){
   requirePw(function(){
     S.showDiary=true;S.diaryEditId=null;
@@ -257,7 +258,7 @@ window.saveDiary = async function(){
   S.showDiary=false;render();
 };
 window.deleteDiary = function(id){requirePw(async function(){await fdD(id);showToast("삭제했어요");});};
- 
+
 async function parseImg(file){
   S.addStep="parsing";S.addPreview=URL.createObjectURL(file);render();
   try{
@@ -277,18 +278,18 @@ async function parseImg(file){
     S.addStep="review";render();
   }catch(err){console.error(err);S.addStep="error";render();}
 }
- 
+
 // ── 렌더 헬퍼
 var HG = 'background:linear-gradient(160deg,#2c2c2e,#3a3a3c)';
 var IS = 'width:100%;border:1px solid #d1d1d6;border-radius:12px;padding:10px 13px;font-size:13px;font-family:inherit;background:#f5f5f7;color:#1c1c1e;outline:none;box-sizing:border-box;';
 var IL = 'font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#8e8e93;display:block;margin-bottom:5px;margin-top:13px;';
- 
+
 function mkLbl(t){return '<label style="'+IL+'">'+t+'</label>';}
 function mkInp(val,fn){return '<input style="'+IS+'" value="'+esc(val)+'" oninput="'+fn+'">';}
 function mkDate(val,fn){return '<input type="date" style="'+IS+'" value="'+esc(val)+'" onchange="'+fn+'">';}
 function mkTA(val,fn,ph){return '<textarea style="'+IS+'resize:none;min-height:80px;" oninput="'+fn+'" placeholder="'+esc(ph||"")+'">'+esc(val)+'</textarea>';}
 function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
- 
+
 function rGuestNotes(notes, beanId){
   if(!notes||!notes.length) return '<div style="font-size:13px;color:#8e8e93;font-style:italic;">아직 게스트 소감이 없어요</div>';
   return notes.map(function(g,gi){
@@ -301,7 +302,7 @@ function rGuestNotes(notes, beanId){
       +'</div>';
   }).join("");
 }
- 
+
 function rMenu(){
   var avail=beans.filter(function(b){return b.status==="available";});
   var html='<div style="'+HG+';padding:52px 22px 32px;text-align:center;position:relative;overflow:hidden;">'
@@ -337,7 +338,7 @@ function rMenu(){
   });
   return html+'</div>';
 }
- 
+
 function rArchive(){
   var fil=S.filter==="all"?beans:beans.filter(function(b){return b.status===S.filter;});
   var html='<div style="'+HG+';padding:52px 22px 20px;position:sticky;top:0;z-index:50;">'
@@ -368,11 +369,11 @@ function rArchive(){
   });
   return html+'</div><button onclick="openAdd()" style="position:fixed;bottom:80px;right:20px;width:52px;height:52px;border-radius:50%;background:#ff9f0a;color:#fff;font-size:26px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(255,159,10,0.4);z-index:80;display:flex;align-items:center;justify-content:center;">+</button>';
 }
- 
+
 function rDetail(id){
   var b=beans.find(function(x){return x.id===id;});if(!b)return "";
   var ps=gPS(b.process),rc=gRC(b.roastLevel);
- 
+
   if(S.editMode&&S.editData){
     var e=S.editData;
     return '<div style="'+HG+';padding:52px 22px 24px;">'
@@ -406,12 +407,12 @@ function rDetail(id){
       +'<button onclick="saveEdit()" style="width:100%;background:#ff9f0a;color:#fff;border:none;border-radius:14px;padding:15px;font-size:15px;font-family:inherit;font-weight:700;cursor:pointer;margin-top:20px;">저장하기 ✅</button>'
       +'</div>';
   }
- 
+
   var dateInfo="";
   if(b.roastDate) dateInfo+='<div style="font-size:12px;color:#8e8e93;">🗓 로스팅 <b style="color:#3a3a3c;">'+b.roastDate+'</b></div>';
   if(b.startDate) dateInfo+='<div style="font-size:12px;color:#8e8e93;">☕ 소비 시작 <b style="color:#3a3a3c;">'+b.startDate+'</b></div>';
   if(b.status==="empty"&&b.emptyDate) dateInfo+='<div style="font-size:12px;color:#8e8e93;">✅ 소진 <b style="color:#3a3a3c;">'+b.emptyDate+'</b></div>';
- 
+
   return '<div style="'+HG+';padding:52px 22px 28px;">'
     +'<button onclick="closeDetail()" style="background:rgba(255,255,255,0.1);border:none;color:rgba(255,255,255,0.7);font-size:13px;cursor:pointer;padding:6px 14px;border-radius:20px;margin-bottom:20px;font-family:inherit;">← 뒤로</button>'
     +'<div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">'
@@ -457,7 +458,7 @@ function rDetail(id){
     +'<button class="btns" onclick="deleteBean(\''+b.id+'\')" style="flex:1;color:#ff3b30;border-color:#ffd7d5;">삭제</button>'
     +'</div></div>';
 }
- 
+
 function rAdd(){
   var s=S.addStep,e=S.addEdit;
   var fl=e&&e.flavor?e.flavor.split(",").map(function(f){return f.trim();}).filter(Boolean):[];
@@ -466,14 +467,24 @@ function rAdd(){
     +'<div style="font-size:18px;font-weight:700;">'+(S.addManual?'원두 직접 입력 ✍️':'원두 스캔 추가 ✨')+'</div>'
     +'<button onclick="closeAdd()" style="background:#f5f5f7;border:none;width:30px;height:30px;border-radius:50%;font-size:18px;cursor:pointer;color:#636366;display:flex;align-items:center;justify-content:center;">×</button>'
     +'</div><div style="font-size:13px;color:#8e8e93;margin-bottom:20px;">어떤 로스터리 이미지든 자동으로 인식해요</div>';
- 
+
   if(s==="upload"){
-    html+='<div class="dz'+(S.addDrag?' over':'')+'" ondragover="handleDragOver(event)" ondragleave="handleDragLeave()" ondrop="handleFileDrop(event)" onclick="document.getElementById(\'fi\').click()">'
+    var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    var hint = isMobile
+      ? '탭해서 갤러리 선택'
+      : '드래그 · 탭해서 선택 · <b style="color:#ff9f0a;">Ctrl+V 붙여넣기</b>';
+    html+='<div id="dz-main" class="dz'+(S.addDrag?' over':'')+'" tabindex="0" ondragover="handleDragOver(event)" ondragleave="handleDragLeave()" ondrop="handleFileDrop(event)" onclick="document.getElementById(\'fi\').click()" onpaste="handleDzPaste(event)">'
       +'<div style="font-size:40px;margin-bottom:10px;">📸</div>'
       +'<div style="font-weight:600;color:#1c1c1e;margin-bottom:6px;font-size:15px;">이미지를 올려주세요</div>'
-      +'<div style="font-size:12px;color:#8e8e93;line-height:1.8;">드래그 · 탭해서 선택 · <b style="color:#ff9f0a;">Ctrl+V 붙여넣기</b></div>'
+      +'<div style="font-size:12px;color:#8e8e93;line-height:1.8;">'+hint+'</div>'
       +'</div>'
       +'<input id="fi" type="file" accept="image/*" style="display:none;" onchange="handleFileInput(event)"/>'
+      // 모바일 전용: 카메라 직접 촬영 버튼
+      +(isMobile
+        ? '<input id="fi-cam" type="file" accept="image/*" capture="environment" style="display:none;" onchange="handleFileInput(event)"/>'
+          +'<button onclick="document.getElementById(\'fi-cam\').click()" style="width:100%;background:#ff9f0a;color:#fff;border:none;border-radius:14px;padding:14px;font-size:14px;font-family:inherit;font-weight:700;cursor:pointer;margin-top:12px;">📷 카메라로 바로 찍기</button>'
+        : ''
+      )
       +'<div style="background:#f5f5f7;border-radius:14px;padding:16px;font-size:12px;color:#636366;margin-top:14px;line-height:1.8;">'
       +'<div style="font-weight:600;margin-bottom:8px;color:#1c1c1e;">📋 인식 가능한 포맷</div>'
       +'<div class="g2">'+[["🇰🇷 한국 로스터리","플레이버 카드"],["🌍 해외 로스터리","영문 테이블"],["🛒 스마트스토어","상품 상세 캡처"],["📄 기타","원두 정보 이미지"]].map(function(x){return '<div style="background:#fff;border-radius:10px;padding:10px;border:0.5px solid rgba(0,0,0,0.08);"><div style="font-weight:600;margin-bottom:2px;font-size:12px;">'+x[0]+'</div><div style="font-size:11px;color:#8e8e93;">'+x[1]+'</div></div>';}).join("")+'</div></div>'
@@ -496,21 +507,21 @@ function rAdd(){
       +'<div style="font-weight:600;color:#ff3b30;margin-bottom:8px;">분석에 실패했어요</div>'
       +'<button onclick="resetScan()" class="btns">다시 시도</button></div>';
   }
- 
+
   // [수정] review 스텝 — html += 체이닝 버그 수정. 모든 내용을 단일 html += 로 연결
   if(s==="review"&&e){
     var reviewBanner = S.addManual
       ? '<div style="background:#fff9f0;border:1px solid #ffd6a0;border-radius:12px;padding:12px 14px;margin-bottom:16px;"><div style="font-size:12px;color:#c05e00;font-weight:600;">✍️ 직접 입력 모드 — 원두 정보를 입력해주세요</div></div>'
       : '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:12px 14px;margin-bottom:16px;"><div style="font-size:12px;color:#166534;font-weight:600;margin-bottom:4px;">✅ 분석 완료 — 확인 후 수정해주세요</div><div style="font-size:12px;color:#4a8060;">'+gFL(e.origin)+' '+(e.origin||"")+' · '+(e.process||"")+' · '+(e.roastLevel||"")+'</div></div>';
- 
+
     var flavorPreview = fl.length
       ? '<div style="margin-bottom:14px;"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#8e8e93;margin-bottom:8px;">감지된 플레이버</div><div style="display:flex;gap:7px;flex-wrap:wrap;">'+fchips(fl,"small")+'</div></div>'
       : "";
- 
+
     var backBtn = S.addManual
       ? '<button onclick="closeManual()" style="width:100%;margin-bottom:10px;background:#f5f5f7;color:#636366;border:1px solid #d1d1d6;border-radius:14px;padding:13px;font-size:14px;font-family:inherit;cursor:pointer;">← 이미지로 돌아가기</button>'
       : "";
- 
+
     html += reviewBanner
       + flavorPreview
       + mkLbl("원두 이름") + mkInp(e.name,"addInput('name',this.value)")
@@ -542,10 +553,10 @@ function rAdd(){
       + '<button onclick="saveBean()" style="flex:2;background:#2c2c2e;color:#fff;border:none;border-radius:14px;padding:14px;font-size:14px;font-family:inherit;font-weight:700;cursor:pointer;">저장하기 🫘</button>'
       + '</div>';
   }
- 
+
   return html+'</div></div>';
 }
- 
+
 function rGuest(){
   var b=beans.find(function(x){return x.id===S.guestId;});if(!b)return "";
   return '<div class="mbg" onclick="if(event.target===this)closeGuest()"><div class="mbox" style="max-height:72vh;">'
@@ -556,7 +567,7 @@ function rGuest(){
     +'<button class="btnp" onclick="submitGuest()">기록하기</button>'
     +'</div></div>';
 }
- 
+
 function rDiary(){
   var today=new Date().toISOString().slice(0,10);
   var te=diaries.find(function(d){return d.date===today;});
@@ -564,7 +575,7 @@ function rDiary(){
   // [수정] streak 재계산 제거 → 캐싱된 cachedStreak 사용
   var streak = cachedStreak;
   var sm=streak===0?"오늘 첫 기록을 남겨보세요 ☕":streak<3?streak+"일 연속 기록 중 ☕":streak<7?streak+"일 연속! 커피 루틴이 생겼어요 🔥":streak+"일 연속!! 진짜 커피 집사예요 🏆";
- 
+
   var html='<div style="'+HG+';padding:52px 22px 28px;">'
     +'<div class="bebas" style="font-size:36px;color:#fff;">COFFEE DIARY</div>'
     +'<div style="color:rgba(255,255,255,0.35);font-size:12px;margin-top:2px;">나의 커피 기록</div>'
@@ -573,7 +584,7 @@ function rDiary(){
     +'<div><div style="color:#ff9f0a;font-size:13px;font-weight:600;">'+sm+'</div>'
     +'<div style="color:rgba(255,255,255,0.3);font-size:11px;margin-top:2px;">총 '+diaries.length+'개의 기록</div></div>'
     +'</div></div><div style="padding:14px 14px 96px;">';
- 
+
   if(!te){
     html+='<div style="background:#fff;border-radius:20px;margin-bottom:14px;padding:22px;box-shadow:0 2px 16px rgba(0,0,0,0.07);text-align:center;">'
       +'<div style="font-size:32px;margin-bottom:8px;">✍️</div>'
@@ -600,7 +611,7 @@ function rDiary(){
       +'<button onclick="deleteDiary(\''+te.id+'\')" style="background:none;border:none;font-size:11px;color:#c7c7cc;cursor:pointer;font-family:inherit;">삭제</button>'
       +'</div></div></div></div>';
   }
- 
+
   var prev=diaries.filter(function(d){return d.date!==today;});
   if(prev.length) html+='<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#8e8e93;margin:20px 2px 10px;">이전 기록</div>';
   prev.forEach(function(d,i){
@@ -624,13 +635,13 @@ function rDiary(){
   if(!diaries.length) html+='<div style="text-align:center;padding:40px 0;color:#8e8e93;"><div style="font-size:36px;margin-bottom:12px;">📝</div>아직 기록이 없어요</div>';
   return html+'</div>';
 }
- 
+
 function rDiaryModal(){
   var f=S.diaryForm;
   var moods=[["☀️","맑음"],["🌧","비오는날"],["😴","피곤해"],["🎉","특별한날"],["❄️","추운날"],["🌙","늦은밤"]];
   var avail=beans.filter(function(b){return b.status==="available";});
   var isEdit=!!S.diaryEditId;
- 
+
   var html='<div class="mbg" onclick="if(event.target===this)closeDiary()"><div class="mbox">'
     +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
     +'<div style="font-size:18px;font-weight:700;">'+(isEdit?"일기 수정 ✏️":"오늘의 기록 ✍️")+'</div>'
@@ -646,7 +657,7 @@ function rDiaryModal(){
     +'<button onclick="diaryInput(\'brewType\',\'hot\')" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:14px;border:2.5px solid '+(f.brewType==='hot'?'#ff9f0a':'#e5e5ea')+';background:'+(f.brewType==='hot'?'#fff9f0':'#fafafa')+';cursor:pointer;font-family:inherit;font-size:15px;font-weight:700;color:'+(f.brewType==='hot'?'#c05e00':'#c7c7cc')+';box-shadow:'+(f.brewType==='hot'?'0 0 0 4px rgba(255,159,10,0.12)':'none')+';">☀️ Hot</button>'
     +'<button onclick="diaryInput(\'brewType\',\'iced\')" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:14px;border:2.5px solid '+(f.brewType==='iced'?'#1d4ed8':'#e5e5ea')+';background:'+(f.brewType==='iced'?'#eff6ff':'#fafafa')+';cursor:pointer;font-family:inherit;font-size:15px;font-weight:700;color:'+(f.brewType==='iced'?'#1d4ed8':'#c7c7cc')+';box-shadow:'+(f.brewType==='iced'?'0 0 0 4px rgba(29,78,216,0.1)':'none')+';">🧊 Iced</button>'
     +'</div>';
- 
+
   if(avail.length){
     html+='<label style="'+IL+'">오늘 마신 원두</label>'
       +'<select onchange="diaryInput(\'beanId\',this.value)" style="'+IS+'appearance:none;">'
@@ -654,7 +665,7 @@ function rDiaryModal(){
       +avail.map(function(b){return '<option value="'+b.id+'"'+(f.beanId===b.id?" selected":"")+'>'+esc(b.name)+'</option>';}).join("")
       +'</select>';
   }
- 
+
   html+=mkLbl("오늘의 한 마디")
     +'<textarea id="diary-note" oninput="diaryInput(\'note\',this.value)" placeholder="오늘 커피는 어땠나요? ☕" style="'+IS+'resize:none;min-height:100px;">'+esc(f.note)+'</textarea>'
     +'<label style="'+IL+';margin-top:14px;">오늘의 커피 점수</label>'
@@ -665,7 +676,7 @@ function rDiaryModal(){
     +'</div></div>';
   return html;
 }
- 
+
 function rPw(){
   return '<div class="mbg" style="align-items:center;justify-content:center;" onclick="if(event.target===this)closePw()">'
     +'<div style="background:#fff;border-radius:22px;width:calc(100% - 48px);max-width:320px;padding:28px 24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.2);">'
@@ -679,11 +690,11 @@ function rPw(){
     +'<button onclick="submitPw()" style="flex:1;background:#2c2c2e;color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-family:inherit;font-weight:700;cursor:pointer;">확인</button>'
     +'</div></div></div>';
 }
- 
+
 function rNav(){
   return '<div class="bnav">'+[["menu","메뉴판","☕"],["archive","아카이브","📚"],["diary","일기","📝"]].map(function(x){return '<button class="nbtn'+(S.tab===x[0]?" on":"")+'" onclick="setTab(\''+x[0]+'\')"><div style="font-size:20px;margin-bottom:2px;">'+x[2]+'</div>'+x[1]+'</button>';}).join("")+'</div>';
 }
- 
+
 function render(){
   var body="";
   if(S.detail) body=rDetail(S.detail);
@@ -699,7 +710,7 @@ function render(){
     +(S.toast?'<div class="toast">'+S.toast+'</div>':"");
 }
 render();
- 
+
 // [수정] paste 이벤트 단일 등록 (window.handlePaste 제거 후 여기서만 처리)
 document.addEventListener('paste', function(e){
   if(!S.showAdd || S.addStep !== 'upload') return;
