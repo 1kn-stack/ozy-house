@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -41,7 +42,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // ── API 키 설정 (여기에 붙여넣으세요)
-const ANTHROPIC_KEY = "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";
+const ANTHROPIC_KEY = ""; // Cloudflare Worker에서 처리
 
 // ── Firebase 설정
 const firebaseConfig = {
@@ -156,9 +157,9 @@ async function parseImg(file) {
   state.addStep="parsing";state.addPreview=URL.createObjectURL(file);render();
   try {
     const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(file);});
-    const resp=await fetch("https://api.anthropic.com/v1/messages",{
+    const resp=await fetch("https://ozy-house-proxy.okgo-levelup.workers.dev",{
       method:"POST",
-      headers:{"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+      headers:{"Content-Type":"application/json"},
       body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1200,messages:[{role:"user",content:[
         {type:"image",source:{type:"base64",media_type:file.type||"image/jpeg",data:b64}},
         {type:"text",text:`커피 원두 정보를 추출해서 JSON만 반환. 다른 텍스트 없이 JSON만.
