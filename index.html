@@ -170,7 +170,7 @@ async function parseImg(file) {
       r.onerror = rej;
       r.readAsDataURL(file);
     });
-    const resp = await fetch("https://api.anthropic.com/v1/messages", {
+    const resp = await fetch("https://ozy-house.okgo-levelup.workers.dev", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
