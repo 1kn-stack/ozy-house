@@ -159,16 +159,18 @@ async function parseImg(file) {
     const resp=await fetch("https://ozy-house-proxy.okgo-levelup.workers.dev",{
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({model:"claude-opus-4-5",max_tokens:1200,messages:[{role:"user",content:[
+      body:JSON.stringify({model:"claude-sonnet-4-5-20250514",max_tokens:1200,messages:[{role:"user",content:[
         {type:"image",source:{type:"base64",media_type:file.type||"image/jpeg",data:b64}},
         {type:"text",text:`커피 원두 정보를 추출해서 JSON만 반환. 다른 텍스트 없이 JSON만.
 포맷: 한국어 카드, 영문 테이블(COUNTRY/REGION/PROCESS 등), 스마트스토어 등 모두 처리.
 원산지는 한국어로(Peru→페루,Ethiopia→에티오피아), 가공법 한국어(Washed→워시드,Natural→내추럴,Fermented Washed→발효 워시드,Plastic Bag Fermented Washed→플라스틱백 발효 워시드), 플레이버 한국어(White Floral→화이트 플로럴,Green Apple→청사과,Sugar Cane→슈가 케인), 배전도 한국어(Light→라이트,Medium→미디엄).
 {"name":"원두명","origin":"국가(한국어)","region":"지역","producer":"농장/생산자","variety":"품종","altitude":"고도","process":"가공법(한국어)","roastLevel":"배전도(한국어)","flavor":["플레이버1","플레이버2"],"tagline":"한줄설명","recipe":{"dripper":"","beans":"","waterTemp":"","grind":"","hot":"","iced":""}}`
       }]}]})
-    });
+      });
+    if(!resp.ok){const errBody=await resp.text();console.error("API error:",resp.status,errBody);throw new Error("API "+resp.status);}
     const data=await resp.json();
     const txt=data.content?.map(c=>c.text||"").join("")||"";
+    if(!txt)throw new Error("Empty response from API");
     const parsed=JSON.parse(txt.replace(/```json|```/g,"").trim());
     state.addEdit={...parsed,flavor:Array.isArray(parsed.flavor)?parsed.flavor.join(", "):(parsed.flavor||""),myNote:"",rating:4,status:"available",rDripper:parsed.recipe?.dripper||"",rBeans:parsed.recipe?.beans||"",rTemp:parsed.recipe?.waterTemp||"",rGrind:parsed.recipe?.grind||"",rHot:parsed.recipe?.hot||"",rIced:parsed.recipe?.iced||""};
     state.addStep="review";render();
