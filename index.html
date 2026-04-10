@@ -306,9 +306,14 @@ window.openGuest = function(id){S.guestId=id;render();};
 window.closeGuest = function(){S.guestId=null;S.guestForm={name:"",note:""};render();};
 window.guestInput = function(k,v){S.guestForm[k]=v;};
 window.submitGuest = async function(){
-  var f=S.guestForm;if(!f.name.trim()||!f.note.trim())return;
+  // S.guestForm 대신 DOM에서 직접 읽어서 이모지 포함 값 보장
+  var nameEl=document.getElementById("guest-name");
+  var noteEl=document.getElementById("guest-note");
+  var name=(nameEl?nameEl.value:S.guestForm.name).trim();
+  var note=(noteEl?noteEl.value:S.guestForm.note).trim();
+  if(!name||!note)return;
   var b=beans.find(function(x){return x.id===S.guestId;});if(!b)return;
-  var notes=(b.guestNotes||[]).concat([{name:f.name,note:f.note,date:new Date().toISOString().slice(0,10)}]);
+  var notes=(b.guestNotes||[]).concat([{name:name,note:note,date:new Date().toISOString().slice(0,10)}]);
   await fuB(S.guestId,{guestNotes:notes});
   S.guestId=null;S.guestForm={name:"",note:""};showToast("소감이 기록됐어요 ✨");
 };
@@ -678,8 +683,8 @@ function rGuest(){
   return '<div class="mbg" onclick="if(event.target===this)closeGuest()"><div class="mbox" style="max-height:72vh;">'
     +'<div style="font-size:18px;font-weight:700;margin-bottom:4px;">소감 남기기 ✏️</div>'
     +'<div style="font-size:13px;color:#8e8e93;margin-bottom:20px;">'+esc(b.name)+'</div>'
-    +mkLbl("이름")+'<input class="inp" placeholder="이름을 입력해주세요" value="'+esc(S.guestForm.name)+'" oninput="guestInput(\'name\',this.value)" style="margin-bottom:4px;">'
-    +mkLbl("한 마디")+'<textarea class="inp" placeholder="이 커피 어떠셨나요? 🍑" oninput="guestInput(\'note\',this.value)" style="resize:none;min-height:80px;">'+esc(S.guestForm.note)+'</textarea>'
+    +mkLbl("이름")+'<input id="guest-name" class="inp" placeholder="이름을 입력해주세요" value="'+esc(S.guestForm.name)+'" style="margin-bottom:4px;">'
+    +mkLbl("한 마디")+'<textarea id="guest-note" class="inp" placeholder="이 커피 어떠셨나요? 🍑" style="resize:none;min-height:80px;">'+esc(S.guestForm.note)+'</textarea>'
     +'<button class="btnp" onclick="submitGuest()">기록하기</button>'
     +'</div></div>';
 }
