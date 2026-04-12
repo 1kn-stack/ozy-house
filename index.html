@@ -260,7 +260,7 @@ function getFlavorBg(flavors){
 
 let beans=[], diaries=[], cachedStreak=0;
 let S = {
-  tab:"menu", detail:null, editMode:false, editData:null,
+  tab:"menu", detail:null, editMode:false, editData:null, editScanState:"idle",
   showAdd:false, addStep:"upload", addEdit:null, addPreview:"", addDrag:false, addManual:false,
   guestId:null, guestForm:{name:"",note:""},
   filter:"all", recOpen:null,
@@ -355,7 +355,34 @@ window.openEdit = function(id){
     render();
   });
 };
-window.closeEdit = function(){S.editMode=false;render();};
+window.closeEdit = function(){S.editMode=false;S.editScanState="idle";render();};
+window.editScanImg = async function(input){
+  var file=input.files[0]; if(!file) return;
+  S.editScanState="scanning"; render();
+  try{
+    var b64=await new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(r.result.split(",")[1]);};r.onerror=rej;r.readAsDataURL(file);});
+    var resp=await fetch(WK,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:2000,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:file.type||"image/jpeg",data:b64}},{type:"text",text:PARSE_PROMPT}]}]})});
+    var data=await resp.json();
+    if(!resp.ok) throw new Error("API "+resp.status);
+    var txt=data.content.map(function(c){return c.text||"";}).join("");
+    var parsed=JSON.parse(txt.replace(/```json|```/g,"").trim());
+    var nr=normalizeRecipe(parsed.recipe);
+    // 파싱 결과를 editData에 병합 (id, status, guestNotes 등 메타 필드는 유지)
+    var fields=["name","roaster","origin","region","producer","variety","altitude","process","roastLevel","tagline"];
+    fields.forEach(function(k){ if(parsed[k]!==undefined&&parsed[k]!=="") S.editData[k]=k==="roastLevel"?normRL(parsed[k])||parsed[k]:parsed[k]; });
+    if(parsed.flavor&&parsed.flavor.length) S.editData.flavor=Array.isArray(parsed.flavor)?parsed.flavor.join(", "):parsed.flavor;
+    S.editData.rDripper=nr.dripper||S.editData.rDripper;
+    if(nr.hot.pour){ S.editData.rHotBeans=nr.hot.beans; S.editData.rHotGrind=nr.hot.grind; S.editData.rHotTemp=nr.hot.waterTemp; S.editData.rHotPour=nr.hot.pour; }
+    if(nr.iced.pour){ S.editData.rIcedBeans=nr.iced.beans; S.editData.rIcedGrind=nr.iced.grind; S.editData.rIcedTemp=nr.iced.waterTemp; S.editData.rIcedPour=nr.iced.pour; }
+    S.editScanState="idle";
+    showToast("이미지 파싱 완료 ✅ 확인 후 저장해주세요");
+  } catch(err){
+    console.error(err);
+    S.editScanState="idle";
+    showToast("파싱 실패 😔 다시 시도해주세요");
+    render();
+  }
+};
 window.editInput = function(k,v){if(S.editData)S.editData[k]=v;};
 window.saveEdit = async function(){
   var e=S.editData;if(!e)return;
@@ -785,11 +812,22 @@ function rDetail(id){
 
   if(S.editMode&&S.editData){
     var e=S.editData;
+    var editScanState=S.editScanState||"idle";
     return '<div style="'+HG+';padding:52px 22px 24px;">'
       +'<button onclick="closeEdit()" style="background:rgba(255,255,255,0.1);border:none;color:rgba(255,255,255,0.7);font-size:13px;cursor:pointer;padding:6px 14px;border-radius:20px;margin-bottom:16px;font-family:inherit;">← 취소</button>'
       +'<div class="bebas" style="font-size:28px;color:#fff;">수정하기</div>'
       +'<div style="color:rgba(255,255,255,0.35);font-size:12px;margin-top:4px;">'+esc(b.name)+'</div>'
       +'</div><div style="padding:20px 20px 100px;">'
+      +'<div style="background:#fff9f0;border:1px solid #ffd6a0;border-radius:14px;padding:14px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:12px;">'
+      +'<div>'
+      +'<div style="font-size:13px;font-weight:600;color:#c05e00;">🔄 이미지로 다시 스캔</div>'
+      +'<div style="font-size:11px;color:#8e8e93;margin-top:2px;">이미지를 올리면 파싱 결과로 필드를 덮어써요</div>'
+      +'</div>'
+      +(editScanState==="scanning"
+        ? '<div style="font-size:12px;color:#8e8e93;">분석 중...</div>'
+        : '<label style="background:#ff9f0a;color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;">이미지 선택<input type="file" accept="image/*" style="display:none;" onchange="editScanImg(this)"></label>'
+      )
+      +'</div>'
       +mkLbl("원두 이름")+mkInp(e.name,"editInput('name',this.value)")
       +mkLbl("로스터리")+mkInp(e.roaster||"","editInput('roaster',this.value)")
       +'<div class="g2">'
