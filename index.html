@@ -129,12 +129,66 @@ function normRL(r){
   var m={"중약배전":"미디엄라이트","중배전":"미디엄","medium light":"미디엄라이트","medium-light":"미디엄라이트","medium dark":"미디엄다크","medium-dark":"미디엄다크","light":"라이트","medium":"미디엄","dark":"다크"};
   return m[r]||m[r.toLowerCase()]||r;
 }
+// 드리퍼명 정규화 (14종 + 별칭 매핑)
+const DRIPPER_MAP = [
+  ["V60 네오", ["v60 neo","v60 네오","하리오 네오","hario neo","hario v60 neo","네오 v60"]],
+  ["V60",      ["v60","v-60","hario v60","하리오 v60","hario","하리오"]],
+  ["칼리타 웨이브", ["칼리타","칼리타웨이브","kalita","kalita wave","kw185","kw155","kalita 185","kalita 155","kalita 101","kalita 102","kalita 103","kalita wave 155","kalita wave 185"]],
+  ["케멕스",    ["chemex","케멕스"]],
+  ["에어로프레스",["aeropress","에어로 프레스","aeropress go","에어로프레스 고"]],
+  ["클레버",    ["clever","clever dripper","클레버드리퍼","클레버 드리퍼"]],
+  ["프렌치프레스",["french press","프렌치 프레스","french-press","프렌치프레스"]],
+  ["모카포트",  ["moka pot","모카 포트","bialetti","비알레티","모카포트"]],
+  ["오리가미",  ["origami","origami dripper","오리가미 드리퍼","오리가미드리퍼"]],
+  ["고노",      ["kono","kono meimon","고노 메이몬","고노드리퍼","고노 드리퍼"]],
+  ["멜리타",    ["melitta","밀리타","melita","멜리타드리퍼","멜리타 드리퍼"]],
+  ["Fellow Stagg",["stagg","stagg x","stagg xf","fellow stagg","스태그","fellow stagg x","fellow stagg xf"]],
+  ["April",     ["april brewer","april dripper","에이프릴","april coffee brewer"]],
+  ["Timemore B75",["timemore","b75","타임모어","timemore b75","time more"]],
+  ["UFO",       ["ufo","ufo dripper","ufo v2","ufo v3","ufo 드리퍼","유에프오"]],
+  ["Graycano",  ["graycano","그레이카노","그레이카노 드리퍼","graycano dripper"]]
+];
+function normDripper(d){
+  if(!d) return d;
+  var lo=d.toLowerCase().trim();
+  for(var i=0;i<DRIPPER_MAP.length;i++){
+    var aliases=DRIPPER_MAP[i][1];
+    for(var j=0;j<aliases.length;j++){
+      if(lo===aliases[j]) return DRIPPER_MAP[i][0];
+    }
+  }
+  // 부분 매칭 (포함 여부)
+  for(var i=0;i<DRIPPER_MAP.length;i++){
+    var aliases=DRIPPER_MAP[i][1];
+    for(var j=0;j<aliases.length;j++){
+      if(lo.indexOf(aliases[j])!==-1) return DRIPPER_MAP[i][0];
+    }
+  }
+  return d;
+}
 const FL = {"에티오피아":"🇪🇹","콜롬비아":"🇨🇴","과테말라":"🇬🇹","케냐":"🇰🇪","코스타리카":"🇨🇷","파나마":"🇵🇦","브라질":"🇧🇷","인도네시아":"🇮🇩","페루":"🇵🇪","르완다":"🇷🇼","예멘":"🇾🇪"};
 const gPS = p => PS[p]||{bg:"#f5f5f7",c:"#636366",l:p||""};
 const gFL = o => FL[o]||"🌍";
 const gRC = r => RC[normRL(r)]||"#ea580c";
 
-// ── 설정 기본값
+// recipe 구버전 → 신규 구조 정규화
+function normalizeRecipe(r){
+  if(!r) return {dripper:"",hot:{beans:"",grind:"",waterTemp:"",pour:""},iced:{beans:"",grind:"",waterTemp:"",pour:""}};
+  // 이미 신규 구조 (hot이 object)
+  if(r.hot && typeof r.hot==="object"){
+    return {
+      dripper:normDripper(r.dripper||""),
+      hot:{beans:r.hot.beans||"",grind:r.hot.grind||"",waterTemp:r.hot.waterTemp||"",pour:r.hot.pour||""},
+      iced:{beans:r.iced&&r.iced.beans||"",grind:r.iced&&r.iced.grind||"",waterTemp:r.iced&&r.iced.waterTemp||"",pour:r.iced&&r.iced.pour||""}
+    };
+  }
+  // 구버전 → 신규로 변환
+  return {
+    dripper:normDripper(r.dripper||""),
+    hot:{beans:r.beans||"",grind:r.grind||"",waterTemp:r.waterTemp||"",pour:r.hot||""},
+    iced:{beans:r.beans||"",grind:r.grind||"",waterTemp:r.waterTemp||"",pour:r.iced||""}
+  };
+}
 const DEFAULT_SETTINGS = {
   degasDays:{"라이트":12,"미디엄라이트":9,"미디엄":7,"미디엄다크":5,"다크":4},
   degasHideMenu:true,
@@ -214,6 +268,7 @@ let S = {
   showDiary:false, diaryForm:{mood:"☀️",cups:[{beanId:"",brewType:"hot"}],note:"",rating:4}, diaryEditId:null,
   showDegasEdit:false, degasEdit:null,
   showAdmin:false, adminTab:"degas",
+  migrateState:"idle", migrateLog:"",
   toast:"", toastT:null,
   titleTap:0, titleTapT:null
 };
@@ -287,13 +342,16 @@ window.openEdit = function(id){
   requirePw(function(){
     S.detail=id;S.editMode=true;
     var b=beans.find(function(x){return x.id===id;});
-    if(b) S.editData=Object.assign({},b,{
-      roastLevel:normRL(b.roastLevel)||b.roastLevel||"미디엄",
-      flavor:Array.isArray(b.flavor)?b.flavor.join(", "):(b.flavor||""),
-      rDripper:(b.recipe&&b.recipe.dripper)||"",rBeans:(b.recipe&&b.recipe.beans)||"",
-      rTemp:(b.recipe&&b.recipe.waterTemp)||"",rGrind:(b.recipe&&b.recipe.grind)||"",
-      rHot:(b.recipe&&b.recipe.hot)||"",rIced:(b.recipe&&b.recipe.iced)||""
-    });
+    if(b){
+      var nr=normalizeRecipe(b.recipe);
+      S.editData=Object.assign({},b,{
+        roastLevel:normRL(b.roastLevel)||b.roastLevel||"미디엄",
+        flavor:Array.isArray(b.flavor)?b.flavor.join(", "):(b.flavor||""),
+        rDripper:nr.dripper,
+        rHotBeans:nr.hot.beans,rHotGrind:nr.hot.grind,rHotTemp:nr.hot.waterTemp,rHotPour:nr.hot.pour,
+        rIcedBeans:nr.iced.beans,rIcedGrind:nr.iced.grind,rIcedTemp:nr.iced.waterTemp,rIcedPour:nr.iced.pour
+      });
+    }
     render();
   });
 };
@@ -304,9 +362,13 @@ window.saveEdit = async function(){
   var u=Object.assign({},e,{
     roastLevel:normRL(e.roastLevel)||e.roastLevel,
     flavor:typeof e.flavor==="string"?e.flavor.split(",").map(function(x){return x.trim();}).filter(Boolean):e.flavor,
-    recipe:{dripper:e.rDripper||"",beans:e.rBeans||"",waterTemp:e.rTemp||"",grind:e.rGrind||"",hot:e.rHot||"",iced:e.rIced||""}
+    recipe:{
+      dripper:normDripper(e.rDripper||""),
+      hot:{beans:e.rHotBeans||"",grind:e.rHotGrind||"",waterTemp:e.rHotTemp||"",pour:e.rHotPour||""},
+      iced:{beans:e.rIcedBeans||"",grind:e.rIcedGrind||"",waterTemp:e.rIcedTemp||"",pour:e.rIcedPour||""}
+    }
   });
-  ["rDripper","rBeans","rTemp","rGrind","rHot","rIced","id"].forEach(function(k){delete u[k];});
+  ["rDripper","rHotBeans","rHotGrind","rHotTemp","rHotPour","rIcedBeans","rIcedGrind","rIcedTemp","rIcedPour","id"].forEach(function(k){delete u[k];});
   await fuB(e.id,u);S.editMode=false;showToast("수정됐어요 ✅");
 };
 
@@ -329,7 +391,9 @@ window.openManual = function(){
   S.addEdit={name:"",roaster:"",origin:"",region:"",producer:"",variety:"",altitude:"",
     process:"내추럴",roastLevel:"라이트",flavor:"",tagline:"",myNote:"",rating:4,
     status:"available",roastDate:"",startDate:"",
-    rDripper:"",rBeans:"",rTemp:"",rGrind:"",rHot:"",rIced:""};
+    rDripper:"",
+    rHotBeans:"",rHotGrind:"",rHotTemp:"",rHotPour:"",
+    rIcedBeans:"",rIcedGrind:"",rIcedTemp:"",rIcedPour:""};
   S.addStep="review";render();
 };
 window.closeManual = function(){S.addManual=false;S.addStep="upload";S.addEdit=null;render();};
@@ -344,10 +408,14 @@ window.saveBean = async function(){
   var nb=Object.assign({},e,{
     roastLevel:normRL(e.roastLevel)||e.roastLevel,
     flavor:typeof e.flavor==="string"?e.flavor.split(",").map(function(x){return x.trim();}).filter(Boolean):e.flavor,
-    recipe:{dripper:e.rDripper||"",beans:e.rBeans||"",waterTemp:e.rTemp||"",grind:e.rGrind||"",hot:e.rHot||"",iced:e.rIced||""},
+    recipe:{
+      dripper:normDripper(e.rDripper||""),
+      hot:{beans:e.rHotBeans||"",grind:e.rHotGrind||"",waterTemp:e.rHotTemp||"",pour:e.rHotPour||""},
+      iced:{beans:e.rIcedBeans||"",grind:e.rIcedGrind||"",waterTemp:e.rIcedTemp||"",pour:e.rIcedPour||""}
+    },
     guestNotes:[],status:e.status||"available"
   });
-  ["rDripper","rBeans","rTemp","rGrind","rHot","rIced"].forEach(function(k){delete nb[k];});
+  ["rDripper","rHotBeans","rHotGrind","rHotTemp","rHotPour","rIcedBeans","rIcedGrind","rIcedTemp","rIcedPour"].forEach(function(k){delete nb[k];});
   await addDoc(BC,nb);S.showAdd=false;showToast("원두 추가 완료! 🫘");
 };
 window.handleFileDrop = function(e){e.preventDefault();S.addDrag=false;var f=e.dataTransfer.files[0];if(f&&f.type.startsWith("image/"))parseImg(f);else render();};
@@ -463,67 +531,70 @@ var PARSE_PROMPT = [
   "다음 규칙에 따라 커피 원두 이미지에서 정보를 추출해 JSON만 반환. 다른 텍스트 없이 JSON만.",
   "",
   "## 필드 규칙",
-  "- name: 원두 상품명 (로스터리명 제외)",
+  "- name: 원두 상품명. 나라명(ETHIOPIA, PERU 등) 제외. 영문 상품명은 영문 그대로.",
+  "  플레이버 단어 나열형 디자인이어도 본문/설명에서 실제 상품명을 찾아 사용.",
   "- roaster: 로스터리/브랜드명",
-  "- origin: 원산지 한국어 (Ethiopia→에티오피아, Colombia→콜롬비아, Peru→페루, Guatemala→과테말라, Kenya→케냐, CostaRica→코스타리카, Panama→파나마)",
-  "- region: 세부 지역명",
-  "- producer: 농장/생산자명",
-  "- variety: 품종 한국어 표기 변환 (Geisha→게이샤, Caturra→카투라, Bourbon→부르봉, Typica→티피카, Pacamara→파카마라, Pacas→파카스, Maragogipe→마라고지페, Mokka→모카, SL28→SL28, SL34→SL34, 숫자코드→그대로, 이미 한국어면 그대로)",
+  "- origin: 원산지 한국어 (Ethiopia→에티오피아, Colombia→콜롬비아, Peru→페루, Guatemala→과테말라, Kenya→케냐, CostaRica→코스타리카, Panama→파나마, Honduras→온두라스, Rwanda→르완다, Yemen→예멘, Indonesia→인도네시아, Brazil→브라질)",
+  "- region: 세부 지역명 (원문 그대로)",
+  "- producer: 농장명 / 생산자명 형태로 병기. 농장만 있으면 농장명만, 둘 다 있으면 '농장명 / 생산자명'",
+  "- variety: 품종 한국어 변환 (Geisha→게이샤, Caturra→카투라, Bourbon→부르봉, Typica→티피카, Pacamara→파카마라, Pacas→파카스, Maragogipe→마라고지페, Mokka→모카, SL28→SL28, SL34→SL34, 숫자코드→그대로). '에티오피아 고유 원종' '토착 품종' 등 한국어 표현은 그대로 유지.",
   "- altitude: 고도 (숫자+m)",
-  "- process: 가공방식 한국어 (Natural→내추럴, Washed→워시드, Honey→허니, Anaerobic→무산소, 콜드퍼멘테이션→무산소, SlowDry→내추럴로 처리)",
+  "- process: 가공방식 한국어 (Natural→내추럴, Washed→워시드, Honey→허니, Anaerobic→무산소, Anaerobic Washed→무산소 워시드, 콜드퍼멘테이션→무산소, SlowDry→내추럴)",
   "- roastLevel: 배전도 → 아래 5단계 중 하나로만 출력. 반드시 한국어로.",
   "  · 라이트: Light, 라이트, 약배전, 약볶음",
-  "  · 미디엄라이트: Medium Light, Medium-Light, 중약배전, 중약볶음, 미디엄 라이트",
-  "  · 미디엄: Medium, 미디엄, 중배전, 중볶음, 보통",
-  "  · 미디엄다크: Medium Dark, Medium-Dark, 중강배전, 중강볶음, 미디엄 다크",
-  "  · 다크: Dark, 다크, 강배전, 강볶음, 풀시티, Full City, French, Italian",
-  "  애매하면 가장 가까운 단계 선택. 절대 이 5가지 외 값 출력 금지.",
-  "- flavor: 플레이버 배열 — 이미지에 명시된 플레이버 단어/아이콘 텍스트만. 설명문장 제외",
-  "- tagline: 원두를 한 문장으로 표현한 문구 (대시(--)로 감싸인 문구 우선)",
-  "- recipe.dripper: 드리퍼 기구명 (v60, 칼리타 등)",
-  "- recipe.beans: 원두량 (예: 16g)",
-  "- recipe.waterTemp: 물온도 (예: 92도)",
-  "- recipe.grind: 분쇄도 (예: ek43 13.2)",
-  "- recipe.hot: Hot 레시피 전체 (물양+시간 포함)",
-  "- recipe.iced: Iced 레시피 전체",
+  "  · 미디엄라이트: Medium Light, Medium-Light, 중약배전, 중약볶음",
+  "  · 미디엄: Medium, 미디엄, 중배전, 중볶음",
+  "  · 미디엄다크: Medium Dark, Medium-Dark, 중강배전, 중강볶음",
+  "  · 다크: Dark, 다크, 강배전, 풀시티, Full City, French, Italian",
+  "  슬라이더/바 이미지: 점/마커가 가장 가까운 라벨로 매핑. 정보 없으면 빈 문자열.",
+  "- flavor: 플레이버 배열 (아래 상세 규칙 참고)",
+  "- tagline: 원두를 한 문장으로 표현한 문구 (아래 상세 규칙 참고)",
+  "- recipe.dripper: 드리퍼 기구명. 아래 목록 중 하나로 최대한 매핑.",
+  "  V60 / V60 네오 / 칼리타 웨이브 / 케멕스 / 에어로프레스 / 클레버 / 프렌치프레스 / 모카포트 / 오리가미 / 고노 / 멜리타 / Fellow Stagg / April / Timemore B75 / UFO / Graycano",
+  "  목록에 없으면 원문 그대로. 없으면 빈 문자열.",
+  "- recipe.hot: Hot 레시피 (beans, grind, waterTemp, pour 각각 분리)",
+  "- recipe.iced: Iced 레시피 (beans, grind, waterTemp, pour 각각 분리)",
   "",
-  "## 핵심 주의사항",
-  "[flavor 추출]",
-  "- 아이콘+텍스트로 나열된 단어만 추출 (예: 와인, 블루베리, 황도, 체리)",
-  '- "-설명문구-" 형태 tagline 문구는 flavor에 절대 넣지 않음',
-  '- "사우어 젤리와 하리보 젤리" → ["사우어 젤리","하리보 젤리"] 처럼 분리',
-  "- 이모지 아이콘 옆 텍스트가 플레이버임",
+  "## flavor 추출 규칙",
+  "- 아이콘+텍스트 나열, CUPPING NOTE, 컵노트 뒤 단어들을 추출",
+  "- 영문 플레이버 → 한국어 변환: Peach→복숭아, Strawberry→딸기, Raspberry→라즈베리, Blueberry→블루베리, Cherry→체리, Grape→포도, Mango→망고, Lemon→레몬, Orange→오렌지, Lime→라임, Bergamot→베르가못, Jasmine→자스민, Rose→장미, Caramel→캐러멜, Chocolate→초콜릿, Vanilla→바닐라, Honey→꿀, Almond→아몬드, Hazelnut→헤이즐넛, Tangerine→탄제린 (단 Green tangerine→그린 탄제린처럼 수식어 있으면 그대로)",
+  "- 제외 단어: 질감, 후미, 바디, 마우스필, 피니시, 여운, 부드러운, 달콤한, 산뜻한, 깔끔한, 풍부한, 상큼한 (형용사/감각 표현)",
+  "- tagline 문구(-로 감싼 문장)는 flavor에 절대 넣지 않음",
+  "- '사우어 젤리와 하리보 젤리' → ['사우어 젤리','하리보 젤리'] 처럼 분리",
   "",
-  "[tagline 추출]",
-  "- 대시(--)로 감싸인 한 줄 문구 우선",
-  "- 없으면 원두를 가장 잘 표현하는 짧은 문구",
+  "## tagline 추출 규칙",
+  "- 대시(--)로 감싸인 문구 최우선",
+  "- 없으면: 산지/품종/가공 설명 문장 제외, 맛·향·인상을 표현하는 요약 문장 선택",
+  "- 설명문이 여러 단락이면 마지막 요약 문장 우선",
   "- 플레이버 나열 문장은 tagline 아님",
+  "- 길이 제한 없음",
   "",
-  "[recipe 추출]",
-  "- 추출 레시피v60 네오 원두16g 물온도93도 물88ppm ek43 13.5",
-  "  → dripper:v60 네오, beans:16g, waterTemp:93도, grind:ek43 13.5",
-  "- ppm(물 경도)은 waterTemp에 포함하지 않음",
+  "## recipe 추출 규칙",
+  "- hot과 iced 각각 beans(원두량), grind(분쇄도), waterTemp(물온도), pour(물붓기 순서/타이밍) 분리",
+  "- 물 브랜드명(미원면, 아이시스 등)은 waterTemp에 포함하지 않음",
+  "- ppm(물 경도)도 waterTemp에 포함하지 않음",
+  "- hot/iced 원두량이 다르면 각각 다르게 저장",
+  "- hot/iced 분쇄도가 다르면 각각 다르게 저장",
+  "- hot/iced 물온도가 다르면 각각 다르게 저장",
+  "- 레시피 없으면 빈 객체 {}",
   "",
-  "## 예시 1 (한국 로스터리 플레이버 카드)",
-  "입력: ETHIOPIA / 고로 베데사 내추럴 / 아이콘: 라즈베리 딸기 감귤 멜론 / 배전도:중약배전 / v60 원두18g 물온도93도 ek43 13.5 / Hot 60-120-200-280 30-1:00-1:30-2분10초 / ICED 60-140-200 0:45-1:30-2분20초",
-  '출력: {"name":"고로 베데사 내추럴","roaster":"","origin":"에티오피아","region":"구지 함벨라 와메나","producer":"","variety":"74110,74112","altitude":"2300~2400m","process":"내추럴","roastLevel":"중약배전","flavor":["라즈베리","딸기","감귤","멜론"],"tagline":"","recipe":{"dripper":"v60","beans":"18g","waterTemp":"93도","grind":"ek43 13.5","hot":"60-120-200-280 / 30-1:00-1:30-2분10초","iced":"60-140-200 / 0:45-1:30-2분20초"}}',
+  "## 예시 1 (플레이버 카드 + Hot/Iced 레시피 분리)",
+  "입력: ETHIOPIA / 버그 우 셀렉션 허니 / 아이콘: 오렌지블라썸 황도 블루베리 쥬시 / -모든 구간의 플로럴하며 쥬시하다- / 허니 / 약~중약배전 / v60 네오 원두16g 물온도93도 ek43 13.2 Hot 60-150-250 0:45-1:30-2분20초 / 20g EK43 12.2 ICED 60-120-200 0:45-1:30-2분20초",
+  '출력: {"name":"버그 우 셀렉션 허니","roaster":"","origin":"에티오피아","region":"구지","producer":"","variety":"에얼룸","altitude":"1900~2300m","process":"허니","roastLevel":"미디엄라이트","flavor":["오렌지 블라썸","황도","블루베리","쥬시"],"tagline":"모든 구간의 플로럴하며 쥬시하다","recipe":{"dripper":"V60 네오","hot":{"beans":"16g","grind":"ek43 13.2","waterTemp":"93도","pour":"60-150-250 / 0:45-1:30-2분20초"},"iced":{"beans":"20g","grind":"ek43 12.2","waterTemp":"","pour":"60-120-200 / 0:45-1:30-2분20초"}}}',
   "",
-  "## 예시 2 (설명문구+플레이버 분리)",
-  "입력: 자리끼 / 아이콘: 이온음료 스타프루츠 포도 자두 베리 / -새콤달콤 저녁에도 마시기 편안한- / 중약배전",
-  '출력: {"name":"자리끼","roaster":"","origin":"에티오피아","region":"","producer":"","variety":"","altitude":"","process":"내추럴","roastLevel":"중약배전","flavor":["이온음료","스타프루츠","포도","자두","베리"],"tagline":"새콤달콤 저녁에도 마시기 편안한","recipe":{"dripper":"","beans":"","waterTemp":"","grind":"","hot":"","iced":""}}',
+  "## 예시 2 (CUPPING NOTE 형식 + 설명문 tagline)",
+  "입력: 에티오피아 예가체프 첼베사 워시드 / REGION 예가체프 첼베사 / VARIETY 에티오피아 고유 원종 / PROCESS 워시드 / CUPPING NOTE 복숭아 박과류 질감 베르가못 후미 / 복숭아 같은 부드럽고 달콤한",
+  '출력: {"name":"예가체프 첼베사 워시드","roaster":"","origin":"에티오피아","region":"예가체프 첼베사","producer":"","variety":"에티오피아 고유 원종","altitude":"","process":"워시드","roastLevel":"","flavor":["복숭아","박과류","베르가못"],"tagline":"복숭아 같은 부드럽고 달콤한","recipe":{"dripper":"","hot":{},"iced":{}}}',
   "",
-  "## 예시 3 (콜롬비아 젤리 플레이버)",
-  "입력: COLOMBIA / 로스 파티오스 펑키 체리 허니 / 아이콘: 사우어젤리 하리보젤리 / -단순하다 근데 이상하지 않네?- / 허니 / 중약배전",
-  '출력: {"name":"로스 파티오스 펑키 체리 허니","roaster":"","origin":"콜롬비아","region":"후일라, 기간테","producer":"Ronald de Hommel","variety":"카투라,카스티요,콜롬비아","altitude":"1800~2000m","process":"허니","roastLevel":"중약배전","flavor":["사우어 젤리","하리보 젤리"],"tagline":"단순하다 근데 이상하지 않네?","recipe":{"dripper":"","beans":"","waterTemp":"","grind":"","hot":"","iced":""}}',
+  "## 예시 3 (영문 테이블 + 농장/생산자 병기)",
+  "입력: PERU Santa Teresa Geisha Natural / PRODUCER: ANDRES TORRES GOICOCHEA / FARM: SANTA TERESA / REGION: CASERIO CALPANA REDONDO, LUYA, AMAZONAS / VARIETY: GEISHA / PROCESS: NATURAL / 라즈베리, 포도, 황설탕 / 라즈베리와 포도의 산미 위에 황설탕 같은 단맛이 더해져 부담 없이 마시기 좋은 가성비 훌륭한 게이샤 내추럴",
+  '출력: {"name":"Santa Teresa Geisha Natural","roaster":"","origin":"페루","region":"Caserio Calpana Redondo, Luya, Amazonas","producer":"Santa Teresa / Andres Torres Goicochea","variety":"게이샤","altitude":"","process":"내추럴","roastLevel":"","flavor":["라즈베리","포도","황설탕"],"tagline":"라즈베리와 포도의 산미 위에 황설탕 같은 단맛이 더해져 부담 없이 마시기 좋은 가성비 훌륭한 게이샤 내추럴","recipe":{"dripper":"","hot":{},"iced":{}}}',
   "",
-  "## 예시 4 (CUPPING NOTE + 긴 설명문 형식)",
-  "- CUPPING NOTE 뒤 명사만 flavor 추출. 형용사(부드러운,달콤한 등)는 제외",
-  "- 하단 긴 설명문에서 추가 플레이버 명사 보완 추출 (황설탕,다크 초콜릿,시트러스 등)",
-  "- 설명문 중 가장 함축적인 첫 줄을 tagline으로 사용",
-  "입력: 콜롬비아 수프리모 워시드 / CUPPING NOTE 캐러멜 볶은 아몬드 부드러운 / 캐러멜과 볶은 아몬드의 달콤하고 고소한 향 / 시트러스 아로마 / 황설탕 같은 단맛 / 다크 초콜릿의 쌉싸름",
-  '출력: {"name":"수프리모 워시드","roaster":"","origin":"콜롬비아","region":"후일라 지역 여러 소농들","producer":"","variety":"카투라,카스틸로","altitude":"1,200m-1,800m","process":"워시드","roastLevel":"","flavor":["캐러멜","볶은 아몬드","시트러스","황설탕","다크 초콜릿"],"tagline":"캐러멜과 볶은 아몬드의 달콤하고 고소한 향","recipe":{"dripper":"","beans":"","waterTemp":"","grind":"","hot":"","iced":""}}',
+  "## 예시 4 (슬라이더 배전도 + Hot/Iced 원두량·분쇄도 각각 다름)",
+  "입력: 콜롬비아 엘 타블론 레이트 하베스트 워시드 / 체리 라임 블루베리 망고스틴 리치 / 워시드 / 슬라이더: Light 근처 / Hot 원두20g 굵은분쇄도(1000μm) 35초마다5번 50-70-60-60-60ml / Ice 원두20g 중간분쇄도(900μm) 45초마다3번 60-60-80ml",
+  '출력: {"name":"엘 타블론 레이트 하베스트 워시드","roaster":"","origin":"콜롬비아","region":"나리뇨 엘 타블론 데 고메스","producer":"","variety":"카투라, 카스티요","altitude":"1600~2100m","process":"워시드","roastLevel":"라이트","flavor":["체리","라임","블루베리","망고스틴","리치"],"tagline":"열대과일 톤과 단맛의 밸런스가 좋은 커피입니다","recipe":{"dripper":"","hot":{"beans":"20g","grind":"굵은 분쇄도 (1000μm)","waterTemp":"","pour":"35초마다 5번 물붓기 / 50-70-60-60-60ml"},"iced":{"beans":"20g","grind":"중간 분쇄도 (900μm)","waterTemp":"","pour":"45초마다 3번 물붓기 / 60-60-80ml"}}}',
   "",
-  '{"name":"","roaster":"","origin":"","region":"","producer":"","variety":"","altitude":"","process":"","roastLevel":"","flavor":[],"tagline":"","recipe":{"dripper":"","beans":"","waterTemp":"","grind":"","hot":"","iced":""}}'
+  '{"name":"","roaster":"","origin":"","region":"","producer":"","variety":"","altitude":"","process":"","roastLevel":"","flavor":[],"tagline":"","recipe":{"dripper":"","hot":{},"iced":{}}}'
 ].join("\n");
 
 
@@ -536,12 +607,13 @@ async function parseImg(file){
     if(!resp.ok)throw new Error("API "+resp.status);
     var txt=data.content.map(function(c){return c.text||"";}).join("");
     var parsed=JSON.parse(txt.replace(/```json|```/g,"").trim());
+    var nr=normalizeRecipe(parsed.recipe);
     S.addEdit=Object.assign({},parsed,{
       flavor:Array.isArray(parsed.flavor)?parsed.flavor.join(", "):(parsed.flavor||""),
       roaster:parsed.roaster||"",myNote:"",rating:4,status:"available",roastDate:"",startDate:"",
-      rDripper:(parsed.recipe&&parsed.recipe.dripper)||"",rBeans:(parsed.recipe&&parsed.recipe.beans)||"",
-      rTemp:(parsed.recipe&&parsed.recipe.waterTemp)||"",rGrind:(parsed.recipe&&parsed.recipe.grind)||"",
-      rHot:(parsed.recipe&&parsed.recipe.hot)||"",rIced:(parsed.recipe&&parsed.recipe.iced)||""
+      rDripper:nr.dripper,
+      rHotBeans:nr.hot.beans,rHotGrind:nr.hot.grind,rHotTemp:nr.hot.waterTemp,rHotPour:nr.hot.pour,
+      rIcedBeans:nr.iced.beans,rIcedGrind:nr.iced.grind,rIcedTemp:nr.iced.waterTemp,rIcedPour:nr.iced.pour
     });
     S.addStep="review";render();
   }catch(err){console.error(err);S.addStep="error";render();}
@@ -561,6 +633,13 @@ function mkRL(val,fn){
   var norm=normRL(val)||val;
   return '<select style="'+IS+'appearance:none;-webkit-appearance:none;" onchange="'+fn+'">'
     +levels.map(function(l){return '<option value="'+l+'"'+(norm===l?' selected':'')+'>'+l+'</option>';}).join('')
+    +'</select>';
+}
+function mkDripper(val,fn){
+  var keys=["","V60","V60 네오","칼리타 웨이브","케멕스","에어로프레스","클레버","프렌치프레스","모카포트","오리가미","고노","멜리타","Fellow Stagg","April","Timemore B75","UFO","Graycano"];
+  var norm=normDripper(val)||val||"";
+  return '<select style="'+IS+'appearance:none;-webkit-appearance:none;" onchange="'+fn+'">'
+    +keys.map(function(k){return '<option value="'+k+'"'+(norm===k?' selected':'')+'>'+(k||'선택 안함')+'</option>';}).join('')
     +'</select>';
 }
 function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
@@ -621,9 +700,14 @@ function rMenu(){
       +'</div><div style="padding:14px 18px 18px;background:'+(fc?fc.bg+'44':'transparent')+'">'
       +'<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#8e8e93;margin-bottom:10px;">Flavor Notes</div>'
       +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">'+fchips(b.flavor)+'</div>';
-    if(b.recipe&&b.recipe.hot){
+    if(b.recipe&&(b.recipe.hot&&typeof b.recipe.hot==="object"?b.recipe.hot.pour:b.recipe.hot)){
+      var nr=normalizeRecipe(b.recipe);
       html+='<div style="margin-bottom:12px;"><button onclick="event.stopPropagation();toggleRec(\''+b.id+'\')" style="background:none;border:1px solid #d1d1d6;border-radius:20px;padding:7px 14px;font-size:12px;color:#636366;cursor:pointer;font-family:inherit;">🔬 추출 레시피 '+(open?"▲":"▼")+'</button>';
-      if(open) html+='<div style="margin-top:10px;background:#f5f5f7;border-radius:12px;padding:13px 15px;font-size:12px;color:#3a3a3c;line-height:1.9;"><div><b>드리퍼</b> '+(b.recipe.dripper||"")+' · <b>원두</b> '+(b.recipe.beans||"")+'</div><div><b>물온도</b> '+(b.recipe.waterTemp||"")+' · <b>분쇄도</b> '+(b.recipe.grind||"")+'</div>'+(b.recipe.hot?'<div>☀️ <b>Hot</b> '+b.recipe.hot+'</div>':"")+(b.recipe.iced?'<div>🧊 <b>Iced</b> '+b.recipe.iced+'</div>':"")+'</div>';
+      if(open) html+='<div style="margin-top:10px;background:#f5f5f7;border-radius:12px;padding:13px 15px;font-size:12px;color:#3a3a3c;line-height:1.9;">'
+        +'<div><b>드리퍼</b> '+(nr.dripper||"")+'</div>'
+        +(nr.hot.pour?'<div style="margin-top:6px;"><b style="color:#c05e00;">☀️ Hot</b> · 원두 '+(nr.hot.beans||"-")+' · 물온도 '+(nr.hot.waterTemp||"-")+' · 분쇄도 '+(nr.hot.grind||"-")+'<br>'+nr.hot.pour+'</div>':"")
+        +(nr.iced.pour?'<div style="margin-top:6px;"><b style="color:#1d4ed8;">🧊 Iced</b> · 원두 '+(nr.iced.beans||"-")+' · 물온도 '+(nr.iced.waterTemp||"-")+' · 분쇄도 '+(nr.iced.grind||"-")+'<br>'+nr.iced.pour+'</div>':"")
+        +'</div>';
       html+='</div>';
     }
     html+='<button onclick="event.stopPropagation();openGuest(\''+b.id+'\')" style="width:100%;background:#2c2c2e;color:#fff;border:none;border-radius:14px;padding:14px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">✏️ 마셔봤어요 — 소감 남기기</button>'
@@ -724,13 +808,26 @@ function rDetail(id){
       +mkLbl("플레이버 (쉼표 구분)")+mkInp(e.flavor,"editInput('flavor',this.value)")
       +mkLbl("한줄 설명")+mkInp(e.tagline,"editInput('tagline',this.value)")
       +'<div class="g2">'
-      +'<div>'+mkLbl("드리퍼")+mkInp(e.rDripper,"editInput('rDripper',this.value)")+'</div>'
-      +'<div>'+mkLbl("원두량")+mkInp(e.rBeans,"editInput('rBeans',this.value)")+'</div>'
-      +'<div>'+mkLbl("물온도")+mkInp(e.rTemp,"editInput('rTemp',this.value)")+'</div>'
-      +'<div>'+mkLbl("분쇄도")+mkInp(e.rGrind,"editInput('rGrind',this.value)")+'</div>'
+      +'<div>'+mkLbl("드리퍼")+mkDripper(e.rDripper,"editInput('rDripper',this.value)")+'</div>'
       +'</div>'
-      +mkLbl("레시피 Hot")+mkInp(e.rHot,"editInput('rHot',this.value)")
-      +mkLbl("레시피 Iced")+mkInp(e.rIced,"editInput('rIced',this.value)")
+      +'<div style="background:#f9f9f9;border-radius:14px;padding:14px;margin-top:14px;border:1px solid #e5e5ea;">'
+      +'<div style="font-size:11px;font-weight:700;color:#ff9f0a;letter-spacing:1px;margin-bottom:10px;">☀️ HOT</div>'
+      +'<div class="g2">'
+      +'<div>'+mkLbl("원두량")+mkInp(e.rHotBeans,"editInput('rHotBeans',this.value)")+'</div>'
+      +'<div>'+mkLbl("물온도")+mkInp(e.rHotTemp,"editInput('rHotTemp',this.value)")+'</div>'
+      +'<div>'+mkLbl("분쇄도")+mkInp(e.rHotGrind,"editInput('rHotGrind',this.value)")+'</div>'
+      +'</div>'
+      +mkLbl("푸어 레시피")+mkInp(e.rHotPour,"editInput('rHotPour',this.value)")
+      +'</div>'
+      +'<div style="background:#eff6ff;border-radius:14px;padding:14px;margin-top:10px;border:1px solid #dbeafe;">'
+      +'<div style="font-size:11px;font-weight:700;color:#1d4ed8;letter-spacing:1px;margin-bottom:10px;">🧊 ICED</div>'
+      +'<div class="g2">'
+      +'<div>'+mkLbl("원두량")+mkInp(e.rIcedBeans,"editInput('rIcedBeans',this.value)")+'</div>'
+      +'<div>'+mkLbl("물온도")+mkInp(e.rIcedTemp,"editInput('rIcedTemp',this.value)")+'</div>'
+      +'<div>'+mkLbl("분쇄도")+mkInp(e.rIcedGrind,"editInput('rIcedGrind',this.value)")+'</div>'
+      +'</div>'
+      +mkLbl("푸어 레시피")+mkInp(e.rIcedPour,"editInput('rIcedPour',this.value)")
+      +'</div>'
       +mkLbl("나의 소감")+mkTA(e.myNote,"editInput('myNote',this.value)")
       +'<label style="'+IL+';margin-top:14px;">평점</label>'
       +'<div style="margin-top:4px;">'+stHtml(e.rating||4,"edit",24,true)+'</div>'
@@ -799,15 +896,34 @@ function rDetail(id){
     +stHtml(b.rating||0,"",18)
     +'<p style="margin-top:10px;font-size:14px;color:#3a3a3c;line-height:1.8;font-style:italic;">'+(b.myNote?esc(b.myNote):"아직 소감이 없어요")+'</p>'
     +'</div>'
-    +(b.recipe&&b.recipe.hot?'<div style="margin-bottom:24px;">'
-      +'<div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#8e8e93;font-weight:600;margin-bottom:12px;">BREWING RECIPE</div>'
-      +'<div style="background:#fff;border-radius:16px;padding:16px;border:0.5px solid rgba(0,0,0,0.06);">'
-      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 0;font-size:13px;margin-bottom:12px;">'
-      +[["드리퍼",b.recipe.dripper],["원두량",b.recipe.beans],["물온도",b.recipe.waterTemp],["분쇄도",b.recipe.grind]].filter(function(x){return x[1];}).map(function(x){return '<div><div style="color:#8e8e93;font-size:10px;margin-bottom:2px;">'+x[0]+'</div><div style="font-weight:600;color:#1c1c1e;">'+esc(x[1])+'</div></div>';}).join("")
-      +'</div>'
-      +(b.recipe.hot?'<div style="font-size:12px;color:#3a3a3c;background:#f5f5f7;border-radius:10px;padding:9px 12px;margin-bottom:6px;">☀️ <b>Hot</b> '+esc(b.recipe.hot)+'</div>':"")
-      +(b.recipe.iced?'<div style="font-size:12px;color:#3a3a3c;background:#eff6ff;border-radius:10px;padding:9px 12px;">🧊 <b>Iced</b> '+esc(b.recipe.iced)+'</div>':"")
-      +'</div></div>':"")
+    +(function(){
+      var nr=normalizeRecipe(b.recipe);
+      var hasRecipe=nr.hot.pour||nr.iced.pour;
+      if(!hasRecipe) return "";
+      return '<div style="margin-bottom:24px;">'
+        +'<div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#8e8e93;font-weight:600;margin-bottom:12px;">BREWING RECIPE</div>'
+        +'<div style="background:#fff;border-radius:16px;padding:16px;border:0.5px solid rgba(0,0,0,0.06);">'
+        +(nr.dripper?'<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:12px;border-bottom:0.5px solid rgba(0,0,0,0.06);"><div style="color:#8e8e93;font-size:10px;">드리퍼</div><div style="font-weight:600;color:#1c1c1e;font-size:13px;">'+esc(nr.dripper)+'</div></div>':"")
+        +(nr.hot.pour?'<div style="background:#fff9f0;border-radius:12px;padding:12px;margin-bottom:8px;">'
+          +'<div style="font-size:11px;font-weight:700;color:#c05e00;margin-bottom:8px;">☀️ HOT</div>'
+          +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;">'
+          +(nr.hot.beans?'<div><div style="color:#8e8e93;font-size:10px;margin-bottom:2px;">원두</div><div style="font-weight:600;color:#1c1c1e;font-size:12px;">'+esc(nr.hot.beans)+'</div></div>':"")
+          +(nr.hot.waterTemp?'<div><div style="color:#8e8e93;font-size:10px;margin-bottom:2px;">물온도</div><div style="font-weight:600;color:#1c1c1e;font-size:12px;">'+esc(nr.hot.waterTemp)+'</div></div>':"")
+          +(nr.hot.grind?'<div><div style="color:#8e8e93;font-size:10px;margin-bottom:2px;">분쇄도</div><div style="font-weight:600;color:#1c1c1e;font-size:12px;">'+esc(nr.hot.grind)+'</div></div>':"")
+          +'</div>'
+          +'<div style="font-size:12px;color:#3a3a3c;">'+esc(nr.hot.pour)+'</div>'
+          +'</div>':"")
+        +(nr.iced.pour?'<div style="background:#eff6ff;border-radius:12px;padding:12px;">'
+          +'<div style="font-size:11px;font-weight:700;color:#1d4ed8;margin-bottom:8px;">🧊 ICED</div>'
+          +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;">'
+          +(nr.iced.beans?'<div><div style="color:#8e8e93;font-size:10px;margin-bottom:2px;">원두</div><div style="font-weight:600;color:#1c1c1e;font-size:12px;">'+esc(nr.iced.beans)+'</div></div>':"")
+          +(nr.iced.waterTemp?'<div><div style="color:#8e8e93;font-size:10px;margin-bottom:2px;">물온도</div><div style="font-weight:600;color:#1c1c1e;font-size:12px;">'+esc(nr.iced.waterTemp)+'</div></div>':"")
+          +(nr.iced.grind?'<div><div style="color:#8e8e93;font-size:10px;margin-bottom:2px;">분쇄도</div><div style="font-weight:600;color:#1c1c1e;font-size:12px;">'+esc(nr.iced.grind)+'</div></div>':"")
+          +'</div>'
+          +'<div style="font-size:12px;color:#3a3a3c;">'+esc(nr.iced.pour)+'</div>'
+          +'</div>':"")
+        +'</div></div>';
+    })()
     +'<div style="margin-bottom:24px;">'
     +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">'
     +'<div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#8e8e93;font-weight:600;">GUEST NOTES ('+(b.guestNotes||[]).length+')</div>'
@@ -910,13 +1026,26 @@ function rAdd(){
       + mkLbl("플레이버 (쉼표 구분)")+mkInp(e.flavor,"addInput('flavor',this.value)")
       + mkLbl("한줄 설명")+mkInp(e.tagline,"addInput('tagline',this.value)")
       + '<div class="g2">'
-      + '<div>'+mkLbl("드리퍼")+mkInp(e.rDripper,"addInput('rDripper',this.value)")+'</div>'
-      + '<div>'+mkLbl("원두량")+mkInp(e.rBeans,"addInput('rBeans',this.value)")+'</div>'
-      + '<div>'+mkLbl("물온도")+mkInp(e.rTemp,"addInput('rTemp',this.value)")+'</div>'
-      + '<div>'+mkLbl("분쇄도")+mkInp(e.rGrind,"addInput('rGrind',this.value)")+'</div>'
+      + '<div>'+mkLbl("드리퍼")+mkDripper(e.rDripper,"addInput('rDripper',this.value)")+'</div>'
       + '</div>'
-      + mkLbl("레시피 Hot")+mkInp(e.rHot,"addInput('rHot',this.value)")
-      + mkLbl("레시피 Iced")+mkInp(e.rIced,"addInput('rIced',this.value)")
+      + '<div style="background:#f9f9f9;border-radius:14px;padding:14px;margin-top:14px;border:1px solid #e5e5ea;">'
+      + '<div style="font-size:11px;font-weight:700;color:#ff9f0a;letter-spacing:1px;margin-bottom:10px;">☀️ HOT</div>'
+      + '<div class="g2">'
+      + '<div>'+mkLbl("원두량")+mkInp(e.rHotBeans,"addInput('rHotBeans',this.value)")+'</div>'
+      + '<div>'+mkLbl("물온도")+mkInp(e.rHotTemp,"addInput('rHotTemp',this.value)")+'</div>'
+      + '<div>'+mkLbl("분쇄도")+mkInp(e.rHotGrind,"addInput('rHotGrind',this.value)")+'</div>'
+      + '</div>'
+      + mkLbl("푸어 레시피")+mkInp(e.rHotPour,"addInput('rHotPour',this.value)")
+      + '</div>'
+      + '<div style="background:#eff6ff;border-radius:14px;padding:14px;margin-top:10px;border:1px solid #dbeafe;">'
+      + '<div style="font-size:11px;font-weight:700;color:#1d4ed8;letter-spacing:1px;margin-bottom:10px;">🧊 ICED</div>'
+      + '<div class="g2">'
+      + '<div>'+mkLbl("원두량")+mkInp(e.rIcedBeans,"addInput('rIcedBeans',this.value)")+'</div>'
+      + '<div>'+mkLbl("물온도")+mkInp(e.rIcedTemp,"addInput('rIcedTemp',this.value)")+'</div>'
+      + '<div>'+mkLbl("분쇄도")+mkInp(e.rIcedGrind,"addInput('rIcedGrind',this.value)")+'</div>'
+      + '</div>'
+      + mkLbl("푸어 레시피")+mkInp(e.rIcedPour,"addInput('rIcedPour',this.value)")
+      + '</div>'
       + mkLbl("나의 소감")+mkTA(e.myNote,"addInput('myNote',this.value)")
       + '<label style="'+IL+';margin-top:14px;">평점</label>'
       + '<div style="margin-top:4px;">'+stHtml(e.rating||4,"add",24,true)+'</div>'
@@ -1189,7 +1318,26 @@ function rAdmin(){
   // ── 데이터 탭
   if(at==="data"){
     var settingsJson=JSON.stringify(settings,null,2);
-    body+='<p style="'+SEC_LBL+'">설정 관리</p>'
+    var migState=S.migrateState||"idle"; // idle | running | done | error
+    body+='<p style="'+SEC_LBL+'">원두 데이터 정규화</p>'
+      +'<div style="'+CARD+'">'
+      +'<div style="'+ROW+'">'
+      +'<div>'
+      +'<div style="font-size:14px;color:#1c1c1e;font-weight:500;">배전도 + 레시피 일괄 정규화</div>'
+      +'<div style="font-size:12px;color:#8e8e93;margin-top:2px;">중약배전→미디엄라이트, 구버전 recipe→신규 구조 변환</div>'
+      +'</div>'
+      +(migState==="running"
+        ? '<div style="font-size:12px;color:#8e8e93;">처리 중...</div>'
+        : migState==="done"
+          ? '<div style="font-size:12px;color:#166534;font-weight:600;">✅ 완료</div>'
+          : migState==="error"
+            ? '<div style="font-size:12px;color:#ff3b30;font-weight:600;">오류 발생</div>'
+            : '<button onclick="migrateAllBeans()" style="background:#f0fdf4;color:#166534;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-family:inherit;font-weight:600;cursor:pointer;">정규화 실행</button>'
+      )
+      +'</div>'
+      +(S.migrateLog?'<div style="padding:10px 16px 12px;font-size:11px;color:#8e8e93;border-top:0.5px solid rgba(0,0,0,0.06);line-height:1.8;">'+esc(S.migrateLog)+'</div>':"")
+      +'</div>'
+      +'<p style="'+SEC_LBL+'margin-top:16px;">설정 관리</p>'
       +'<div style="'+CARD+'">'
       +'<div style="'+ROW+'">'
       +'<div>'
@@ -1259,8 +1407,38 @@ window.saveAdminBehavior=async function(){
   await setDoc(SC,{degasHideMenu:!!settings.degasHideMenu,degasHideDiary:!!settings.degasHideDiary},{merge:true});
   showToast("동작 설정이 저장됐어요 ✅");
 };
+window.migrateAllBeans=async function(){
+  if(!confirm('전체 원두 데이터를 정규화할까요?\n배전도(중약배전→미디엄라이트 등)와 레시피 구조를 일괄 변환합니다.')) return;
+  S.migrateState="running"; S.migrateLog=""; render();
+  var total=beans.length, done=0, skipped=0, errors=0;
+  for(var i=0;i<beans.length;i++){
+    var b=beans[i];
+    try{
+      var newRL=normRL(b.roastLevel);
+      var newRecipe=normalizeRecipe(b.recipe);
+      var changed=false;
+      var upd={};
+      // 배전도 변경 필요 여부
+      if(newRL && newRL!==b.roastLevel){upd.roastLevel=newRL; changed=true;}
+      // recipe 변경 필요 여부: 구버전이면 hot이 string이거나 beans 필드 존재
+      var isOldRecipe=b.recipe&&(typeof b.recipe.hot==="string"||b.recipe.beans!==undefined);
+      if(isOldRecipe){upd.recipe=newRecipe; changed=true;}
+      if(changed){
+        await fuB(b.id,upd);
+        done++;
+      } else {
+        skipped++;
+      }
+    } catch(e){
+      errors++;
+    }
+  }
+  S.migrateState="done";
+  S.migrateLog=total+'개 원두 처리 완료 — 변환: '+done+'개 / 이미 최신: '+skipped+'개'+(errors?(' / 오류: '+errors+'개'):'');
+  render();
+  showToast('정규화 완료 ✅ '+done+'개 변환');
+};
 window.exportAdminSettings=function(){
-  var blob=new Blob([JSON.stringify(settings,null,2)],{type:"application/json"});
   var a=document.createElement("a");a.href=URL.createObjectURL(blob);
   a.download="ozy-settings-"+new Date().toISOString().slice(0,10)+".json";
   a.click();showToast("설정 파일을 내보냈어요 📁");
