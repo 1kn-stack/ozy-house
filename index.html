@@ -1560,13 +1560,18 @@ window.addEventListener('popstate', function(e){
 
 // [수정] paste 이벤트 단일 등록 (window.handlePaste 제거 후 여기서만 처리)
 document.addEventListener('paste', function(e){
-  if(!S.showAdd || S.addStep !== 'upload') return;
   var items = (e.clipboardData||e.originalEvent&&e.originalEvent.clipboardData||{items:[]}).items||[];
+  var imgFile=null;
   for(var i=0;i<items.length;i++){
-    if(items[i].type.indexOf('image')!==-1){
-      var file=items[i].getAsFile();
-      if(file){ parseImg(file); return; }
-    }
+    if(items[i].type.indexOf('image')!==-1){ imgFile=items[i].getAsFile(); break; }
+  }
+  if(!imgFile) return;
+  if(S.editMode && S.editData){
+    editScanImg({files:[imgFile]});
+    return;
+  }
+  if(S.showAdd && S.addStep==='upload'){
+    parseImg(imgFile);
   }
 });
 </script>
