@@ -928,7 +928,17 @@ function rDiary(){
     html+='<div style="background:#fff;border-radius:20px;margin-bottom:14px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.07);">'
       +'<div style="background:'+mc+';padding:16px 18px;display:flex;justify-content:space-between;align-items:center;">'
       +'<div><div style="font-size:11px;color:#8e8e93;">오늘 · '+te.date+'</div>'
-      +'<div style="font-size:15px;font-weight:700;color:#1c1c1e;">'+te.mood+' 오늘의 한 잔</div>'
+      +function(){
+        var cupCount=teCups.length;
+        if(cupCount<=1) return '<div style="font-size:15px;font-weight:700;color:#1c1c1e;">'+te.mood+' 오늘의 한 잔</div>';
+        var KOR=["","한","두","세","네","다섯","여섯","일곱","여덟"];
+        var countStr=cupCount<KOR.length?KOR[cupCount]+" 잔":cupCount+"잔";
+        var yesterday=new Date(new Date(today).getTime()-86400000).toISOString().slice(0,10);
+        var yEntry=diaries.find(function(x){return x.date===yesterday;});
+        var yCups=yEntry?(yEntry.cups&&yEntry.cups.length?yEntry.cups.length:(yEntry.beanId?1:0)):0;
+        var particle=yCups===cupCount?"도":"은";
+        return '<div style="font-size:15px;font-weight:700;color:#1c1c1e;">'+te.mood+' 오늘'+particle+' '+countStr+'</div>';
+      }()
       +(te.beanName?'<div style="font-size:12px;color:#ff9f0a;margin-top:2px;">☕ '+esc(te.beanName)+'</div>':"")
       +'</div><span style="font-size:28px;">'+te.mood+'</span></div>'
       +'<div style="padding:14px 18px 16px;">'
