@@ -239,9 +239,9 @@ window.setStar = function(id,v){
   if(id==="diary"){S.diaryForm.rating=v;render();}
 };
 window.toggleRec = function(id){S.recOpen=S.recOpen===id?null:id;render();};
-window.setTab = function(t){S.tab=t;S.detail=null;S.editMode=false;render();};
+window.setTab = function(t){S.tab=t;S.detail=null;S.editMode=false;pushHistory();render();};
 window.setFilter = function(f){S.filter=f;render();};
-window.openDetail = function(id){S.detail=id;S.editMode=false;render();};
+window.openDetail = function(id){S.detail=id;S.editMode=false;pushHistory();render();};
 window.closeDetail = function(){S.detail=null;S.editMode=false;render();};
 
 window.requirePw = function(action){S.showPw=true;S.pwAction=action;S.pwErr=false;render();setTimeout(function(){var el=document.getElementById("pw-inp");if(el)el.focus();},100);};
@@ -558,7 +558,7 @@ function rMenu(){
       +'<span style="background:'+rc+'18;color:'+rc+';border-radius:20px;padding:3px 11px;font-size:11px;font-weight:600;">'+(b.roastLevel||"")+'</span>'
       +'</div>'
       +(b.roaster?'<div style="font-size:11px;color:#ff9f0a;font-weight:600;margin-bottom:4px;">🏪 '+esc(b.roaster)+'</div>':"")
-      +'<div style="font-size:18px;font-weight:700;color:#1c1c1e;line-height:1.3;margin-bottom:4px;">'+esc(b.name||"")+'</div>'
+      +'<div style="font-size:'+(b.name&&b.name.length>20?'14px':b.name&&b.name.length>14?'16px':'18px')+';font-weight:700;color:#1c1c1e;line-height:1.3;margin-bottom:4px;word-break:keep-all;overflow-wrap:break-word;">'+esc(b.name||"")+'</div>'
       +'<div style="font-size:12px;color:#8e8e93;margin-bottom:'+(b.tagline?0:16)+'px;">'+gFL(b.origin)+' '+(b.origin||"")+(b.region?" · "+b.region:"")+(b.variety?" · "+b.variety:"")+'</div>'
       +(b.tagline?'<div style="font-style:italic;font-size:12px;color:#636366;border-left:2px solid #ff9f0a;padding-left:10px;margin-top:8px;margin-bottom:0;">"'+esc(b.tagline)+'"</div>':"")
       +'</div><div style="padding:14px 18px 18px;background:'+(fc?fc.bg+'44':'transparent')+'">'
@@ -624,7 +624,7 @@ function rArchive(){
       +(b.status==="empty"?'<span style="background:#f5f5f7;color:#8e8e93;border-radius:20px;padding:2px 9px;font-size:10px;">소진</span>':"")
       +'</div>'
       +(b.roaster?'<div style="font-size:11px;color:#ff9f0a;font-weight:600;margin-bottom:2px;">🏪 '+esc(b.roaster)+'</div>':"")
-      +'<div style="font-weight:700;font-size:15px;color:#1c1c1e;margin-bottom:3px;">'+esc(b.name||"")+'</div>'
+      +'<div style="font-weight:700;font-size:'+(b.name&&b.name.length>20?'11px':b.name&&b.name.length>14?'13px':'15px')+';color:#1c1c1e;margin-bottom:3px;word-break:keep-all;overflow-wrap:break-word;line-height:1.35;">'+esc(b.name||"")+'</div>'
       +'<div style="font-size:11px;color:#8e8e93;margin-bottom:8px;">'+gFL(b.origin)+' '+(b.origin||"")+(b.region?" · "+b.region:"")+'</div>'
       +'<div style="display:flex;gap:4px;">'+(b.flavor||[]).slice(0,5).map(function(f){return '<span style="font-size:18px;">'+fe(f)+'</span>';}).join("")+'</div>'
       +(isDegassing?'<div style="font-size:11px;color:#2b6cb0;margin-top:6px;">'+dg.remaining+'일 후 음용 추천 · '+dg.degasEndDate+'까지</div>':"")
@@ -1051,6 +1051,38 @@ function render(){
     +(S.toast?'<div class="toast">'+S.toast+'</div>':"");
 }
 render();
+
+// ── History API — SPA 뒤로가기 처리
+function getHistoryState(){
+  return {tab:S.tab, detail:S.detail};
+}
+function pushHistory(){
+  history.pushState(getHistoryState(), "");
+}
+// 초기 상태 replace (첫 진입 시 스택 기준점)
+history.replaceState(getHistoryState(), "");
+
+window.addEventListener('popstate', function(e){
+  var state = e.state;
+  if(!state) return;
+  // 모달 열려있으면 모달만 닫기
+  if(S.showAdd||S.showDiary||S.showPw||S.showDegasEdit||S.guestId){
+    S.showAdd=false;S.showDiary=false;S.showPw=false;S.showDegasEdit=false;S.guestId=null;
+    S.pwAction=null;S.pwErr=false;
+    history.pushState(getHistoryState(),"");
+    render();
+    return;
+  }
+  // 상세 페이지 → 목록으로
+  if(S.detail && !state.detail){
+    S.detail=null;S.editMode=false;render();return;
+  }
+  // 탭 전환
+  S.tab=state.tab||"menu";
+  S.detail=state.detail||null;
+  S.editMode=false;
+  render();
+});
 
 // [수정] paste 이벤트 단일 등록 (window.handlePaste 제거 후 여기서만 처리)
 document.addEventListener('paste', function(e){
