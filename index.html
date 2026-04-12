@@ -966,7 +966,11 @@ function rDiary(){
       +'</div></div></div></div>';
   });
   if(!diaries.length) html+='<div style="text-align:center;padding:40px 0;color:#8e8e93;"><div style="font-size:36px;margin-bottom:12px;">📝</div>아직 기록이 없어요</div>';
-  return html+'</div>';
+  // 오늘 기록이 이미 있으면 FAB 버튼으로 추가 기록 제공
+  var fab = te
+    ? '<button onclick="openDiary()" style="position:fixed;bottom:80px;right:20px;width:52px;height:52px;border-radius:50%;background:#ff9f0a;color:#fff;font-size:22px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(255,159,10,0.4);z-index:80;display:flex;align-items:center;justify-content:center;">✍️</button>'
+    : "";
+  return html+'</div>'+fab;
 }
 
 function rDiaryModal(){
