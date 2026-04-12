@@ -121,7 +121,49 @@ const fe = function(n){
   }
   return "✨";
 };
-const PS = {"내추럴":{bg:"#fff5eb",c:"#c05e00",l:"Natural"},"워시드":{bg:"#eff6ff",c:"#1d4ed8",l:"Washed"},"허니":{bg:"#fefce8",c:"#a16207",l:"Honey"},"무산소":{bg:"#faf5ff",c:"#7e22ce",l:"Anaerobic"},"무산소 워시드":{bg:"#faf5ff",c:"#7e22ce",l:"Ana.Washed"},"발효 워시드":{bg:"#f0fdf4",c:"#166534",l:"Fermented"},"플라스틱백 발효 워시드":{bg:"#f0fdf4",c:"#14532d",l:"PB Fermented"}};
+// 뱃지 색상 있는 3종
+const PS = {
+  "내추럴": {bg:"#fff5eb",c:"#c05e00",l:"Natural"},
+  "워시드":  {bg:"#eff6ff",c:"#1d4ed8",l:"Washed"},
+  "허니":    {bg:"#fefce8",c:"#a16207",l:"Honey"},
+  // 회색 기타
+  "무산소":           {bg:"#f5f5f7",c:"#636366",l:"Anaerobic"},
+  "카보닉 마세라시옹": {bg:"#f5f5f7",c:"#636366",l:"Carbonic Mac."},
+  "웻헐드":           {bg:"#f5f5f7",c:"#636366",l:"Wet Hulled"}
+};
+// 가공방식 정규화
+const PROCESS_MAP = [
+  // 내추럴 계열
+  ["내추럴", ["natural","내추럴","건식","dry process","dry","unwashed","natural process",
+             "anaerobic natural","무산소 내추럴","anaerobic nat","asd","slow dry","슬로우 드라이",
+             "cold fermentation natural","콜드퍼멘테이션 내추럴","콜드 퍼멘테이션 내추럴"]],
+  // 워시드 계열
+  ["워시드", ["washed","워시드","fully washed","full washed","wet process","습식",
+             "anaerobic washed","무산소 워시드","anaerobic wash",
+             "cold fermentation washed","콜드퍼멘테이션 워시드","콜드 퍼멘테이션 워시드",
+             "발효 워시드","fermented washed","플라스틱백 발효 워시드","pb fermented"]],
+  // 허니 계열 (세부 통합)
+  ["허니", ["honey","허니","black honey","블랙 허니","red honey","레드 허니",
+            "yellow honey","옐로우 허니","white honey","화이트 허니",
+            "pulped natural","펄프드 내추럴","semi washed","semiwashed",
+            "anaerobic honey","무산소 허니","honey process","허니 프로세스"]],
+  // 회색 기타
+  ["무산소", ["anaerobic","무산소","anaerobic fermentation","무산소 발효",
+              "cold fermentation","콜드퍼멘테이션","콜드 퍼멘테이션"]],
+  ["카보닉 마세라시옹", ["carbonic maceration","카보닉 마세라시옹","carbonic","cm process","co2"]],
+  ["웻헐드", ["wet hulled","웻헐드","wet hull","giling basah","길링바사","wet-hulled"]]
+];
+function normProcess(p){
+  if(!p) return p;
+  var lo=p.toLowerCase().trim();
+  for(var i=0;i<PROCESS_MAP.length;i++){
+    var aliases=PROCESS_MAP[i][1];
+    for(var j=0;j<aliases.length;j++){
+      if(lo===aliases[j]||lo.indexOf(aliases[j])!==-1) return PROCESS_MAP[i][0];
+    }
+  }
+  return p;
+}
 const RC = {"라이트":"#f59e0b","미디엄라이트":"#d97706","미디엄":"#ea580c","미디엄다크":"#c2410c","다크":"#431407"};
 // 기존 데이터 호환: 구버전 배전도 값을 5단계로 정규화
 function normRL(r){
@@ -167,7 +209,7 @@ function normDripper(d){
   return d;
 }
 const FL = {"에티오피아":"🇪🇹","콜롬비아":"🇨🇴","과테말라":"🇬🇹","케냐":"🇰🇪","코스타리카":"🇨🇷","파나마":"🇵🇦","브라질":"🇧🇷","인도네시아":"🇮🇩","페루":"🇵🇪","르완다":"🇷🇼","예멘":"🇾🇪"};
-const gPS = p => PS[p]||{bg:"#f5f5f7",c:"#636366",l:p||""};
+const gPS = p => { var np=normProcess(p)||p; return PS[np]||{bg:"#f5f5f7",c:"#636366",l:np||""}; };
 const gFL = o => FL[o]||"🌍";
 const gRC = r => RC[normRL(r)]||"#ea580c";
 
@@ -176,13 +218,18 @@ function normalizeRecipe(r){
   if(!r) return {dripper:"",hot:{beans:"",grind:"",waterTemp:"",pour:""},iced:{beans:"",grind:"",waterTemp:"",pour:""}};
   // 이미 신규 구조 (hot이 object)
   if(r.hot && typeof r.hot==="object"){
+    var hotTemp=r.hot.waterTemp||"";
+    var icedTemp=r.iced&&r.iced.waterTemp||"";
+    // 한쪽에만 waterTemp 있으면 반대쪽에도 복사
+    if(hotTemp && !icedTemp) icedTemp=hotTemp;
+    if(icedTemp && !hotTemp) hotTemp=icedTemp;
     return {
       dripper:normDripper(r.dripper||""),
-      hot:{beans:r.hot.beans||"",grind:r.hot.grind||"",waterTemp:r.hot.waterTemp||"",pour:r.hot.pour||""},
-      iced:{beans:r.iced&&r.iced.beans||"",grind:r.iced&&r.iced.grind||"",waterTemp:r.iced&&r.iced.waterTemp||"",pour:r.iced&&r.iced.pour||""}
+      hot:{beans:r.hot.beans||"",grind:r.hot.grind||"",waterTemp:hotTemp,pour:r.hot.pour||""},
+      iced:{beans:r.iced&&r.iced.beans||"",grind:r.iced&&r.iced.grind||"",waterTemp:icedTemp,pour:r.iced&&r.iced.pour||""}
     };
   }
-  // 구버전 → 신규로 변환
+  // 구버전 → 신규로 변환 (waterTemp 공통 필드라 둘 다 동일하게)
   return {
     dripper:normDripper(r.dripper||""),
     hot:{beans:r.beans||"",grind:r.grind||"",waterTemp:r.waterTemp||"",pour:r.hot||""},
@@ -379,7 +426,7 @@ window.editScanImg = async function(input){
     var nr=normalizeRecipe(parsed.recipe);
     // 파싱 결과를 editData에 병합 (id, status, guestNotes 등 메타 필드는 유지)
     var fields=["name","roaster","origin","region","producer","variety","altitude","process","roastLevel","tagline"];
-    fields.forEach(function(k){ if(parsed[k]!==undefined&&parsed[k]!=="") S.editData[k]=k==="roastLevel"?normRL(parsed[k])||parsed[k]:parsed[k]; });
+    fields.forEach(function(k){ if(parsed[k]!==undefined&&parsed[k]!=="") S.editData[k]=k==="roastLevel"?normRL(parsed[k])||parsed[k]:k==="process"?normProcess(parsed[k])||parsed[k]:parsed[k]; });
     if(parsed.flavor&&parsed.flavor.length) S.editData.flavor=Array.isArray(parsed.flavor)?parsed.flavor.join(", "):parsed.flavor;
     S.editData.rDripper=nr.dripper||S.editData.rDripper;
     if(nr.hot.pour){ S.editData.rHotBeans=nr.hot.beans; S.editData.rHotGrind=nr.hot.grind; S.editData.rHotTemp=nr.hot.waterTemp; S.editData.rHotPour=nr.hot.pour; }
@@ -398,6 +445,7 @@ window.saveEdit = async function(){
   var e=S.editData;if(!e)return;
   var u=Object.assign({},e,{
     roastLevel:normRL(e.roastLevel)||e.roastLevel,
+    process:normProcess(e.process)||e.process,
     flavor:typeof e.flavor==="string"?e.flavor.split(",").map(function(x){return x.trim();}).filter(Boolean):e.flavor,
     recipe:{
       dripper:normDripper(e.rDripper||""),
@@ -444,6 +492,7 @@ window.saveBean = async function(){
   var e=S.addEdit;if(!e||!e.name.trim())return;
   var nb=Object.assign({},e,{
     roastLevel:normRL(e.roastLevel)||e.roastLevel,
+    process:normProcess(e.process)||e.process,
     flavor:typeof e.flavor==="string"?e.flavor.split(",").map(function(x){return x.trim();}).filter(Boolean):e.flavor,
     recipe:{
       dripper:normDripper(e.rDripper||""),
@@ -576,7 +625,14 @@ var PARSE_PROMPT = [
   "- producer: 농장명 / 생산자명 형태로 병기. 농장만 있으면 농장명만, 둘 다 있으면 '농장명 / 생산자명'",
   "- variety: 품종 한국어 변환 (Geisha→게이샤, Caturra→카투라, Bourbon→부르봉, Typica→티피카, Pacamara→파카마라, Pacas→파카스, Maragogipe→마라고지페, Mokka→모카, SL28→SL28, SL34→SL34, 숫자코드→그대로). '에티오피아 고유 원종' '토착 품종' 등 한국어 표현은 그대로 유지.",
   "- altitude: 고도 (숫자+m)",
-  "- process: 가공방식 한국어 (Natural→내추럴, Washed→워시드, Honey→허니, Anaerobic→무산소, Anaerobic Washed→무산소 워시드, 콜드퍼멘테이션→무산소, SlowDry→내추럴)",
+  "- process: 가공방식 한국어. 아래 중 하나로 매핑:",
+  "  · 내추럴: Natural, 건식, Dry Process, Unwashed, Anaerobic Natural, ASD, Slow Dry, Cold Fermentation Natural",
+  "  · 워시드: Washed, Fully Washed, Wet Process, Anaerobic Washed, Cold Fermentation Washed, Fermented Washed",
+  "  · 허니: Honey, Black/Red/Yellow/White Honey, Pulped Natural, Anaerobic Honey",
+  "  · 무산소: Anaerobic (건조방식 불명확할 때만), Cold Fermentation (건조방식 불명확)",
+  "  · 카보닉 마세라시옹: Carbonic Maceration, CM",
+  "  · 웻헐드: Wet Hulled, Giling Basah, Semi Washed",
+  "  무산소+내추럴→내추럴 / 무산소+워시드→워시드 / 무산소+허니→허니 로 통합. 건조방식 명확하면 내추럴/워시드/허니 우선.",
   "- roastLevel: 배전도 → 아래 5단계 중 하나로만 출력. 반드시 한국어로.",
   "  · 라이트: Light, 라이트, 약배전, 약볶음",
   "  · 미디엄라이트: Medium Light, Medium-Light, 중약배전, 중약볶음",
@@ -613,6 +669,7 @@ var PARSE_PROMPT = [
   "- hot/iced 원두량이 다르면 각각 다르게 저장",
   "- hot/iced 분쇄도가 다르면 각각 다르게 저장",
   "- hot/iced 물온도가 다르면 각각 다르게 저장",
+  "- 물온도가 하나만 명시된 경우(hot/iced 구분 없이) → hot과 iced 둘 다 동일하게 저장",
   "- 레시피 없으면 빈 객체 {}",
   "",
   "## 예시 1 (플레이버 카드 + Hot/Iced 레시피 분리)",
@@ -648,6 +705,8 @@ async function parseImg(file){
     S.addEdit=Object.assign({},parsed,{
       flavor:Array.isArray(parsed.flavor)?parsed.flavor.join(", "):(parsed.flavor||""),
       roaster:parsed.roaster||"",myNote:"",rating:4,status:"available",roastDate:"",startDate:"",
+      process:normProcess(parsed.process)||parsed.process||"",
+      roastLevel:normRL(parsed.roastLevel)||parsed.roastLevel||"",
       rDripper:nr.dripper,
       rHotBeans:nr.hot.beans,rHotGrind:nr.hot.grind,rHotTemp:nr.hot.waterTemp,rHotPour:nr.hot.pour,
       rIcedBeans:nr.iced.beans,rIcedGrind:nr.iced.grind,rIcedTemp:nr.iced.waterTemp,rIcedPour:nr.iced.pour
@@ -677,6 +736,13 @@ function mkDripper(val,fn){
   var norm=normDripper(val)||val||"";
   return '<select style="'+IS+'appearance:none;-webkit-appearance:none;" onchange="'+fn+'">'
     +keys.map(function(k){return '<option value="'+k+'"'+(norm===k?' selected':'')+'>'+(k||'선택 안함')+'</option>';}).join('')
+    +'</select>';
+}
+function mkProcess(val,fn){
+  var keys=["내추럴","워시드","허니","무산소","무산소 내추럴","무산소 워시드","무산소 허니","카보닉 마세라시옹","웻헐드"];
+  var norm=normProcess(val)||val||"";
+  return '<select style="'+IS+'appearance:none;-webkit-appearance:none;" onchange="'+fn+'">'
+    +keys.map(function(k){return '<option value="'+k+'"'+(norm===k?' selected':'')+'>'+k+'</option>';}).join('')
     +'</select>';
 }
 function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
@@ -847,7 +913,7 @@ function rDetail(id){
       +'<div class="g2">'
       +'<div>'+mkLbl("원산지")+mkInp(e.origin,"editInput('origin',this.value)")+'</div>'
       +'<div>'+mkLbl("지역")+mkInp(e.region,"editInput('region',this.value)")+'</div>'
-      +'<div>'+mkLbl("가공방식")+mkInp(e.process,"editInput('process',this.value)")+'</div>'
+      +'<div>'+mkLbl("가공방식")+mkProcess(e.process,"editInput('process',this.value)")+'</div>'
       +'<div>'+mkLbl("배전도")+mkRL(e.roastLevel,"editInput('roastLevel',this.value)")+'</div>'
       +'<div>'+mkLbl("로스팅 일자")+mkDate(e.roastDate,"editInput('roastDate',this.value)")+'</div>'
       +'<div>'+mkLbl("소비 시작일")+mkDate(e.startDate,"editInput('startDate',this.value)")+'</div>'
@@ -1065,7 +1131,7 @@ function rAdd(){
       + '<div class="g2">'
       + '<div>'+mkLbl("원산지")+mkInp(e.origin,"addInput('origin',this.value)")+'</div>'
       + '<div>'+mkLbl("지역")+mkInp(e.region,"addInput('region',this.value)")+'</div>'
-      + '<div>'+mkLbl("가공방식")+mkInp(e.process,"addInput('process',this.value)")+'</div>'
+      + '<div>'+mkLbl("가공방식")+mkProcess(e.process,"addInput('process',this.value)")+'</div>'
       + '<div>'+mkLbl("배전도")+mkRL(e.roastLevel,"addInput('roastLevel',this.value)")+'</div>'
       + '<div>'+mkLbl("로스팅 일자")+mkDate(e.roastDate,"addInput('roastDate',this.value)")+'</div>'
       + '<div>'+mkLbl("소비 시작일")+mkDate(e.startDate,"addInput('startDate',this.value)")+'</div>'
@@ -1467,12 +1533,12 @@ window.migrateAllBeans=async function(){
     var b=beans[i];
     try{
       var newRL=normRL(b.roastLevel);
+      var newProcess=normProcess(b.process);
       var newRecipe=normalizeRecipe(b.recipe);
       var changed=false;
       var upd={};
-      // 배전도 변경 필요 여부
       if(newRL && newRL!==b.roastLevel){upd.roastLevel=newRL; changed=true;}
-      // recipe 변경 필요 여부: 구버전이면 hot이 string이거나 beans 필드 존재
+      if(newProcess && newProcess!==b.process){upd.process=newProcess; changed=true;}
       var isOldRecipe=b.recipe&&(typeof b.recipe.hot==="string"||b.recipe.beans!==undefined);
       if(isOldRecipe){upd.recipe=newRecipe; changed=true;}
       if(changed){
