@@ -194,7 +194,7 @@ let S = {
   guestId:null, guestForm:{name:"",note:""},
   filter:"all", recOpen:null,
   showPw:false, pwAction:null, pwErr:false,
-  showDiary:false, diaryForm:{mood:"☀️",beanId:"",note:"",rating:4,brewType:"hot"}, diaryEditId:null,
+  showDiary:false, diaryForm:{mood:"☀️",cups:[{beanId:"",brewType:"hot"}],note:"",rating:4}, diaryEditId:null,
   showDegasEdit:false, degasEdit:null,
   toast:"", toastT:null
 };
@@ -352,8 +352,8 @@ window.deleteGuest = function(beanId, idx){
 window.openDiary = function(){
   requirePw(function(){
     S.showDiary=true;S.diaryEditId=null;
-    var avail=beans.find(function(b){return b.status==="available";});
-    S.diaryForm={mood:"☀️",beanId:avail?avail.id:"",note:"",rating:4,brewType:"hot"};
+    var avail=beans.find(function(b){return b.status==="available"&&getDegasInfo(b).status!=="degassing";});
+    S.diaryForm={mood:"☀️",cups:[{beanId:avail?avail.id:"",brewType:"hot"}],note:"",rating:4};
     render();setTimeout(function(){var el=document.getElementById("diary-note");if(el)el.focus();},100);
   });
 };
@@ -361,17 +361,28 @@ window.openDiaryEdit = function(id){
   requirePw(function(){
     var d=diaries.find(function(x){return x.id===id;});if(!d)return;
     S.diaryEditId=id;
-    S.diaryForm={mood:d.mood||"☀️",beanId:d.beanId||"",note:d.note||"",rating:d.rating||4,brewType:d.brewType||"hot"};
+    // cups 배열 복원 (기존 beanId/beanId2 호환)
+    var cups=d.cups&&d.cups.length?d.cups:[{beanId:d.beanId||"",brewType:d.brewType||"hot"}];
+    if(!d.cups&&d.beanId2) cups.push({beanId:d.beanId2,brewType:d.brewType2||"hot"});
+    S.diaryForm={mood:d.mood||"☀️",cups:cups,note:d.note||"",rating:d.rating||4};
     S.showDiary=true;
     render();setTimeout(function(){var el=document.getElementById("diary-note");if(el)el.focus();},100);
   });
 };
 window.closeDiary = function(){S.showDiary=false;S.diaryEditId=null;render();};
 window.diaryInput = function(k,v){S.diaryForm[k]=v;if(k!=="note")render();};
+window.cupInput = function(idx,k,v){if(S.diaryForm.cups[idx])S.diaryForm.cups[idx][k]=v;render();};
+window.addCup = function(){S.diaryForm.cups.push({beanId:"",brewType:"hot"});render();};
+window.removeCup = function(idx){if(S.diaryForm.cups.length>1)S.diaryForm.cups.splice(idx,1);render();};
 window.saveDiary = async function(){
   var f=S.diaryForm;if(!f.note.trim())return;
   var b=beans.find(function(x){return x.id===f.beanId;});
-  var data={mood:f.mood,beanId:f.beanId,beanName:(b&&b.name)||"",note:f.note,rating:f.rating,brewType:f.brewType||"hot"};
+  var cups=(f.cups||[{beanId:f.beanId||"",brewType:f.brewType||"hot"}]).map(function(c){
+    var cb=beans.find(function(x){return x.id===c.beanId;});
+    return {beanId:c.beanId||"",beanName:(cb&&cb.name)||"",brewType:c.brewType||"hot"};
+  });
+  // 하위 호환: 첫 번째 잔을 최상위 필드에도 저장
+  var data={mood:f.mood,beanId:cups[0].beanId,beanName:cups[0].beanName,note:f.note,rating:f.rating,brewType:cups[0].brewType,cups:cups};
   if(S.diaryEditId){
     await updateDoc(doc(db,"diary",S.diaryEditId),data);
     S.diaryEditId=null;showToast("일기가 수정됐어요 ✅");
@@ -910,7 +921,10 @@ function rDiary(){
       +'</div>';
   } else {
     var mc=MC[te.mood]||"#f5f5f7";
-    var btag=te.brewType?'<div style="display:inline-flex;align-items:center;gap:5px;background:'+(te.brewType==="iced"?"#eff6ff":"#fff5eb")+';color:'+(te.brewType==="iced"?"#1d4ed8":"#c05e00")+';border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;margin-bottom:8px;">'+(te.brewType==="iced"?"🧊 Iced":"☀️ Hot")+'</div>':"";
+    var teCups=te.cups&&te.cups.length?te.cups:(te.beanId?[{beanId:te.beanId,beanName:te.beanName,brewType:te.brewType||"hot"}]:[]);
+    var btag=teCups.map(function(c,ci){
+      return '<div style="display:inline-flex;align-items:center;gap:4px;background:'+(c.brewType==="iced"?"#eff6ff":"#fff5eb")+';color:'+(c.brewType==="iced"?"#1d4ed8":"#c05e00")+';border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;margin-bottom:6px;margin-right:4px;">'+(c.brewType==="iced"?"🧊":"☀️")+(ci>0?" "+(ci+1)+"잔":"")+(c.beanName?" · "+esc(c.beanName):"")+'</div>';
+    }).join("");
     html+='<div style="background:#fff;border-radius:20px;margin-bottom:14px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.07);">'
       +'<div style="background:'+mc+';padding:16px 18px;display:flex;justify-content:space-between;align-items:center;">'
       +'<div><div style="font-size:11px;color:#8e8e93;">오늘 · '+te.date+'</div>'
@@ -932,7 +946,10 @@ function rDiary(){
   if(prev.length) html+='<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#8e8e93;margin:20px 2px 10px;">이전 기록</div>';
   prev.forEach(function(d,i){
     var mc=MC[d.mood]||"#f5f5f7";
-    var btag=d.brewType?'<div style="display:inline-flex;align-items:center;gap:5px;background:'+(d.brewType==="iced"?"#eff6ff":"#fff5eb")+';color:'+(d.brewType==="iced"?"#1d4ed8":"#c05e00")+';border-radius:20px;padding:2px 9px;font-size:10px;font-weight:600;margin-bottom:7px;">'+(d.brewType==="iced"?"🧊 Iced":"☀️ Hot")+'</div>':"";
+    var dCups=d.cups&&d.cups.length?d.cups:(d.beanId?[{beanId:d.beanId,beanName:d.beanName,brewType:d.brewType||"hot"}]:[]);
+    var btag=dCups.map(function(c,ci){
+      return '<div style="display:inline-flex;align-items:center;gap:4px;background:'+(c.brewType==="iced"?"#eff6ff":"#fff5eb")+';color:'+(c.brewType==="iced"?"#1d4ed8":"#c05e00")+';border-radius:20px;padding:2px 9px;font-size:10px;font-weight:600;margin-bottom:6px;margin-right:4px;">'+(c.brewType==="iced"?"🧊":"☀️")+(ci>0?" "+(ci+1)+"잔":"")+(c.beanName?" · "+esc(c.beanName):"")+'</div>';
+    }).join("");
     html+='<div class="cani" style="background:#fff;border-radius:16px;margin-bottom:10px;overflow:hidden;border:0.5px solid rgba(0,0,0,0.06);box-shadow:0 1px 8px rgba(0,0,0,0.05);animation-delay:'+(i*.04)+'s;">'
       +'<div style="background:'+mc+';padding:12px 16px;display:flex;justify-content:space-between;align-items:center;">'
       +'<div><div style="font-size:11px;color:#8e8e93;">'+d.date+'</div>'
@@ -967,21 +984,30 @@ function rDiaryModal(){
     +'<label style="'+IL+'">오늘의 기분</label>'
     +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px;">'
     +moods.map(function(x){var m=x[0],l=x[1],on=f.mood===m;return '<button onclick="diaryInput(\'mood\',\''+m+'\')" style="display:flex;flex-direction:column;align-items:center;padding:10px 12px;border-radius:14px;border:2px solid '+(on?'#ff9f0a':'#e5e5ea')+';background:'+(on?'#fff9f0':'#fff')+';cursor:pointer;font-family:inherit;min-width:52px;"><span style="font-size:22px;">'+m+'</span><span style="font-size:10px;color:'+(on?'#ff9f0a':'#8e8e93')+';margin-top:3px;font-weight:'+(on?'600':'400')+';">'+l+'</span></button>';}).join("")
-    +'</div>'
-    +'<label style="'+IL+'">추출 방식</label>'
-    +'<div style="display:flex;gap:10px;margin-bottom:4px;">'
-    +'<button onclick="diaryInput(\'brewType\',\'hot\')" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:14px;border:2.5px solid '+(f.brewType==='hot'?'#ff9f0a':'#e5e5ea')+';background:'+(f.brewType==='hot'?'#fff9f0':'#fafafa')+';cursor:pointer;font-family:inherit;font-size:15px;font-weight:700;color:'+(f.brewType==='hot'?'#c05e00':'#c7c7cc')+';box-shadow:'+(f.brewType==='hot'?'0 0 0 4px rgba(255,159,10,0.12)':'none')+';">☀️ Hot</button>'
-    +'<button onclick="diaryInput(\'brewType\',\'iced\')" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:14px;border:2.5px solid '+(f.brewType==='iced'?'#1d4ed8':'#e5e5ea')+';background:'+(f.brewType==='iced'?'#eff6ff':'#fafafa')+';cursor:pointer;font-family:inherit;font-size:15px;font-weight:700;color:'+(f.brewType==='iced'?'#1d4ed8':'#c7c7cc')+';box-shadow:'+(f.brewType==='iced'?'0 0 0 4px rgba(29,78,216,0.1)':'none')+';">🧊 Iced</button>'
     +'</div>';
 
-  if(avail.length){
-    html+='<label style="'+IL+'">오늘 마신 원두</label>'
-      +'<select onchange="diaryInput(\'beanId\',this.value)" style="'+IS+'appearance:none;">'
-      +'<option value="">선택 안함</option>'
-      +avail.map(function(b){return '<option value="'+b.id+'"'+(f.beanId===b.id?" selected":"")+'>'+esc(b.name)+'</option>';}).join("")
-      +'</select>';
+  var avail2=beans.filter(function(b){return b.status==="available"&&getDegasInfo(b).status!=="degassing";});
+  var cups=f.cups||[{beanId:"",brewType:"hot"}];
+  if(avail2.length){
+    cups.forEach(function(cup,ci){
+      var label=ci===0?"첫 번째 잔":"두 번째 잔"+(ci>1?" ("+( ci+1)+"번째)":"");
+      html+='<div style="background:#f9f9f9;border-radius:14px;padding:12px 14px;margin-top:12px;border:1px solid #e5e5ea;">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
+        +'<label style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#8e8e93;">'+label+'</label>'
+        +(ci>0?'<button onclick="removeCup('+ci+')" style="background:none;border:none;color:#ff3b30;font-size:12px;cursor:pointer;font-family:inherit;padding:0;">✕ 제거</button>':"")
+        +'</div>'
+        +'<select onchange="cupInput('+ci+',\'beanId\',this.value)" style="'+IS+'appearance:none;margin-bottom:8px;">'
+        +'<option value="">선택 안함</option>'
+        +avail2.map(function(b){return '<option value="'+b.id+'"'+(cup.beanId===b.id?" selected":"")+'>'+esc(b.name)+'</option>';}).join("")
+        +'</select>'
+        +'<div style="display:flex;gap:8px;">'
+        +'<button onclick="cupInput('+ci+',\'brewType\',\'hot\')" style="flex:1;padding:8px;border-radius:10px;border:2px solid '+(cup.brewType==="hot"?"#ff9f0a":"#e5e5ea")+';background:'+(cup.brewType==="hot"?"#fff9f0":"#fafafa")+';cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;color:'+(cup.brewType==="hot"?"#c05e00":"#c7c7cc")+';">☀️ Hot</button>'
+        +'<button onclick="cupInput('+ci+',\'brewType\',\'iced\')" style="flex:1;padding:8px;border-radius:10px;border:2px solid '+(cup.brewType==="iced"?"#1d4ed8":"#e5e5ea")+';background:'+(cup.brewType==="iced"?"#eff6ff":"#fafafa")+';cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;color:'+(cup.brewType==="iced"?"#1d4ed8":"#c7c7cc")+';">🧊 Iced</button>'
+        +'</div>'
+        +'</div>';
+    });
+    html+='<button onclick="addCup()" style="width:100%;margin-top:10px;background:#f5f5f7;color:#636366;border:1.5px dashed #d1d1d6;border-radius:12px;padding:10px;font-size:13px;font-family:inherit;cursor:pointer;">+ 한 잔 더 추가</button>';
   }
-
   html+=mkLbl("오늘의 한 마디")
     +'<textarea id="diary-note" oninput="diaryInput(\'note\',this.value)" placeholder="오늘 커피는 어땠나요? ☕" style="'+IS+'resize:none;min-height:100px;">'+esc(f.note)+'</textarea>'
     +'<label style="'+IL+';margin-top:14px;">오늘의 커피 점수</label>'
