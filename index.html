@@ -49,7 +49,7 @@ textarea.inp{resize:none;min-height:80px;}
 <div id="app"></div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const WK = "https://ozy-house-proxy.okgo-levelup.workers.dev";
 const AH = "ac2a41af69b8320d2205a77620e8ed776df54a41b707004272f028807f467c17";
@@ -59,6 +59,7 @@ const app = initializeApp({apiKey:"AIzaSyAA_PfyKj3XQd-2Bul-NcuTILNeN2-u0iY",auth
 const db = getFirestore(app);
 const BC = collection(db,"beans");
 const DC = collection(db,"diary");
+const SC = doc(db,"settings","admin");
 
 const EMO = {"무화과":"🫐","베르가못":"🍋‍🟩","복숭아":"🍑","포도":"🍇","자스민":"🌸","레몬":"🍋","홍차":"🍵","후르트링":"🥣","초콜릿":"🍫","다크초콜릿":"🍫","캐러멜":"🍮","견과류":"🌰","사과":"🍎","오렌지":"🍊","딸기":"🍓","블루베리":"🫐","체리":"🍒","망고":"🥭","파인애플":"🍍","바닐라":"🍦","허브":"🌿","장미":"🌹","아몬드":"🌰","헤이즐넛":"☕","꿀":"🍯","라즈베리":"🍓","감귤":"🍊","멜론":"🍈","자두":"🍑","살구":"🍑","패션후르츠":"🌺","시트러스":"🍋","캐모마일":"🌼","얼그레이":"🍵","크랜베리":"🍒","키위":"🥝","화이트 플로럴":"🌼","청사과":"🍏","슈가 케인":"🌾","팝콘":"🍿","수박":"🍉","white floral":"🌼","green apple":"🍏","sugar cane":"🌾","floral":"🌸","apple":"🍎","peach":"🍑","jasmine":"🌸","lemon":"🍋","orange":"🍊","strawberry":"🍓","raspberry":"🍓","blueberry":"🫐","chocolate":"🍫","caramel":"🍮","vanilla":"🍦","honey":"🍯","grape":"🍇","cherry":"🍒","mango":"🥭","melon":"🍈"};
 // 카테고리별 키워드 부분 매칭
@@ -121,16 +122,32 @@ const fe = function(n){
   return "✨";
 };
 const PS = {"내추럴":{bg:"#fff5eb",c:"#c05e00",l:"Natural"},"워시드":{bg:"#eff6ff",c:"#1d4ed8",l:"Washed"},"허니":{bg:"#fefce8",c:"#a16207",l:"Honey"},"무산소":{bg:"#faf5ff",c:"#7e22ce",l:"Anaerobic"},"무산소 워시드":{bg:"#faf5ff",c:"#7e22ce",l:"Ana.Washed"},"발효 워시드":{bg:"#f0fdf4",c:"#166534",l:"Fermented"},"플라스틱백 발효 워시드":{bg:"#f0fdf4",c:"#14532d",l:"PB Fermented"}};
-const RC = {"라이트":"#f59e0b","미디엄":"#ea580c","중약배전":"#d97706","중배전":"#ea580c","미디엄다크":"#c2410c","다크":"#431407"};
+const RC = {"라이트":"#f59e0b","미디엄라이트":"#d97706","미디엄":"#ea580c","미디엄다크":"#c2410c","다크":"#431407"};
+// 기존 데이터 호환: 구버전 배전도 값을 5단계로 정규화
+function normRL(r){
+  if(!r) return "";
+  var m={"중약배전":"미디엄라이트","중배전":"미디엄","medium light":"미디엄라이트","medium-light":"미디엄라이트","medium dark":"미디엄다크","medium-dark":"미디엄다크","light":"라이트","medium":"미디엄","dark":"다크"};
+  return m[r]||m[r.toLowerCase()]||r;
+}
 const FL = {"에티오피아":"🇪🇹","콜롬비아":"🇨🇴","과테말라":"🇬🇹","케냐":"🇰🇪","코스타리카":"🇨🇷","파나마":"🇵🇦","브라질":"🇧🇷","인도네시아":"🇮🇩","페루":"🇵🇪","르완다":"🇷🇼","예멘":"🇾🇪"};
 const gPS = p => PS[p]||{bg:"#f5f5f7",c:"#636366",l:p||""};
 const gFL = o => FL[o]||"🌍";
-const gRC = r => RC[r]||"#ea580c";
+const gRC = r => RC[normRL(r)]||"#ea580c";
+
+// ── 설정 기본값
+const DEFAULT_SETTINGS = {
+  degasDays:{"라이트":12,"미디엄라이트":9,"미디엄":7,"미디엄다크":5,"다크":4},
+  degasHideMenu:true,
+  degasHideDiary:true
+};
+let settings = Object.assign({},DEFAULT_SETTINGS,{degasDays:Object.assign({},DEFAULT_SETTINGS.degasDays)});
 
 // ── 디게싱 계산
 // 배전도별 기본 디게싱 일수
-const DEGAS_DAYS = {"라이트":12,"미디엄":8,"중약배전":8,"중배전":6,"미디엄다크":5,"다크":4};
-function getDegasDays(roastLevel){ return DEGAS_DAYS[roastLevel]||8; }
+function getDegasDays(roastLevel){
+  var rl=normRL(roastLevel);
+  return (settings.degasDays&&settings.degasDays[rl])||DEFAULT_SETTINGS.degasDays[rl]||8;
+}
 
 // 오늘 기준 디게싱 상태 계산
 // 반환: {status:"degassing"|"ready"|"none", daysSince:N, degasEndDate:"YYYY-MM-DD", remaining:N}
@@ -196,7 +213,9 @@ let S = {
   showPw:false, pwAction:null, pwErr:false,
   showDiary:false, diaryForm:{mood:"☀️",cups:[{beanId:"",brewType:"hot"}],note:"",rating:4}, diaryEditId:null,
   showDegasEdit:false, degasEdit:null,
-  toast:"", toastT:null
+  showAdmin:false, adminTab:"degas",
+  toast:"", toastT:null,
+  titleTap:0, titleTapT:null
 };
 
 // ── [수정] streak 계산을 렌더 외부에서 캐싱
@@ -213,7 +232,18 @@ function calcStreak(ds){
 onSnapshot(BC, s=>{beans=s.docs.map(d=>({id:d.id,...d.data()}));render();});
 onSnapshot(DC, s=>{
   diaries=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>b.date.localeCompare(a.date));
-  cachedStreak=calcStreak(diaries); // [수정] 데이터 변경 시에만 재계산
+  cachedStreak=calcStreak(diaries);
+  render();
+});
+onSnapshot(SC, s=>{
+  var d=s.data();
+  if(d){
+    settings=Object.assign({},DEFAULT_SETTINGS,d,{
+      degasDays:Object.assign({},DEFAULT_SETTINGS.degasDays,d.degasDays||{})
+    });
+  } else {
+    settings=Object.assign({},DEFAULT_SETTINGS,{degasDays:Object.assign({},DEFAULT_SETTINGS.degasDays)});
+  }
   render();
 });
 
@@ -258,6 +288,7 @@ window.openEdit = function(id){
     S.detail=id;S.editMode=true;
     var b=beans.find(function(x){return x.id===id;});
     if(b) S.editData=Object.assign({},b,{
+      roastLevel:normRL(b.roastLevel)||b.roastLevel||"미디엄",
       flavor:Array.isArray(b.flavor)?b.flavor.join(", "):(b.flavor||""),
       rDripper:(b.recipe&&b.recipe.dripper)||"",rBeans:(b.recipe&&b.recipe.beans)||"",
       rTemp:(b.recipe&&b.recipe.waterTemp)||"",rGrind:(b.recipe&&b.recipe.grind)||"",
@@ -271,6 +302,7 @@ window.editInput = function(k,v){if(S.editData)S.editData[k]=v;};
 window.saveEdit = async function(){
   var e=S.editData;if(!e)return;
   var u=Object.assign({},e,{
+    roastLevel:normRL(e.roastLevel)||e.roastLevel,
     flavor:typeof e.flavor==="string"?e.flavor.split(",").map(function(x){return x.trim();}).filter(Boolean):e.flavor,
     recipe:{dripper:e.rDripper||"",beans:e.rBeans||"",waterTemp:e.rTemp||"",grind:e.rGrind||"",hot:e.rHot||"",iced:e.rIced||""}
   });
@@ -310,6 +342,7 @@ window.addInput = function(k,v){if(S.addEdit)S.addEdit[k]=v;};
 window.saveBean = async function(){
   var e=S.addEdit;if(!e||!e.name.trim())return;
   var nb=Object.assign({},e,{
+    roastLevel:normRL(e.roastLevel)||e.roastLevel,
     flavor:typeof e.flavor==="string"?e.flavor.split(",").map(function(x){return x.trim();}).filter(Boolean):e.flavor,
     recipe:{dripper:e.rDripper||"",beans:e.rBeans||"",waterTemp:e.rTemp||"",grind:e.rGrind||"",hot:e.rHot||"",iced:e.rIced||""},
     guestNotes:[],status:e.status||"available"
@@ -352,7 +385,7 @@ window.deleteGuest = function(beanId, idx){
 window.openDiary = function(){
   requirePw(function(){
     S.showDiary=true;S.diaryEditId=null;
-    var avail=beans.find(function(b){return b.status==="available"&&getDegasInfo(b).status!=="degassing";});
+    var avail=beans.find(function(b){return b.status==="available"&&(!settings.degasHideDiary||getDegasInfo(b).status!=="degassing");});
     S.diaryForm={mood:"☀️",cups:[{beanId:avail?avail.id:"",brewType:"hot"}],note:"",rating:4};
     render();setTimeout(function(){var el=document.getElementById("diary-note");if(el)el.focus();},100);
   });
@@ -438,7 +471,13 @@ var PARSE_PROMPT = [
   "- variety: 품종 한국어 표기 변환 (Geisha→게이샤, Caturra→카투라, Bourbon→부르봉, Typica→티피카, Pacamara→파카마라, Pacas→파카스, Maragogipe→마라고지페, Mokka→모카, SL28→SL28, SL34→SL34, 숫자코드→그대로, 이미 한국어면 그대로)",
   "- altitude: 고도 (숫자+m)",
   "- process: 가공방식 한국어 (Natural→내추럴, Washed→워시드, Honey→허니, Anaerobic→무산소, 콜드퍼멘테이션→무산소, SlowDry→내추럴로 처리)",
-  "- roastLevel: 배전도 한국어 (Light→라이트, Medium→미디엄, MediumDark→미디엄다크, Dark→다크, 중약배전→중약배전, 중배전→중배전)",
+  "- roastLevel: 배전도 → 아래 5단계 중 하나로만 출력. 반드시 한국어로.",
+  "  · 라이트: Light, 라이트, 약배전, 약볶음",
+  "  · 미디엄라이트: Medium Light, Medium-Light, 중약배전, 중약볶음, 미디엄 라이트",
+  "  · 미디엄: Medium, 미디엄, 중배전, 중볶음, 보통",
+  "  · 미디엄다크: Medium Dark, Medium-Dark, 중강배전, 중강볶음, 미디엄 다크",
+  "  · 다크: Dark, 다크, 강배전, 강볶음, 풀시티, Full City, French, Italian",
+  "  애매하면 가장 가까운 단계 선택. 절대 이 5가지 외 값 출력 금지.",
   "- flavor: 플레이버 배열 — 이미지에 명시된 플레이버 단어/아이콘 텍스트만. 설명문장 제외",
   "- tagline: 원두를 한 문장으로 표현한 문구 (대시(--)로 감싸인 문구 우선)",
   "- recipe.dripper: 드리퍼 기구명 (v60, 칼리타 등)",
@@ -517,6 +556,13 @@ function mkLbl(t){return '<label style="'+IL+'">'+t+'</label>';}
 function mkInp(val,fn){return '<input style="'+IS+'" value="'+esc(val)+'" oninput="'+fn+'">';}
 function mkDate(val,fn){return '<input type="date" style="'+IS+'" value="'+esc(val)+'" onchange="'+fn+'">';}
 function mkTA(val,fn,ph){return '<textarea style="'+IS+'resize:none;min-height:80px;" oninput="'+fn+'" placeholder="'+esc(ph||"")+'">'+esc(val)+'</textarea>';}
+function mkRL(val,fn){
+  var levels=["라이트","미디엄라이트","미디엄","미디엄다크","다크"];
+  var norm=normRL(val)||val;
+  return '<select style="'+IS+'appearance:none;-webkit-appearance:none;" onchange="'+fn+'">'
+    +levels.map(function(l){return '<option value="'+l+'"'+(norm===l?' selected':'')+'>'+l+'</option>';}).join('')
+    +'</select>';
+}
 function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 
 function rGuestNotes(notes, beanId){
@@ -533,7 +579,7 @@ function rGuestNotes(notes, beanId){
 }
 
 function rMenu(){
-  var avail=beans.filter(function(b){return b.status==="available"&&getDegasInfo(b).status!=="degassing";});
+  var avail=beans.filter(function(b){return b.status==="available"&&(!settings.degasHideMenu||getDegasInfo(b).status!=="degassing");});
   // 디게싱 중인 원두 중 가장 빨리 끝나는 것의 남은 일수
   var degasBeans=beans.filter(function(b){return b.status==="available"&&getDegasInfo(b).status==="degassing";});
   var nextDegas=null;
@@ -545,7 +591,7 @@ function rMenu(){
   avail.forEach(function(b){(b.flavor||[]).slice(0,2).forEach(function(f){if(topFlavors.indexOf(f)===-1)topFlavors.push(f);});});
   var html='<div style="'+HG+';padding:52px 22px 28px;text-align:center;position:relative;overflow:hidden;">'
     +'<div style="position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(255,159,10,0.12),transparent 70%);border-radius:50%;pointer-events:none;"></div>'
-    +'<div class="bebas" style="font-size:58px;color:#fff;line-height:1;margin-bottom:6px;letter-spacing:2px;">OZY HOUSE</div>'
+    +'<div class="bebas" style="font-size:58px;color:#fff;line-height:1;margin-bottom:6px;letter-spacing:2px;cursor:default;" onclick="titleTap()">OZY HOUSE</div>'
     +'<div style="font-size:12px;letter-spacing:3px;color:rgba(255,255,255,0.45);text-transform:uppercase;margin-bottom:16px;">Bean Lineup</div>'
     +'<div style="background:rgba(255,159,10,0.15);border:1px solid rgba(255,159,10,0.3);border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:10px;text-align:left;">'
     +'<span style="font-size:24px;">☕</span>'
@@ -666,7 +712,7 @@ function rDetail(id){
       +'<div>'+mkLbl("원산지")+mkInp(e.origin,"editInput('origin',this.value)")+'</div>'
       +'<div>'+mkLbl("지역")+mkInp(e.region,"editInput('region',this.value)")+'</div>'
       +'<div>'+mkLbl("가공방식")+mkInp(e.process,"editInput('process',this.value)")+'</div>'
-      +'<div>'+mkLbl("배전도")+mkInp(e.roastLevel,"editInput('roastLevel',this.value)")+'</div>'
+      +'<div>'+mkLbl("배전도")+mkRL(e.roastLevel,"editInput('roastLevel',this.value)")+'</div>'
       +'<div>'+mkLbl("로스팅 일자")+mkDate(e.roastDate,"editInput('roastDate',this.value)")+'</div>'
       +'<div>'+mkLbl("소비 시작일")+mkDate(e.startDate,"editInput('startDate',this.value)")+'</div>'
       +'<div>'+mkLbl("디게싱 시작일 (기본:로스팅일)")+mkDate(e.degasDate||e.roastDate||"",'editInput("degasDate",this.value)')+'</div>'
@@ -852,7 +898,7 @@ function rAdd(){
       + '<div>'+mkLbl("원산지")+mkInp(e.origin,"addInput('origin',this.value)")+'</div>'
       + '<div>'+mkLbl("지역")+mkInp(e.region,"addInput('region',this.value)")+'</div>'
       + '<div>'+mkLbl("가공방식")+mkInp(e.process,"addInput('process',this.value)")+'</div>'
-      + '<div>'+mkLbl("배전도")+mkInp(e.roastLevel,"addInput('roastLevel',this.value)")+'</div>'
+      + '<div>'+mkLbl("배전도")+mkRL(e.roastLevel,"addInput('roastLevel',this.value)")+'</div>'
       + '<div>'+mkLbl("로스팅 일자")+mkDate(e.roastDate,"addInput('roastDate',this.value)")+'</div>'
       + '<div>'+mkLbl("소비 시작일")+mkDate(e.startDate,"addInput('startDate',this.value)")+'</div>'
       + '<div>'+mkLbl("디게싱 시작일 (기본:로스팅일)")+mkDate(e.degasDate||"","addInput('degasDate',this.value)")+'</div>'
@@ -1000,7 +1046,7 @@ function rDiaryModal(){
     +moods.map(function(x){var m=x[0],l=x[1],on=f.mood===m;return '<button onclick="diaryInput(\'mood\',\''+m+'\')" style="display:flex;flex-direction:column;align-items:center;padding:10px 12px;border-radius:14px;border:2px solid '+(on?'#ff9f0a':'#e5e5ea')+';background:'+(on?'#fff9f0':'#fff')+';cursor:pointer;font-family:inherit;min-width:52px;"><span style="font-size:22px;">'+m+'</span><span style="font-size:10px;color:'+(on?'#ff9f0a':'#8e8e93')+';margin-top:3px;font-weight:'+(on?'600':'400')+';">'+l+'</span></button>';}).join("")
     +'</div>';
 
-  var avail2=beans.filter(function(b){return b.status==="available"&&getDegasInfo(b).status!=="degassing";});
+  var avail2=beans.filter(function(b){return b.status==="available"&&(!settings.degasHideDiary||getDegasInfo(b).status!=="degassing");});
   var cups=f.cups||[{beanId:"",brewType:"hot"}];
   if(avail2.length){
     cups.forEach(function(cup,ci){
@@ -1057,6 +1103,175 @@ function rDegasModal(){
     +'</div></div></div>';
 }
 
+function mkToggle(val, fn){
+  return '<div onclick="'+fn+'" style="width:42px;height:24px;border-radius:12px;background:'+(val?'#34c759':'#d1d1d6')+';position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;">'
+    +'<div style="position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;'+(val?'right:3px':'left:3px')+';transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div>'
+    +'</div>';
+}
+
+function rAdmin(){
+  var at=S.adminTab;
+  var tabs=[["degas","🫧 디게싱"],["behavior","⚙️ 동작"],["data","💾 데이터"]];
+  var roastLevels=["라이트","미디엄라이트","미디엄","미디엄다크","다크"];
+
+  var RS='width:100%;border:1px solid #d1d1d6;border-radius:10px;padding:9px 12px;font-size:13px;font-family:inherit;background:#f5f5f7;color:#1c1c1e;outline:none;box-sizing:border-box;';
+  var ROW='display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:0.5px solid rgba(0,0,0,0.06);';
+  var ROWLAST='display:flex;align-items:center;justify-content:space-between;padding:13px 16px;';
+  var CARD='background:#fff;border-radius:16px;border:0.5px solid rgba(0,0,0,0.08);margin-bottom:16px;overflow:hidden;';
+  var SEC_LBL='font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#8e8e93;margin-bottom:8px;margin-top:0;';
+
+  var body='<div class="mbg" style="align-items:flex-end;" onclick="if(event.target===this)closeAdmin()">'
+    +'<div style="background:#f5f5f7;border-radius:24px 24px 0 0;width:100%;max-width:480px;margin:0 auto;max-height:92vh;overflow-y:auto;">'
+
+    // 헤더
+    +'<div style="background:linear-gradient(160deg,#2c2c2e,#3a3a3c);padding:24px 22px 20px;border-radius:24px 24px 0 0;position:relative;">'
+    +'<button onclick="closeAdmin()" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.12);border:none;border-radius:50%;width:32px;height:32px;color:#fff;font-size:18px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;">✕</button>'
+    +'<div class="bebas" style="font-size:28px;color:#ff9f0a;letter-spacing:2px;line-height:1;">OZY HOUSE</div>'
+    +'<div style="font-size:16px;font-weight:700;color:#fff;margin-top:4px;">관리 설정</div>'
+    +'<div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">앱 전체에 적용되는 기본값</div>'
+    +'</div>'
+
+    // 탭
+    +'<div style="display:flex;gap:8px;padding:16px 16px 0;">'
+    +tabs.map(function(t){
+      var on=at===t[0];
+      return '<button onclick="adminTab(\''+t[0]+'\')" style="flex:1;padding:9px 4px;border-radius:12px;border:'+(on?'none':'1px solid #d1d1d6')+';background:'+(on?'#2c2c2e':'#fff')+';color:'+(on?'#fff':'#636366')+';font-size:11px;font-family:inherit;font-weight:'+(on?'700':'400')+';cursor:pointer;">'+t[1]+'</button>';
+    }).join("")
+    +'</div>'
+
+    +'<div style="padding:16px 16px 40px;">';
+
+  // ── 디게싱 탭
+  if(at==="degas"){
+    body+='<p style="'+SEC_LBL+'">배전도별 기본 디게싱 기간</p>'
+      +'<div style="'+CARD+'">';
+    roastLevels.forEach(function(rl, i){
+      var days=settings.degasDays[rl]||DEFAULT_SETTINGS.degasDays[rl]||8;
+      var isLast=(i===roastLevels.length-1);
+      body+='<div style="'+(isLast?ROWLAST:ROW)+'">'
+        +'<div>'
+        +'<div style="font-size:14px;color:#1c1c1e;font-weight:500;">'+rl+'</div>'
+        +'</div>'
+        +'<div style="display:flex;align-items:center;gap:10px;">'
+        +'<button onclick="adminDegasDec(\''+rl+'\')" style="width:30px;height:30px;border-radius:8px;border:1px solid #d1d1d6;background:#f5f5f7;font-size:16px;cursor:pointer;font-family:inherit;color:#1c1c1e;display:flex;align-items:center;justify-content:center;">−</button>'
+        +'<span style="font-size:16px;font-weight:700;color:#1c1c1e;min-width:28px;text-align:center;" id="dd-'+rl+'">'+days+'</span>'
+        +'<button onclick="adminDegasInc(\''+rl+'\')" style="width:30px;height:30px;border-radius:8px;border:1px solid #d1d1d6;background:#f5f5f7;font-size:16px;cursor:pointer;font-family:inherit;color:#1c1c1e;display:flex;align-items:center;justify-content:center;">+</button>'
+        +'<span style="font-size:12px;color:#8e8e93;min-width:14px;">일</span>'
+        +'</div>'
+        +'</div>';
+    });
+    body+='</div>'
+      +'<button onclick="saveAdminDegas()" style="width:100%;background:#2c2c2e;color:#fff;border:none;border-radius:14px;padding:14px;font-size:14px;font-family:inherit;font-weight:700;cursor:pointer;">저장하기</button>';
+  }
+
+  // ── 동작 탭
+  if(at==="behavior"){
+    body+='<p style="'+SEC_LBL+'">디게싱 동작 설정</p>'
+      +'<div style="'+CARD+'">'
+      +'<div style="'+ROW+'">'
+      +'<div>'
+      +'<div style="font-size:14px;color:#1c1c1e;font-weight:500;">메뉴판에서 숨기기</div>'
+      +'<div style="font-size:12px;color:#8e8e93;margin-top:2px;">BEAN LINEUP에 디게싱 원두 미표시</div>'
+      +'</div>'
+      +mkToggle(settings.degasHideMenu,"adminToggle(\'degasHideMenu\')")
+      +'</div>'
+      +'<div style="'+ROWLAST+'">'
+      +'<div>'
+      +'<div style="font-size:14px;color:#1c1c1e;font-weight:500;">일기 원두 선택 제외</div>'
+      +'<div style="font-size:12px;color:#8e8e93;margin-top:2px;">커피 일기 작성 시 디게싱 원두 선택 불가</div>'
+      +'</div>'
+      +mkToggle(settings.degasHideDiary,"adminToggle(\'degasHideDiary\')")
+      +'</div>'
+      +'</div>'
+      +'<button onclick="saveAdminBehavior()" style="width:100%;background:#2c2c2e;color:#fff;border:none;border-radius:14px;padding:14px;font-size:14px;font-family:inherit;font-weight:700;cursor:pointer;">저장하기</button>';
+  }
+
+  // ── 데이터 탭
+  if(at==="data"){
+    var settingsJson=JSON.stringify(settings,null,2);
+    body+='<p style="'+SEC_LBL+'">설정 관리</p>'
+      +'<div style="'+CARD+'">'
+      +'<div style="'+ROW+'">'
+      +'<div>'
+      +'<div style="font-size:14px;color:#1c1c1e;font-weight:500;">현재 설정 내보내기</div>'
+      +'<div style="font-size:12px;color:#8e8e93;margin-top:2px;">JSON 파일로 백업</div>'
+      +'</div>'
+      +'<button onclick="exportAdminSettings()" style="background:#eff6ff;color:#1d4ed8;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-family:inherit;font-weight:600;cursor:pointer;">내보내기</button>'
+      +'</div>'
+      +'<div style="'+ROWLAST+'">'
+      +'<div>'
+      +'<div style="font-size:14px;color:#1c1c1e;font-weight:500;">설정 초기화</div>'
+      +'<div style="font-size:12px;color:#8e8e93;margin-top:2px;">모든 설정을 기본값으로 되돌리기</div>'
+      +'</div>'
+      +'<button onclick="resetAdminSettings()" style="background:#fff0f0;color:#ff3b30;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-family:inherit;font-weight:600;cursor:pointer;">초기화</button>'
+      +'</div>'
+      +'</div>'
+      +'<p style="'+SEC_LBL+'margin-top:8px;">현재 설정값</p>'
+      +'<div style="background:#1c1c1e;border-radius:14px;padding:14px 16px;overflow-x:auto;">'
+      +'<pre style="font-family:monospace;font-size:11px;color:#a8ff78;line-height:1.7;margin:0;white-space:pre-wrap;">'+esc(settingsJson)+'</pre>'
+      +'</div>';
+  }
+
+  body+='</div></div></div>';
+  return body;
+}
+
+// ── 관리 페이지 핸들러
+var navLongT=null;
+window.navLongStart=function(e){
+  navLongT=setTimeout(function(){
+    e.preventDefault();
+    openAdmin();
+  },600);
+};
+window.navLongEnd=function(){
+  if(navLongT){clearTimeout(navLongT);navLongT=null;}
+};
+window.titleTap=function(){
+  S.titleTap=(S.titleTap||0)+1;
+  if(S.titleTapT) clearTimeout(S.titleTapT);
+  if(S.titleTap>=5){S.titleTap=0;openAdmin();return;}
+  S.titleTapT=setTimeout(function(){S.titleTap=0;},2000);
+};
+window.openAdmin=function(){
+  requirePw(function(){S.showAdmin=true;S.adminTab="degas";render();});
+};
+window.closeAdmin=function(){S.showAdmin=false;render();};
+window.adminTab=function(t){S.adminTab=t;render();};
+window.adminDegasDec=function(rl){
+  var cur=settings.degasDays[rl]||DEFAULT_SETTINGS.degasDays[rl]||8;
+  if(cur<=1)return;
+  settings.degasDays[rl]=cur-1;render();
+};
+window.adminDegasInc=function(rl){
+  var cur=settings.degasDays[rl]||DEFAULT_SETTINGS.degasDays[rl]||8;
+  if(cur>=30)return;
+  settings.degasDays[rl]=cur+1;render();
+};
+window.adminToggle=function(key){
+  settings[key]=!settings[key];render();
+};
+window.saveAdminDegas=async function(){
+  await setDoc(SC,{degasDays:Object.assign({},settings.degasDays)},{merge:true});
+  showToast("디게싱 기간이 저장됐어요 🫧");
+};
+window.saveAdminBehavior=async function(){
+  await setDoc(SC,{degasHideMenu:!!settings.degasHideMenu,degasHideDiary:!!settings.degasHideDiary},{merge:true});
+  showToast("동작 설정이 저장됐어요 ✅");
+};
+window.exportAdminSettings=function(){
+  var blob=new Blob([JSON.stringify(settings,null,2)],{type:"application/json"});
+  var a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download="ozy-settings-"+new Date().toISOString().slice(0,10)+".json";
+  a.click();showToast("설정 파일을 내보냈어요 📁");
+};
+window.resetAdminSettings=async function(){
+  if(!confirm("모든 설정을 기본값으로 초기화할까요?"))return;
+  await setDoc(SC,Object.assign({},DEFAULT_SETTINGS,{degasDays:Object.assign({},DEFAULT_SETTINGS.degasDays)}));
+  showToast("기본값으로 초기화됐어요");
+};
+
+
 function rPw(){
   return '<div class="mbg" style="align-items:center;justify-content:center;" onclick="if(event.target===this)closePw()">'
     +'<div style="background:#fff;border-radius:22px;width:calc(100% - 48px);max-width:320px;padding:28px 24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.2);">'
@@ -1072,7 +1287,9 @@ function rPw(){
 }
 
 function rNav(){
-  return '<div class="bnav">'+[["menu","BEAN LINEUP","☕"],["archive","BEAN ARCHIVE","📚"],["diary","COFFEE DIARY","📝"]].map(function(x){return '<button class="nbtn'+(S.tab===x[0]?" on":"")+'" onclick="setTab(\''+x[0]+'\')"><div style="font-size:20px;margin-bottom:2px;">'+x[2]+'</div>'+x[1]+'</button>';}).join("")+'</div>';
+  return '<div class="bnav">'+[["menu","BEAN LINEUP","☕"],["archive","BEAN ARCHIVE","📚"],["diary","COFFEE DIARY","📝"]].map(function(x){
+    return '<button class="nbtn'+(S.tab===x[0]?" on":"")+'" onclick="setTab(\''+x[0]+'\')" oncontextmenu="event.preventDefault();openAdmin()" ontouchstart="navLongStart(event)" ontouchend="navLongEnd()" ontouchcancel="navLongEnd()"><div style="font-size:20px;margin-bottom:2px;">'+x[2]+'</div>'+x[1]+'</button>';
+  }).join("")+'</div>';
 }
 
 function render(){
@@ -1088,6 +1305,7 @@ function render(){
     +(S.showDiary?rDiaryModal():"")
     +(S.showPw?rPw():"")
     +(S.showDegasEdit?rDegasModal():"")
+    +(S.showAdmin?rAdmin():"")
     +(S.toast?'<div class="toast">'+S.toast+'</div>':"");
 }
 render();
@@ -1106,8 +1324,8 @@ window.addEventListener('popstate', function(e){
   var state = e.state;
   if(!state) return;
   // 모달 열려있으면 모달만 닫기
-  if(S.showAdd||S.showDiary||S.showPw||S.showDegasEdit||S.guestId){
-    S.showAdd=false;S.showDiary=false;S.showPw=false;S.showDegasEdit=false;S.guestId=null;
+  if(S.showAdd||S.showDiary||S.showPw||S.showDegasEdit||S.guestId||S.showAdmin){
+    S.showAdd=false;S.showDiary=false;S.showPw=false;S.showDegasEdit=false;S.guestId=null;S.showAdmin=false;
     S.pwAction=null;S.pwErr=false;
     history.pushState(getHistoryState(),"");
     render();
