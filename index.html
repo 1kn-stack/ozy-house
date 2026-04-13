@@ -243,14 +243,14 @@ const DEFAULT_SETTINGS = {
 };
 let settings = Object.assign({},DEFAULT_SETTINGS,{degasDays:Object.assign({},DEFAULT_SETTINGS.degasDays)});
 
-// ── 디게싱 계산
-// 배전도별 기본 디게싱 일수
+// ── 디개싱 계산
+// 배전도별 기본 디개싱 일수
 function getDegasDays(roastLevel){
   var rl=normRL(roastLevel);
   return (settings.degasDays&&settings.degasDays[rl])||DEFAULT_SETTINGS.degasDays[rl]||8;
 }
 
-// 오늘 기준 디게싱 상태 계산
+// 오늘 기준 디개싱 상태 계산
 // 반환: {status:"degassing"|"ready"|"none", daysSince:N, degasEndDate:"YYYY-MM-DD", remaining:N}
 function getDegasInfo(b){
   var roastDate = b.degasDate || b.roastDate; // degasDate 수동 설정 우선
@@ -581,7 +581,14 @@ window.saveDiary = async function(){
 };
 window.deleteDiary = function(id){requirePw(async function(){await fdD(id);showToast("삭제했어요");});};
 
-// ── 디게싱 수동 조정
+// ── 디개싱 수동 조정
+window.openNow = function(id){
+  requirePw(async function(){
+    var today=new Date().toISOString().slice(0,10);
+    await fuB(id,{startDate:today});
+    showToast("개봉일이 기록됐어요 ☕");
+  });
+};
 window.openDegasEdit = function(id){
   requirePw(function(){
     var b=beans.find(function(x){return x.id===id;});if(!b)return;
@@ -604,7 +611,7 @@ window.saveDegasEdit = async function(){
   if(e.degasDays) upd.degasDays=parseInt(e.degasDays)||getDegasDays("");
   await fuB(e.id,upd);
   S.showDegasEdit=false;S.degasEdit=null;
-  showToast("디게싱 설정이 저장됐어요 🫧");
+  showToast("디개싱 설정이 저장됐어요 🫧");
 };
 window.resetDegasEdit = async function(){
   var e=S.degasEdit;if(!e)return;
@@ -762,7 +769,7 @@ function rGuestNotes(notes, beanId){
 
 function rMenu(){
   var avail=beans.filter(function(b){return b.status==="available"&&(!settings.degasHideMenu||getDegasInfo(b).status!=="degassing");});
-  // 디게싱 중인 원두 중 가장 빨리 끝나는 것의 남은 일수
+  // 디개싱 중인 원두 중 가장 빨리 끝나는 것의 남은 일수
   var degasBeans=beans.filter(function(b){return b.status==="available"&&getDegasInfo(b).status==="degassing";});
   var nextDegas=null;
   degasBeans.forEach(function(b){
@@ -833,7 +840,7 @@ function rArchive(){
   var filters=[
     {v:"all",l:"전체"},
     {v:"available",l:"보유"},
-    {v:"degassing",l:"🫧 디게싱"+(degasingCount?" "+degasingCount:"")},
+    {v:"degassing",l:"🫧 디개싱"+(degasingCount?" "+degasingCount:"")},
     {v:"empty",l:"소진"},
   ];
   var availCount=beans.filter(function(b){return b.status==="available"&&getDegasInfo(b).status!=="degassing";}).length;
@@ -845,7 +852,7 @@ function rArchive(){
     +'<div style="background:rgba(255,159,10,0.15);border:1px solid rgba(255,159,10,0.3);border-radius:14px;padding:12px 16px;margin-top:14px;display:flex;align-items:center;justify-content:space-around;">'
     +'<div style="text-align:center;"><div style="font-size:20px;font-weight:700;color:#ff9f0a;">'+availCount+'</div><div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px;">보유</div></div>'
     +'<div style="width:1px;height:28px;background:rgba(255,255,255,0.1);"></div>'
-    +'<div style="text-align:center;"><div style="font-size:20px;font-weight:700;color:#63b3ed;">'+degasCount2+'</div><div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px;">🫧 디게싱</div></div>'
+    +'<div style="text-align:center;"><div style="font-size:20px;font-weight:700;color:#63b3ed;">'+degasCount2+'</div><div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px;">🫧 디개싱</div></div>'
     +'<div style="width:1px;height:28px;background:rgba(255,255,255,0.1);"></div>'
     +'<div style="text-align:center;"><div style="font-size:20px;font-weight:700;color:rgba(255,255,255,0.3);">'+emptyCount+'</div><div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px;">소진</div></div>'
     +'</div>'
@@ -917,8 +924,8 @@ function rDetail(id){
       +'<div>'+mkLbl("배전도")+mkRL(e.roastLevel,"editInput('roastLevel',this.value)")+'</div>'
       +'<div>'+mkLbl("로스팅 일자")+mkDate(e.roastDate,"editInput('roastDate',this.value)")+'</div>'
       +'<div>'+mkLbl("소비 시작일")+mkDate(e.startDate,"editInput('startDate',this.value)")+'</div>'
-      +'<div>'+mkLbl("디게싱 시작일 (기본:로스팅일)")+mkDate(e.degasDate||e.roastDate||"",'editInput("degasDate",this.value)')+'</div>'
-      +'<div>'+mkLbl("디게싱 기간(일)")+mkInp(e.degasDays!=null?e.degasDays:getDegasDays(e.roastLevel),"editInput('degasDays',this.value)")+'</div>'
+      +'<div>'+mkLbl("디개싱 시작일 (기본:로스팅일)")+mkDate(e.degasDate||e.roastDate||"",'editInput("degasDate",this.value)')+'</div>'
+      +'<div>'+mkLbl("디개싱 기간(일)")+mkInp(e.degasDays!=null?e.degasDays:getDegasDays(e.roastLevel),"editInput('degasDays',this.value)")+'</div>'
       +'</div>'
       +mkLbl("품종")+mkInp(e.variety,"editInput('variety',this.value)")
       +mkLbl("농장/생산자")+mkInp(e.producer||"","editInput('producer',this.value)")
@@ -957,26 +964,40 @@ function rDetail(id){
   if(b.roastDate) dateInfo+='<div style="font-size:12px;color:#8e8e93;">🗓 로스팅 <b style="color:#3a3a3c;">'+b.roastDate+'</b></div>';
   if(b.startDate) dateInfo+='<div style="font-size:12px;color:#8e8e93;">☕ 소비 시작 <b style="color:#3a3a3c;">'+b.startDate+'</b></div>';
   if(b.status==="empty"&&b.emptyDate) dateInfo+='<div style="font-size:12px;color:#8e8e93;">✅ 소진 <b style="color:#3a3a3c;">'+b.emptyDate+'</b></div>';
-  // 디게싱 정보
+  // 디개싱 정보
   var dg=getDegasInfo(b);
   var degasHtml="";
+
+  // 자동 처리: 디개싱 완료됐고 startDate 없으면 degasEndDate로 자동 세팅
+  if(b.status==="available" && dg.status==="ready" && !b.startDate && dg.degasEndDate){
+    fuB(b.id,{startDate:dg.degasEndDate});
+  }
+
   if(b.status==="available"&&dg.status!=="none"){
     if(dg.status==="degassing"){
       degasHtml='<div style="background:#ebf8ff;border:1px solid #bee3f8;border-radius:14px;padding:14px 16px;margin-bottom:16px;">'
         +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
-        +'<div style="font-size:12px;font-weight:700;color:#2b6cb0;">🫧 디게싱 중</div>'
+        +'<div style="font-size:12px;font-weight:700;color:#2b6cb0;">🫧 디개싱 중</div>'
         +'<div style="font-size:11px;color:#2b6cb0;font-weight:600;">D+'+dg.daysSince+' / D+'+dg.totalDays+'</div>'
         +'</div>'
         +'<div style="background:#bee3f8;border-radius:6px;height:6px;margin-bottom:8px;overflow:hidden;">'
         +'<div style="background:#2b6cb0;height:100%;width:'+Math.round(dg.daysSince/dg.totalDays*100)+'%;border-radius:6px;transition:width .3s;"></div>'
         +'</div>'
-        +'<div style="font-size:12px;color:#2c5282;">'+dg.remaining+'일 후 음용 추천 — '+dg.degasEndDate+'까지</div>'
-        +'<button onclick="event.stopPropagation();openDegasEdit(\''+b.id+'\')" style="margin-top:10px;background:none;border:1px solid #bee3f8;border-radius:10px;padding:5px 12px;font-size:11px;color:#2b6cb0;cursor:pointer;font-family:inherit;">⚙️ 직접 조정</button>'
+        +'<div style="font-size:12px;color:#2c5282;margin-bottom:10px;">'+dg.remaining+'일 후 음용 추천 — '+dg.degasEndDate+'까지</div>'
+        +'<div style="display:flex;gap:8px;">'
+        +(b.startDate
+          ? '<div style="font-size:11px;color:#2b6cb0;padding:5px 0;">☕ '+b.startDate+' 개봉됨</div>'
+          : '<button onclick="event.stopPropagation();openNow(\''+b.id+'\')" style="flex:1;background:#2b6cb0;color:#fff;border:none;border-radius:10px;padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">☕ 지금 개봉하기</button>'
+        )
+        +'<button onclick="event.stopPropagation();openDegasEdit(\''+b.id+'\')" style="background:none;border:1px solid #bee3f8;border-radius:10px;padding:8px 12px;font-size:11px;color:#2b6cb0;cursor:pointer;font-family:inherit;">⚙️ 조정</button>'
+        +'</div>'
         +'</div>';
     } else {
       degasHtml='<div style="background:#f0fff4;border:1px solid #c6f6d5;border-radius:14px;padding:12px 16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;">'
-        +'<div><div style="font-size:12px;font-weight:700;color:#276749;">✅ 디게싱 완료</div>'
-        +'<div style="font-size:11px;color:#2f855a;margin-top:2px;">로스팅 후 '+dg.daysSince+'일째 — 지금 마시기 좋아요</div></div>'
+        +'<div><div style="font-size:12px;font-weight:700;color:#276749;">✅ 디개싱 완료</div>'
+        +'<div style="font-size:11px;color:#2f855a;margin-top:2px;">로스팅 후 '+dg.daysSince+'일째 — 지금 마시기 좋아요</div>'
+        +(b.startDate?'<div style="font-size:11px;color:#276749;margin-top:2px;">☕ '+b.startDate+' 개봉됨</div>':'')
+        +'</div>'
         +'<button onclick="event.stopPropagation();openDegasEdit(\''+b.id+'\')" style="background:none;border:1px solid #c6f6d5;border-radius:10px;padding:5px 12px;font-size:11px;color:#276749;cursor:pointer;font-family:inherit;">⚙️ 조정</button>'
         +'</div>';
     }
@@ -1135,8 +1156,8 @@ function rAdd(){
       + '<div>'+mkLbl("배전도")+mkRL(e.roastLevel,"addInput('roastLevel',this.value)")+'</div>'
       + '<div>'+mkLbl("로스팅 일자")+mkDate(e.roastDate,"addInput('roastDate',this.value)")+'</div>'
       + '<div>'+mkLbl("소비 시작일")+mkDate(e.startDate,"addInput('startDate',this.value)")+'</div>'
-      + '<div>'+mkLbl("디게싱 시작일 (기본:로스팅일)")+mkDate(e.degasDate||"","addInput('degasDate',this.value)")+'</div>'
-      + '<div>'+mkLbl("디게싱 기간(일)")+mkInp(e.degasDays!=null?e.degasDays:getDegasDays(e.roastLevel||"")+"","addInput('degasDays',this.value)")+'</div>'
+      + '<div>'+mkLbl("디개싱 시작일 (기본:로스팅일)")+mkDate(e.degasDate||"","addInput('degasDate',this.value)")+'</div>'
+      + '<div>'+mkLbl("디개싱 기간(일)")+mkInp(e.degasDays!=null?e.degasDays:getDegasDays(e.roastLevel||"")+"","addInput('degasDays',this.value)")+'</div>'
       + '</div>'
       + mkLbl("품종")+mkInp(e.variety,"addInput('variety',this.value)")
       + mkLbl("농장/생산자")+mkInp(e.producer||"","addInput('producer',this.value)")
@@ -1331,14 +1352,14 @@ function rDegasModal(){
   var b=beans.find(function(x){return x.id===e.id;});if(!b)return "";
   return '<div class="mbg" style="align-items:center;justify-content:center;" onclick="if(event.target===this)closeDegasEdit()">'
     +'<div style="background:#fff;border-radius:22px;width:calc(100% - 48px);max-width:340px;padding:28px 24px;box-shadow:0 20px 60px rgba(0,0,0,0.2);">'
-    +'<div style="font-size:18px;font-weight:700;margin-bottom:4px;">🫧 디게싱 조정</div>'
+    +'<div style="font-size:18px;font-weight:700;margin-bottom:4px;">🫧 디개싱 조정</div>'
     +'<div style="font-size:13px;color:#8e8e93;margin-bottom:20px;">'+esc(b.name)+'</div>'
-    +'<label style="'+IL+'">디게싱 시작일 (기본: 로스팅일)</label>'
+    +'<label style="'+IL+'">디개싱 시작일 (기본: 로스팅일)</label>'
     +'<input type="date" style="'+IS+'" value="'+esc(e.degasDate)+'" onchange="degasInput(\'degasDate\',this.value)">'
-    +'<label style="'+IL+'">디게싱 기간 (일)</label>'
+    +'<label style="'+IL+'">디개싱 기간 (일)</label>'
     +'<div style="display:flex;align-items:center;gap:10px;margin-top:6px;">'
     +'<input type="number" min="1" max="30" style="'+IS+'width:80px;" value="'+e.degasDays+'" oninput="degasInput(\'degasDays\',this.value)">'
-    +'<div style="font-size:12px;color:#8e8e93;">일간 디게싱</div>'
+    +'<div style="font-size:12px;color:#8e8e93;">일간 디개싱</div>'
     +'</div>'
     +'<div style="background:#ebf8ff;border-radius:12px;padding:10px 14px;margin-top:14px;font-size:12px;color:#2b6cb0;">'
     +'음용 추천일: <b>'+(e.degasDate?(new Date(new Date(e.degasDate).getTime()+parseInt(e.degasDays||8)*86400000).toISOString().slice(0,10)):"날짜 입력 필요")+'</b>'
@@ -1358,7 +1379,7 @@ function mkToggle(val, fn){
 
 function rAdmin(){
   var at=S.adminTab;
-  var tabs=[["degas","🫧 디게싱"],["behavior","⚙️ 동작"],["data","💾 데이터"]];
+  var tabs=[["degas","🫧 디개싱"],["behavior","⚙️ 동작"],["data","💾 데이터"]];
   var roastLevels=["라이트","미디엄라이트","미디엄","미디엄다크","다크"];
 
   var RS='width:100%;border:1px solid #d1d1d6;border-radius:10px;padding:9px 12px;font-size:13px;font-family:inherit;background:#f5f5f7;color:#1c1c1e;outline:none;box-sizing:border-box;';
@@ -1388,9 +1409,9 @@ function rAdmin(){
 
     +'<div style="padding:16px 16px 40px;">';
 
-  // ── 디게싱 탭
+  // ── 디개싱 탭
   if(at==="degas"){
-    body+='<p style="'+SEC_LBL+'">배전도별 기본 디게싱 기간</p>'
+    body+='<p style="'+SEC_LBL+'">배전도별 기본 디개싱 기간</p>'
       +'<div style="'+CARD+'">';
     roastLevels.forEach(function(rl, i){
       var days=settings.degasDays[rl]||DEFAULT_SETTINGS.degasDays[rl]||8;
@@ -1413,19 +1434,19 @@ function rAdmin(){
 
   // ── 동작 탭
   if(at==="behavior"){
-    body+='<p style="'+SEC_LBL+'">디게싱 동작 설정</p>'
+    body+='<p style="'+SEC_LBL+'">디개싱 동작 설정</p>'
       +'<div style="'+CARD+'">'
       +'<div style="'+ROW+'">'
       +'<div>'
       +'<div style="font-size:14px;color:#1c1c1e;font-weight:500;">메뉴판에서 숨기기</div>'
-      +'<div style="font-size:12px;color:#8e8e93;margin-top:2px;">BEAN LINEUP에 디게싱 원두 미표시</div>'
+      +'<div style="font-size:12px;color:#8e8e93;margin-top:2px;">BEAN LINEUP에 디개싱 원두 미표시</div>'
       +'</div>'
       +mkToggle(settings.degasHideMenu,"adminToggle(\'degasHideMenu\')")
       +'</div>'
       +'<div style="'+ROWLAST+'">'
       +'<div>'
       +'<div style="font-size:14px;color:#1c1c1e;font-weight:500;">일기 원두 선택 제외</div>'
-      +'<div style="font-size:12px;color:#8e8e93;margin-top:2px;">커피 일기 작성 시 디게싱 원두 선택 불가</div>'
+      +'<div style="font-size:12px;color:#8e8e93;margin-top:2px;">커피 일기 작성 시 디개싱 원두 선택 불가</div>'
       +'</div>'
       +mkToggle(settings.degasHideDiary,"adminToggle(\'degasHideDiary\')")
       +'</div>'
@@ -1519,7 +1540,7 @@ window.adminToggle=function(key){
 };
 window.saveAdminDegas=async function(){
   await setDoc(SC,{degasDays:Object.assign({},settings.degasDays)},{merge:true});
-  showToast("디게싱 기간이 저장됐어요 🫧");
+  showToast("디개싱 기간이 저장됐어요 🫧");
 };
 window.saveAdminBehavior=async function(){
   await setDoc(SC,{degasHideMenu:!!settings.degasHideMenu,degasHideDiary:!!settings.degasHideDiary},{merge:true});
