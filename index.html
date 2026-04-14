@@ -409,7 +409,8 @@ function normalizeRecipe(r){
 const DEFAULT_SETTINGS = {
   degasDays:{"라이트":12,"미디엄라이트":9,"미디엄":7,"미디엄다크":5,"다크":4},
   degasHideMenu:true,
-  degasHideDiary:true
+  degasHideDiary:true,
+  timezoneOffset:9  // UTC+9 (KST 기본값), 관리자에서 변경 가능
 };
 let settings = Object.assign({},DEFAULT_SETTINGS,{degasDays:Object.assign({},DEFAULT_SETTINGS.degasDays)});
 
@@ -422,14 +423,24 @@ function getDegasDays(roastLevel){
 
 // 오늘 기준 디개싱 상태 계산
 // 반환: {status:"degassing"|"ready"|"none", daysSince:N, degasEndDate:"YYYY-MM-DD", remaining:N}
+// 로컬 날짜 문자열 반환 — settings.timezoneOffset(UTC+N) 기준
+function localDateStr(d) {
+  var offset = (settings && settings.timezoneOffset != null) ? settings.timezoneOffset : 9;
+  var dt = d || new Date();
+  var local = new Date(dt.getTime() + offset * 3600000);
+  var y = local.getUTCFullYear();
+  var m = String(local.getUTCMonth() + 1).padStart(2, '0');
+  var day = String(local.getUTCDate()).padStart(2, '0');
+  return y + '-' + m + '-' + day;
+}
 function getDegasInfo(b){
   var roastDate = b.degasDate || b.roastDate; // degasDate 수동 설정 우선
   if(!roastDate) return {status:"none"};
   var roast = new Date(roastDate);
-  var today = new Date(new Date().toISOString().slice(0,10));
+  var today = new Date(localDateStr());
   var daysSince = Math.floor((today - roast) / 86400000);
   var totalDays = b.degasDays != null ? b.degasDays : getDegasDays(b.roastLevel);
-  var degasEndDate = new Date(roast.getTime() + totalDays * 86400000).toISOString().slice(0,10);
+  var degasEndDate = localDateStr(new Date(roast.getTime() + totalDays * 86400000));
   if(daysSince < 0) return {status:"none"}; // 로스팅 전
   if(daysSince < totalDays){
     return {status:"degassing", daysSince:daysSince, degasEndDate:degasEndDate, remaining:totalDays-daysSince, totalDays:totalDays};
@@ -553,7 +564,7 @@ let S = {
 function calcStreak(ds){
   var streak=0, dd=new Date();
   while(true){
-    var dateStr=dd.toISOString().slice(0,10);
+    var dateStr=localDateStr(dd);
     if(ds.find(function(x){return x.date===dateStr;})){streak++;dd.setDate(dd.getDate()-1);}
     else break;
   }
@@ -764,7 +775,7 @@ window.toggleStatus = function(id){
     var b=beans.find(function(x){return x.id===id;});if(!b)return;
     var next=b.status==="available"?"empty":"available";
     var upd={status:next};
-    if(next==="empty")upd.emptyDate=new Date().toISOString().slice(0,10);
+    if(next==="empty")upd.emptyDate=localDateStr();
     await fuB(id,upd);
     showToast(next==="available"?"다시 보유로 변경됐어요":"소진 처리됐어요");
   });
@@ -825,7 +836,7 @@ window.submitGuest = async function(){
   var note=(noteEl?noteEl.value:S.guestForm.note).trim();
   if(!name||!note)return;
   var b=beans.find(function(x){return x.id===S.guestId;});if(!b)return;
-  var notes=(b.guestNotes||[]).concat([{name:name,note:note,date:new Date().toISOString().slice(0,10)}]);
+  var notes=(b.guestNotes||[]).concat([{name:name,note:note,date:localDateStr()}]);
   await fuB(S.guestId,{guestNotes:notes});
   S.guestId=null;S.guestForm={name:"",note:""};showToast("소감이 기록됐어요 ✨");
 };
@@ -876,7 +887,7 @@ window.saveDiary = async function(){
     await updateDoc(doc(db,"diary",S.diaryEditId),data);
     S.diaryEditId=null;showToast("일기가 수정됐어요 ✅");
   } else {
-    data.date=new Date().toISOString().slice(0,10);data.ts=Date.now();
+    data.date=localDateStr();data.ts=Date.now();
     await addDoc(DC,data);showToast("일기가 기록됐어요 ☕");
   }
   S.showDiary=false;render();
@@ -886,7 +897,7 @@ window.deleteDiary = function(id){requirePw(async function(){await fdD(id);showT
 // ── 디개싱 수동 조정
 window.openNow = function(id){
   requirePw(async function(){
-    var today=new Date().toISOString().slice(0,10);
+    var today=localDateStr();
     await fuB(id,{startDate:today});
     showToast("개봉일이 기록됐어요 ☕");
   });
@@ -1515,7 +1526,7 @@ function rGuest(){
 }
 
 function rDiary(){
-  var today=new Date().toISOString().slice(0,10);
+  var today=localDateStr();
   var te=diaries.find(function(d){return d.date===today;});
   var MC={"☀️":"#fff9c4","🌧":"#e3f2fd","😴":"#f3e5f5","🎉":"#fff3e0","❄️":"#e0f7fa","🌙":"#ede7f6"};
   // [수정] streak 재계산 제거 → 캐싱된 cachedStreak 사용
@@ -1552,7 +1563,7 @@ function rDiary(){
         if(cupCount<=1) return '<div style="font-size:15px;font-weight:700;color:#28160a;">'+te.mood+' 오늘의 한 잔</div>';
         var KOR=["","한","두","세","네","다섯","여섯","일곱","여덟"];
         var countStr=cupCount<KOR.length?KOR[cupCount]+" 잔":cupCount+"잔";
-        var yesterday=new Date(new Date(today).getTime()-86400000).toISOString().slice(0,10);
+        var yesterday=localDateStr(new Date(new Date(today).getTime()-86400000));
         var yEntry=diaries.find(function(x){return x.date===yesterday;});
         var yCups=yEntry?(yEntry.cups&&yEntry.cups.length?yEntry.cups.length:(yEntry.beanId?1:0)):0;
         var particle=yCups===cupCount?"도":"은";
@@ -1667,7 +1678,7 @@ function rDegasModal(){
     +'<div style="font-size:12px;color:#b89070;">일간 디개싱</div>'
     +'</div>'
     +'<div style="background:#ebf8ff;border-radius:12px;padding:10px 14px;margin-top:14px;font-size:12px;color:#2b6cb0;">'
-    +'음용 추천일: <b>'+(e.degasDate?(new Date(new Date(e.degasDate).getTime()+parseInt(e.degasDays||8)*86400000).toISOString().slice(0,10)):"날짜 입력 필요")+'</b>'
+    +'음용 추천일: <b>'+(e.degasDate?(localDateStr(new Date(new Date(e.degasDate).getTime()+parseInt(e.degasDays||8)*86400000))):"날짜 입력 필요")+'</b>'
     +'</div>'
     +'<div style="display:flex;gap:8px;margin-top:18px;">'
     +'<button onclick="resetDegasEdit()" style="flex:1;background:#f4ece0;color:#b89070;border:none;border-radius:12px;padding:12px;font-size:13px;font-family:inherit;cursor:pointer;">초기화</button>'
@@ -1756,7 +1767,24 @@ function rAdmin(){
       +mkToggle(settings.degasHideDiary,"adminToggle(\'degasHideDiary\')")
       +'</div>'
       +'</div>'
-      +'<button onclick="saveAdminBehavior()" style="width:100%;background:#2a1a0c;color:#fff;border:none;border-radius:14px;padding:14px;font-size:14px;font-family:inherit;font-weight:700;cursor:pointer;">저장하기</button>';
+      +'<p style="'+SEC_LBL+'margin-top:16px;">시간대 설정</p>'
+      +'<div style="'+CARD+'">'
+      +'<div style="'+ROW+'">'
+      +'<div style="flex:1;">'
+      +'<div style="font-size:14px;color:#28160a;font-weight:500;">UTC 오프셋</div>'
+      +'<div style="font-size:12px;color:#b89070;margin-top:2px;">일기 날짜 기준 시간대 · 한국은 +9</div>'
+      +'</div>'
+      +'<select id="tz-select" onchange="S.tzDraft=parseFloat(this.value)" style="border:1px solid rgba(42,26,12,0.15);border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;background:#fffaf2;color:#28160a;outline:none;">'
+      +(function(){
+          var cur=S.tzDraft!=null?S.tzDraft:(settings.timezoneOffset!=null?settings.timezoneOffset:9);
+          var zones=[[-12,'UTC-12'],[-11,'UTC-11'],[-10,'UTC-10'],[-9,'UTC-9'],[-8,'UTC-8 (PST)'],[-7,'UTC-7 (MST)'],[-6,'UTC-6 (CST)'],[-5,'UTC-5 (EST)'],[-4,'UTC-4'],[-3,'UTC-3'],[-2,'UTC-2'],[-1,'UTC-1'],[0,'UTC+0 (GMT)'],[1,'UTC+1 (CET)'],[2,'UTC+2'],[3,'UTC+3'],[4,'UTC+4'],[5,'UTC+5'],[5.5,'UTC+5:30 (IST)'],[6,'UTC+6'],[7,'UTC+7 (ICT)'],[8,'UTC+8 (CST)'],[9,'UTC+9 (KST) ★'],[10,'UTC+10 (AEST)'],[11,'UTC+11'],[12,'UTC+12']];
+          return zones.map(function(z){return '<option value="'+z[0]+'"'+(cur===z[0]?' selected':'')+'>'+z[1]+'</option>';}).join('');
+        })()
+      +'</select>'
+      +'</div>'
+      +'<div style="padding:10px 16px 12px;border-top:0.5px solid rgba(42,26,12,0.07);font-size:12px;color:#b89070;">현재 기준 오늘: <b style="color:#2a1a0c;">'+localDateStr()+'</b></div>'
+      +'</div>'
+      +'<button onclick="saveAdminBehavior()" style="width:100%;background:#2a1a0c;color:#fff;border:none;border-radius:14px;padding:14px;font-size:14px;font-family:inherit;font-weight:700;cursor:pointer;margin-top:4px;">저장하기</button>';
   }
 
   // ── 데이터 탭
@@ -1848,7 +1876,10 @@ window.saveAdminDegas=async function(){
   showToast("디개싱 기간이 저장됐어요 🫧");
 };
 window.saveAdminBehavior=async function(){
-  await setDoc(SC,{degasHideMenu:!!settings.degasHideMenu,degasHideDiary:!!settings.degasHideDiary},{merge:true});
+  var tz = S.tzDraft != null ? S.tzDraft : (settings.timezoneOffset != null ? settings.timezoneOffset : 9);
+  settings.timezoneOffset = tz;
+  S.tzDraft = null;
+  await setDoc(SC,{degasHideMenu:!!settings.degasHideMenu, degasHideDiary:!!settings.degasHideDiary, timezoneOffset:tz},{merge:true});
   showToast("동작 설정이 저장됐어요 ✅");
 };
 window.migrateAllBeans=async function(){
