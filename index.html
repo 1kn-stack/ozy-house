@@ -103,61 +103,62 @@ const EMO = {
   "strawberry":"🍓","raspberry":"🍓","blueberry":"🫐","chocolate":"🍫",
   "caramel":"🍮","vanilla":"🍦","honey":"🍯","grape":"🍇","cherry":"🍒",
   "mango":"🥭","melon":"🍈","blackcurrant":"🍇","blackberry":"🍇",
-  "raisin":"🫙","dried fruit":"🫙","tobacco":"🚬","woody":"🪵","cedar":"🪵"};
+  "raisin":"🫙","dried fruit":"🫙","tobacco":"🚬","woody":"🪵","cedar":"🪵","견과":"__svg_nuts","견과류":"__svg_nuts","헤이즐넛":"__svg_nuts","아몬드":"__svg_nuts","호두":"__svg_nuts","땅콩":"__svg_nuts","피칸":"__svg_nuts","마카다미아":"__svg_nuts","잣":"__svg_nuts","nut":"__svg_nuts","hazelnut":"__svg_nuts","almond":"__svg_nuts","walnut":"__svg_nuts","pecan":"__svg_nuts","캐러멜":"__svg_caramel","카라멜":"__svg_caramel","토피":"__svg_caramel","버터스카치":"__svg_caramel","caramel":"__svg_caramel","toffee":"__svg_caramel","butterscotch":"__svg_caramel","솜사탕":"__svg_cotton","솜사탕향":"__svg_cotton","cotton candy":"__svg_cotton","candy floss":"__svg_cotton","홍시":"__svg_hongsi","감":"__svg_hongsi","단감":"__svg_hongsi","자스민":"__svg_jasmine","재스민":"__svg_jasmine","jasmine":"__svg_jasmine","생강":"__svg_ginger","생강청":"__svg_ginger","진저":"__svg_ginger","ginger":"__svg_ginger","생강향":"__svg_ginger","곶감":"__svg_gotgam","건시":"__svg_gotgam","곶감향":"__svg_gotgam"};
 // 카테고리별 키워드 부분 매칭 (v3 확장: SCA 9대 카테고리 완전 커버)
 const FCAT = [
   /* ── FRUITY: Berry ── */
-  ["🫐", ["블루베리","blueberry","huckleberry","bilberry"]],
-  ["🍇", ["블랙커런트","블랙베리","카시스","포도","청포도","머스캣","blackcurrant","blackberry","cassis","grape","muscat","concord"]],
+  ["🫐", ["블루베리","오디","뽕나무","엘더베리","blueberry","mulberry","boysenberry","loganberry","elderberry","huckleberry","bilberry"]],
+  ["🍇", ["블랙커런트","블랙베리","카시스","포도","청포도","머스캣","거봉","머루","머루포도","캠벨","흑포도","청포도향","포도향","포도주스","blackcurrant","blackberry","cassis","grape","muscat","concord","muscadine","concord grape"]],
   ["🍓", ["딸기","라즈베리","mixed berry","strawberry","raspberry","wild berry","딸기잼"]],
-  ["🍒", ["체리","크랜베리","다크체리","건체리","cherry","cranberry","dark cherry","maraschino","morello","dried cherry"]],
+  ["🍒", ["체리","크랜베리","다크체리","건체리","오미자","오미자청","석류","구기자","cherry","cranberry","dark cherry","maraschino","morello","dried cherry","omija","pomegranate","goji berry","goji"]],
 
   /* ── FRUITY: Dried Fruit ── */
   ["🫙", ["건포도","건자두","건살구","건망고","건과일","무화과","raisin","sultana","dried fruit","dried grape","dried apricot","dried mango","prune","fig","date","tamarind","타마린드","대추야자"]],
 
   /* ── FRUITY: Citrus ── */
-  ["🍋", ["레몬","시트러스","시트론","유자","라임","레몬그라스","lemon","citrus","citron","yuzu","lime","lemon zest","lemon curd"]],
-  ["🍊", ["오렌지","감귤","귤","만다린","클레멘타인","자몽","그레이프프루트","orange","mandarin","tangerine","grapefruit","clementine","blood orange"]],
+  ["🍋", ["레몬","시트러스","시트론","유자","라임","레몬그라스","유자청","청귤","레몬필","lemon","citrus","citron","yuzu","lime","lemon zest","lemon curd","citrus peel","yuzu tea"]],
+  ["🍊", ["오렌지","감귤","귤","만다린","클레멘타인","자몽","그레이프프루트","홍시","감","곶감","단감","금귤","카라카라","오렌지필","자몽필","핑크자몽","블러드오렌지","orange","mandarin","tangerine","grapefruit","clementine","blood orange","persimmon","orange peel","grapefruit peel","kumquat","cara cara"]],
   ["🍋‍🟩", ["베르가못","bergamot"]],
 
   /* ── FRUITY: Stone Fruit ── */
-  ["🍑", ["복숭아","황도","백도","피치","살구","자두","apricot","plum","peach","nectarine"]],
+  ["🍑", ["복숭아","황도","백도","피치","살구","자두","복숭아껍질","복숭아즙","매실","매실청","살구잼","복숭아잼","자두잼","apricot","plum","peach","nectarine","peach skin","white peach"]],
 
   /* ── FRUITY: Other Fruit ── */
   ["🍎", ["사과","적사과","홍사과","apple","red apple","fuji apple"]],
   ["🍏", ["청사과","풋사과","그린망고","그린 망고","덜익은망고","green apple","granny smith","green mango","unripe mango","raw mango"]],
   ["🥭", ["망고","mango","alphonso","ataulfo"]],
   ["🍍", ["파인애플","트로피컬","pineapple","tropical","jackfruit","잭프루트"]],
-  ["🍈", ["멜론","메론","리치","구아바","파파야","melon","lychee","guava","papaya","honeydew","cantaloupe"]],
+  ["🍈", ["멜론","메론","리치","구아바","파파야","용안","longan","melon","lychee","guava","papaya","honeydew","cantaloupe"]],
   ["🍉", ["수박","watermelon"]],
   ["🥝", ["키위","kiwi","kiwifruit"]],
+  ["🍐", ["배","배청","배향","모과","모과청","asian pear","pear","quince","nashi","poire","배꿀","비파","loquat"]],
   ["🥥", ["코코넛","coconut","coconut milk","코코넛밀크"]],
   ["🌺", ["패션","패숀","히비스커스","passion","hibiscus","passionfruit","passion fruit"]],
 
   /* ── FLORAL ── */
-  ["🌸", ["자스민","재스민","플로럴","벚꽃","오렌지블라썸","blossom","jasmine","floral","flower","orange blossom"]],
-  ["🌼", ["캐모마일","화이트 플로럴","엘더플라워","아카시아","chamomile","elderflower","white floral","acacia","linden"]],
+  ["🌸", ["자스민","재스민","플로럴","벚꽃","오렌지블라썸","금목서","목서","계화","blossom","jasmine","floral","flower","orange blossom","osmanthus"]],
+  ["🌼", ["캐모마일","화이트 플로럴","엘더플라워","아카시아","국화","국화차","chrysanthemum","chamomile","elderflower","white floral","acacia","linden"]],
   ["🌹", ["장미","로즈","로즈힙","rose","rosehip","damask rose"]],
   ["🌷", ["라벤더","라일락","백합","튤립","제라늄","lavender","lilac","lily","tulip","geranium"]],
 
   /* ── SWEET ── */
-  ["🍯", ["꿀","벌꿀","흑설탕","흑당","대추","브라운슈거","메이플","졸인설탕","시럽","honey","brown sugar","maple","molasses","treacle","agave","허니","caramelized","설탕","sugar"]],
+  ["🍯", ["꿀","벌꿀","흑설탕","흑당","대추","브라운슈거","메이플","졸인설탕","시럽","쌀엿","원당","황설탕","사탕수수","맑은단맛","깨끗한단맛","honey","brown sugar","maple","molasses","treacle","agave","허니","caramelized","설탕","sugar","clean sweetness","pure sweetness","cane sugar"]],
   ["🍮", ["캐러멜","카라멜","토피","버터스카치","caramel","toffee","butterscotch","dulce de leche"]],
   ["🍦", ["바닐라","바닐라빈","크렘브륄레","vanilla","vanilla bean","creme brulee"]],
   ["🫚", ["버터","크림","버터크림","butter","cream","clotted cream","browned butter","milky","밀키"]],
-  ["🥛", ["요거트","요구르트","밀크","우유","크림치즈","yogurt","yoghurt","milk","dairy","cream cheese","buttermilk","kefir","latte","라떼"]],
-  ["🌾", ["몰트","맥아","그레인","곡물","시리얼","귀리","보리","호밀","슈가케인","슈가 케인","malt","grain","cereal","oat","barley","rye","sugar cane","wheat"]],
+  ["🥛", ["요거트","요구르트","밀크","우유","크림치즈","연유","두유","오트밀크","밀크티","라떼","yogurt","yoghurt","milk","dairy","cream cheese","buttermilk","kefir","latte","condensed milk","oat milk","soy milk","milk tea"]],
+  ["🌾", ["몰트","맥아","그레인","곡물","시리얼","귀리","보리","호밀","슈가케인","슈가 케인","식혜","누룽지","누룽지향","쌀","흑미","율무","보리차","옥수수차","malt","grain","cereal","oat","barley","rye","sugar cane","wheat","rice","sikhye","barley tea","corn tea","black rice"]],
   ["🥣", ["후르트링","그래놀라","오트밀","muesli","granola","oatmeal","porridge"]],
 
   /* ── NUTTY / COCOA ── */
-  ["🌰", ["견과","헤이즐넛","아몬드","호두","땅콩","밤","피칸","마카다미아","피스타치오","캐슈","프랄린","nut","hazel","hazelnut","almond","walnut","peanut","chestnut","praline","pecan","macadamia","pistachio","cashew","marzipan"]],
+  ["🌰", ["견과","헤이즐넛","아몬드","호두","땅콩","밤","피칸","마카다미아","피스타치오","캐슈","프랄린","흑임자","잣","nut","hazel","hazelnut","almond","walnut","peanut","chestnut","praline","pecan","macadamia","pistachio","cashew","marzipan","pine nut","black sesame"]],
   ["🍫", ["초콜릿","초콜렛","다크초코","카카오","밀크초콜릿","화이트초콜릿","모카","cacao","cocoa","chocolate","dark chocolate","milk chocolate","white chocolate","mocha","ganache"]],
 
   /* ── SPICES ── 신규 추가 ── */
   ["🌶", ["후추","흑후추","넛메그","육두구","pepper","black pepper","white pepper","nutmeg","allspice","spicy","pungent","chile"]],
-  ["🫚", ["아니스","스타아니스","리코리스","감초","펜넬","anise","star anise","licorice","fennel","absinthe"]],
+  ["🫚", ["아니스","스타아니스","리코리스","감초","펜넬","생강","생강청","진저","ginger","anise","star anise","licorice","fennel","absinthe","ginger root"]],
   ["🫙", ["정향","카다몬","팔각","올스파이스","clove","cardamom","star anise","allspice","일라이치","cardamon"]],
-  ["🌿", ["시나몬","계피","허브","민트","바질","타임","로즈마리","cinnamon","herb","mint","basil","thyme","rosemary","sage","eucalyptus","lavender herb"]],
+  ["🌿", ["시나몬","계피","허브","민트","바질","타임","로즈마리","쑥","쑥향","판단","pandan","mugwort","cinnamon","herb","mint","basil","thyme","rosemary","sage","eucalyptus","lavender herb","lemongrass","레몬그라스"]],
 
   /* ── GREEN / VEGETATIVE ── 신규 추가 ── */
   ["🌱", ["풀향","풀내","그라시","헤이","덜익은","새싹","hay","grassy","green","vegetal","under-ripe","fresh grass","cut grass","hay-like","straw"]],
@@ -165,9 +166,9 @@ const FCAT = [
   ["🫒", ["올리브","흙","흙내","어시","머디","earthy","muddy","damp","musty","dirty","olive","papery","woody base"]],
 
   /* ── SOUR / FERMENTED ── 신규 추가 ── */
-  ["🍶", ["발효향","콤부차","와이니발효","fermented","kombucha","winey-sour","lactic","발효","과발효"]],
+  ["🍶", ["발효향","콤부차","와이니발효","막걸리","사케","미림","fermented","kombucha","winey-sour","lactic","발효","과발효","makgeolli","sake","mirin","rice wine","omakase"]],
   ["🧀", ["버터산","치즈향","젖산","유산균","butyric","cheesy","lactic acid","dairy sour","치즈"]],
-  ["🍾", ["샴페인산미","스파클링산미","champagne","sparkling acidity","effervescent","fizzy acid","샴페인","탄산산미"]],
+  ["🍾", ["샴페인산미","스파클링산미","탄산","사이다","스파클링","champagne","sparkling acidity","effervescent","fizzy acid","샴페인","탄산산미","cider","sparkling water"]],
 
   /* ── ROASTED 세분화 ── */
   ["☕", ["로스티","비스킷","토스트","그레이엄","roasty","biscuit","graham","toast","brown butter","browned"]],
@@ -185,7 +186,7 @@ const FCAT = [
   ["🌊", ["감칠맛","짭조름","미네랄","umami","savory","salty","brine","mineral","minerality","saline","terroir"]],
   ["🥜", ["캐슈넛","캐슈","피넛버터","peanut butter","cashew","피넛"]],
   ["🍿", ["팝콘","popcorn"]],
-  ["🍬", ["젤리","캔디","사탕","jelly","candy","sour candy","gummy","bubblegum"]],
+  ["🍬", ["젤리","캔디","사탕","과일사탕","과일젤리","솜사탕","하드캔디","보리사탕","jelly","candy","sour candy","gummy","bubblegum","hard candy","cotton candy","fruit candy","fruit jelly"]],
   ["🥤", ["소다","탄산","soda","sparkling","fizzy","tonic","cola"]],
   ["⭐", ["스타프루츠","star fruit","starfruit","carambola"]],
   ["🍋", ["레몬즙","lemon juice","lime juice","라임즙","라임","lime"]],
@@ -353,9 +354,9 @@ const FLAVOR_COLOR = [
   /* ── Berry 분리 ── */
   {keys:["그린망고","그린 망고","green mango","unripe mango","raw mango"], c:"#4ade80"},
   {keys:["블루베리","blueberry","huckleberry","bilberry"], c:"#3b0764"},
-  {keys:["블랙커런트","블랙베리","카시스","blackcurrant","blackberry","cassis"], c:"#4c1d95"},
+  {keys:["블랙커런트","블랙베리","카시스","거봉","머루","머루포도","흑포도","blackcurrant","blackberry","cassis"], c:"#4c1d95"},
   {keys:["포도","청포도","머스캣","grape","muscat","concord"], c:"#6d28d9"},
-  {keys:["라즈베리","딸기","raspberry","strawberry","wild berry"], c:"#e11d48"},
+  {keys:["라즈베리","딸기","오미자","오미자청","raspberry","strawberry","wild berry","omija"], c:"#e11d48"},
   {keys:["체리","크랜베리","cherry","cranberry","dark cherry"], c:"#9f1239"},
   /* ── Dried Fruit ── */
   {keys:["건포도","건자두","무화과","raisin","dried fruit","fig","prune","tamarind","타마린드","건과일","date"], c:"#78350f"},
@@ -363,7 +364,8 @@ const FLAVOR_COLOR = [
   {keys:["레몬","시트러스","유자","라임","lemon","citrus","yuzu","lime","bergamot","베르가못"], c:"#fbbf24"},
   {keys:["오렌지","감귤","자몽","orange","grapefruit","mandarin","tangerine"], c:"#f97316"},
   /* ── Stone Fruit ── */
-  {keys:["복숭아","살구","자두","peach","apricot","plum","nectarine"], c:"#fb923c"},
+  {keys:["복숭아","살구","자두","복숭아껍질","매실","peach","apricot","plum","nectarine","white peach"], c:"#fb923c"},
+  {keys:["홍시","감","곶감","단감","persimmon"], c:"#ea580c"},
   /* ── Tropical ── */
   {keys:["패션후르츠","파인애플","망고","passion","pineapple","mango","tropical"], c:"#f59e0b"},
   {keys:["코코넛","coconut"], c:"#fef9c3"},
@@ -374,7 +376,8 @@ const FLAVOR_COLOR = [
   {keys:["캐모마일","엘더플라워","chamomile","elderflower","white floral","화이트 플로럴"], c:"#818cf8"},
   {keys:["라벤더","lavender","lilac","라일락"], c:"#a78bfa"},
   /* ── Sweet ── */
-  {keys:["꿀","흑설탕","메이플","honey","brown sugar","maple","molasses","설탕","sugar"], c:"#f59e0b"},
+  {keys:["꿀","흑설탕","메이플","쌀엿","원당","황설탕","맑은단맛","honey","brown sugar","maple","molasses","설탕","sugar","clean sweetness","cane sugar"], c:"#f59e0b"},
+  {keys:["식혜","누룽지","sikhye"], c:"#ca8a04"},
   {keys:["캐러멜","토피","버터스카치","caramel","toffee","butterscotch"], c:"#b45309"},
   {keys:["바닐라","크림","버터","vanilla","cream","butter","milky"], c:"#fde68a"},
   /* ── Nutty/Cocoa ── */
@@ -406,6 +409,11 @@ const FLAVOR_COLOR = [
   {keys:["와인","포트","wine","port","winey","vinous"], c:"#9d174d"},
   {keys:["위스키","럼","whiskey","rum","bourbon","boozy"], c:"#7c2d12"},
   /* ── Other ── */
+  {keys:["배","모과","pear","quince","asian pear","nashi"], c:"#d4edda"},
+  {keys:["석류","구기자","pomegranate","goji"], c:"#dc2626"},
+  {keys:["오디","mulberry","boysenberry","loganberry","elderberry"], c:"#5b21b6"},
+  {keys:["금목서","목서","osmanthus","계화"], c:"#f472b6"},
+  {keys:["국화","chrysanthemum"], c:"#fde68a"},
   {keys:["미네랄","감칠맛","mineral","umami","savory","brine","terroir"], c:"#38bdf8"},
 ];
 
@@ -488,17 +496,36 @@ function showToast(m){S.toast=m;if(S.toastT)clearTimeout(S.toastT);S.toastT=setT
 function fchips(flavors,sz){
   if(!flavors||!flavors.length) return "";
   var isSmall=sz==="small";
-  var emoSz=isSmall?"15px":"20px", txtSz=isSmall?"9px":"10px", pad=isSmall?"6px 4px":"8px 4px";
+  var boxSz=isSmall?17:24;
+  var imgSz=isSmall?14:20;
+  var emoFont=isSmall?"13px":"20px";
+  var txtSz=isSmall?"9px":"10px";
+  var pad=isSmall?"5px 4px":"8px 5px";
+  var chipH=isSmall?'auto':'60px';
+  var bigIcons={'hongsi':0.85,'nuts':1,'caramel':1};
   var grad=getFlavorGradient(flavors);
-  var barHtml=grad?'<div style="height:'+(isSmall?'3px':'4px')+';border-radius:2px;margin-bottom:'+(isSmall?'8px':'10px')+';background:linear-gradient(90deg,'+grad+');"></div>':"";
+  var barHtml=grad?'<div style="height:'+(isSmall?'3px':'4px')+';border-radius:2px;margin-bottom:'+(isSmall?'8px':'10px')+';background:linear-gradient(90deg,'+grad+');">'+'</div>':"";
   var chips=flavors.map(function(f){
-    return '<div class="fchip" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:#fffaf2;border:0.5px solid rgba(42,26,12,0.09);border-radius:10px;padding:'+pad+';">'
-      +'<span style="font-size:'+emoSz+';line-height:1.1;">'+fe(f)+'</span>'
-      +'<span style="font-size:'+txtSz+';color:#7a4e2a;font-weight:300;text-align:center;width:100%;word-break:keep-all;overflow-wrap:break-word;line-height:1.3;">'+f+'</span>'
+    var ico=fe(f);
+    var icoHtml;
+    if(ico.indexOf('__svg_')===0){
+      var svgKey=ico.slice(6);
+      var sz2=bigIcons[svgKey]?Math.round(imgSz*1.3):imgSz;
+      var svgStr=getSvgIcon(svgKey,String(sz2));
+      var wrap='<div style="width:'+boxSz+'px;height:'+boxSz+'px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:visible;">';
+      icoHtml=wrap+(svgStr||'<span style="font-size:'+emoFont+';">✨</span>')+'</div>';
+    } else {
+      var wrap='<div style="width:'+boxSz+'px;height:'+boxSz+'px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">';
+      icoHtml=wrap+'<span style="font-size:'+emoFont+';line-height:1;">'+ico+'</span></div>';
+    }
+    return '<div class="fchip" style="height:'+chipH+';display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:2px;background:#fffaf2;border:0.5px solid rgba(42,26,12,0.09);border-radius:10px;padding:'+pad+';">'  
+      +icoHtml
+      +'<span style="font-size:'+txtSz+';color:#7a4e2a;font-weight:300;text-align:center;width:100%;word-break:keep-all;overflow-wrap:break-word;line-height:1.3;margin-top:auto;">'+f+'</span>'
       +'</div>';
   }).join("");
   return barHtml+'<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;">'+chips+'</div>';
 }
+function getSvgIcon(k,sz){var t=SVG_ICONS[k];return t?t.replace(/SZ/g,sz):null;}
 function stHtml(v,id,sz,ed){
   return [1,2,3,4,5].map(function(s){return '<span class="star'+(s<=v?" on":"")+'" style="font-size:'+(sz||16)+'px;" '+(ed?'onclick="setStar(\''+id+'\','+s+')"':'')+'>★</span>';}).join("");
 }
