@@ -63,133 +63,214 @@ const SC = doc(db,"settings","admin");
 
 const EMO = {
   /* ── 과일 ── */
-  "무화과":"🍯","베르가못":"🍋‍🟩","복숭아":"🍑","포도":"🍇","레몬":"🍋",
-  "홍차":"🍵","후르트링":"🥣","초콜릿":"🍫","다크초콜릿":"🍫","캐러멜":"🍮","견과류":"🌰",
-  "사과":"🍎","오렌지":"🍊","딸기":"🍓","블루베리":"🫐","체리":"🍒","망고":"🥭",
-  "파인애플":"🍍","바닐라":"🍦","허브":"🌿","장미":"🌹","아몬드":"🌰","헤이즐넛":"🌰",
-  "꿀":"🍯","라즈베리":"🍓","감귤":"🍊","멜론":"🍈","자두":"🍑","살구":"🍑",
-  "패션후르츠":"🌺","시트러스":"🍋","캐모마일":"🌼","얼그레이":"🍵","크랜베리":"🍒",
-  "키위":"🥝","화이트 플로럴":"🌼","청사과":"🍏","풋사과":"🍏","그린망고":"🍏","그린 망고":"🍏","슈가 케인":"🌾","팝콘":"🍿",
-  "수박":"🍉","리치":"🍈","구아바":"🍈","코코넛":"🥥",
-  /* ── 블랙커런트·블랙베리 분리 ── */
-  "블랙커런트":"🍇","블랙베리":"🍇","카시스":"🍇","블랙베리잼":"🍇",
-  /* ── 건과일 ── */
-  "건포도":"🫙","건자두":"🫙","건살구":"🫙","건망고":"🫙","대추야자":"🫙",
-  "건체리":"🍒","건크랜베리":"🍒","무화과잼":"🫙","타마린드":"🫙",
-  /* ── Spices ── */
-  "시나몬":"🌿","계피":"🌿","넛메그":"🌶","육두구":"🌶","후추":"🌶","흑후추":"🌶",
-  "아니스":"🫚","스타아니스":"🫚","리코리스":"🫚","감초":"🫚","펜넬":"🫚",
-  "정향":"🫙","카다몬":"🫙","일라이치":"🫙","팔각":"🫙","올스파이스":"🫙",
-  /* ── Green/Vegetative ── */
-  "풀향":"🌱","풀내":"🌱","그라시":"🌱","헤이":"🌱","덜익은":"🌱",
+  "홍시":"__svg_hongsi","감":"__svg_hongsi","단감":"__svg_hongsi","홍시향":"__svg_hongsi",
+  "곶감":"__svg_gotgam","건시":"__svg_gotgam","곶감향":"__svg_gotgam",
+  "복숭아":"🍑","살구":"🍑","황도":"🍑","백도":"🍑","피치":"🍑","복숭아껍질":"🍑","복숭아즙":"🍑","복숭아잼":"🍑","살구잼":"🍑",
+  "매실":"__svg_maesil","매실청":"__svg_maesil","매실향":"__svg_maesil",
+  "자두":"__svg_plum","자두잼":"__svg_plum",
+  "레몬":"🍋","시트러스":"🍋","시트론":"🍋","유자":"🍋","라임":"🍋","레몬그라스":"🍋","유자청":"🍋","청귤":"🍋","레몬필":"🍋","레몬즙":"🍋","라임즙":"🍋",
+  "베르가못":"__svg_bergamot",
+  "오렌지":"🍊","감귤":"🍊","귤":"🍊","만다린":"🍊","클레멘타인":"🍊","자몽":"🍊","그레이프프루트":"🍊","금귤":"🍊",
+  "포도":"🍇","청포도":"🍇","머스캣":"🍇","거봉":"🍇","머루":"🍇","머루포도":"🍇","캠벨":"🍇","흑포도":"🍇",
+  "블랙커런트":"__svg_blackberry","블랙베리":"__svg_blackberry","카시스":"__svg_blackberry","블랙베리잼":"__svg_blackberry",
+  "딸기":"🍓","라즈베리":"🍓","딸기잼":"🍓",
+  "블루베리":"🫐","오디":"🫐","뽕나무":"🫐","엘더베리":"🫐",
+  "체리":"🍒","크랜베리":"🍒","건체리":"🍒","건크랜베리":"🍒","다크체리":"🍒","오미자":"🍒","오미자청":"🍒","석류":"🍒","구기자":"🍒",
+  "파인애플":"🍍","트로피컬":"🍍","잭프루트":"🍍",
+  "망고":"🥭",
+  "멜론":"🍈","리치":"🍈","구아바":"🍈","메론":"🍈","파파야":"🍈","용안":"🍈",
+  "청사과":"🍏","풋사과":"🍏","그린망고":"🍏","그린 망고":"🍏","덜익은망고":"🍏",
+  "키위":"🥝",
+  "배":"🍐","배청":"🍐","배향":"🍐","모과":"🍐","모과청":"🍐","배꿀":"🍐","비파":"🍐",
+  "올리브":"🫒","올리브오일":"🫒",
+  "코코넛":"🥥","코코넛밀크":"🥥",
+  "수박":"🍉",
+  "사과":"🍎","적사과":"🍎","홍사과":"🍎",
   "피망":"🫑","토마토줄기":"🫑","채소향":"🫑","야채향":"🫑",
-  "올리브":"🫒","흙":"🫒","흙내":"🫒","어시":"🫒","머디":"🫒",
-  /* ── Sour/Fermented ── */
-  "발효":"🍶","콤부차":"🍶","와이니":"🍷","식초":"🫙","초산":"🫙",
-  "버터산":"🧀","치즈향":"🧀","젖산":"🧀","유산균":"🧀",
-  "샴페인":"🍾","스파클링":"🍾","위스키":"🥃","보이차":"🍵",
-  /* ── Roasted 세분화 ── */
-  "타바코":"🚬","담배":"🚬","재":"🚬","어시향":"🚬",
-  "우디":"🪵","시더":"🪵","오크":"🪵","나무":"🪵","우드":"🪵",
-  "몰트":"🌾","맥아":"🌾","그레인":"🌾","곡물":"🌾",
-  /* ── 기타 ── */
-  "흑설탕":"🍯","흑당":"🍯","대추":"🍯","브라운슈거":"🍯","메이플":"🍯",
-  "버터":"🫚","크림":"🫚","바닐라빈":"🍦","크렘브륄레":"🍦",
-  "와인":"🍷","포트와인":"🍷","레드와인":"🍷","화이트와인":"🍷",
-  "미네랄":"🌊","감칠맛":"🌊","짭조름":"🌊","훈연":"💨","스모키":"💨","피트":"💨",
+  "패션후르츠":"__svg_passion","패션":"__svg_passion","패숀":"__svg_passion","히비스커스":"__svg_passion",
+  /* ── 건과일 ── */
+  "건포도":"__svg_raisin","건자두":"__svg_raisin","건살구":"__svg_raisin","건망고":"__svg_raisin","건과일":"__svg_raisin","건포도향":"__svg_raisin","대추야자":"__svg_raisin","타마린드":"__svg_raisin",
+  "무화과":"__svg_fig","건무화과":"__svg_fig","무화과잼":"__svg_fig",
+  /* ── 달콤함 ── */
+  "캐러멜":"__svg_caramel","카라멜":"__svg_caramel","다크캐러멜":"__svg_caramel","다크카라멜":"__svg_caramel","캐러멜소스":"__svg_caramel","카라멜라떼":"__svg_caramel","캐러멜라떼":"__svg_caramel","토피":"__svg_caramel","버터스카치":"__svg_caramel",
+  "솜사탕":"__svg_cotton","솜사탕향":"__svg_cotton",
+  "초콜릿":"🍫","다크초콜릿":"🍫","초콜렛":"🍫","다크초코":"🍫","카카오":"🍫","밀크초콜릿":"🍫","화이트초콜릿":"🍫","모카":"🍫",
+  "꿀":"__svg_honey","흑설탕":"__svg_honey","흑당":"__svg_honey","대추":"__svg_honey","브라운슈거":"__svg_honey","메이플":"__svg_honey","맑은 단맛":"__svg_honey","맑은단맛":"__svg_honey","깨끗한 단맛":"__svg_honey","깨끗한단맛":"__svg_honey","깔끔한 단맛":"__svg_honey","깔끔한단맛":"__svg_honey","클린 스위트":"__svg_honey",
+  "바닐라":"__svg_vanilla","바닐라빈":"__svg_vanilla","크렘브륄레":"__svg_vanilla",
+  "젤리":"🍬","캔디":"🍬","사탕":"🍬","과일사탕":"🍬","과일젤리":"🍬","하드캔디":"🍬","보리사탕":"🍬",
+  /* ── 꽃·허브 ── */
+  "자스민":"__svg_jasmine","재스민":"__svg_jasmine","쟈스민":"__svg_jasmine","제스민":"__svg_jasmine","제즈민":"__svg_jasmine","자스민향":"__svg_jasmine","재스민향":"__svg_jasmine","자스민차":"__svg_jasmine","자스민티":"__svg_jasmine","벚꽃":"__svg_jasmine","오렌지블라썸":"__svg_jasmine","플로럴":"__svg_jasmine",
+  "장미":"🌹","로즈":"🌹","로즈힙":"🌹",
+  "라벤더":"__svg_lavender","라일락":"__svg_lavender","백합":"__svg_lavender","튤립":"__svg_lavender","제라늄":"__svg_lavender",
+  "캐모마일":"🌼","화이트 플로럴":"🌼","엘더플라워":"🌼","아카시아":"🌼","국화":"🌼","국화차":"🌼","캐모마일차":"🌼",
+  "허브":"🌿","민트":"🌿","바질":"🌿","타임":"🌿","로즈마리":"🌿","쑥":"🌿","쑥향":"🌿","판단":"🌿","레몬그라스":"🌿",
+  "풀향":"🌱","풀내":"🌱","그라시":"🌱","헤이":"🌱","덜익은":"🌱","새싹":"🌱",
+  /* ── 로스팅·견과 ── */
+  "견과":"__svg_nuts","견과류":"__svg_nuts","아몬드":"__svg_nuts","헤이즐넛":"__svg_nuts","호두":"__svg_nuts","땅콩":"__svg_nuts","밤":"__svg_nuts","피칸":"__svg_nuts","마카다미아":"__svg_nuts","피스타치오":"__svg_nuts","잣":"__svg_nuts","프랄린":"__svg_nuts",
+  "캐슈넛":"🥜","캐슈":"🥜","피넛버터":"🥜","피넛":"🥜",
+  /* ── 향신료 ── */
+  "생강":"__svg_ginger","생강청":"__svg_ginger","진저":"__svg_ginger","생강향":"__svg_ginger",
+  "아니스":"__svg_anise","스타아니스":"__svg_anise","리코리스":"__svg_anise","감초":"__svg_anise","펜넬":"__svg_anise",
+  "넛메그":"__svg_nutmeg","시나몬":"__svg_nutmeg","계피":"__svg_nutmeg","육두구":"__svg_nutmeg","후추":"__svg_nutmeg","흑후추":"__svg_nutmeg",
+  "정향":"__svg_clove","카다몬":"__svg_clove","일라이치":"__svg_clove","팔각":"__svg_clove","올스파이스":"__svg_clove",
+  "버터":"__svg_butter","크림":"__svg_butter","버터크림":"__svg_butter","밀키":"__svg_butter",
+  /* ── 차·음료·기타 ── */
+  "홍차":"🍵","얼그레이":"🍵","보이차":"🍵","녹차":"🍵","우롱":"🍵","루이보스":"🍵","다르질링":"🍵",
+  "그래놀라":"__svg_cereal","오트밀":"__svg_cereal",
+  "타바코":"__svg_tobacco","담배":"__svg_tobacco","재":"__svg_tobacco","어시향":"__svg_tobacco","탄향":"__svg_tobacco","탄내":"__svg_tobacco",
+  "우디":"🪵","시더":"🪵","오크":"🪵","나무":"🪵","우드":"🪵","나무향":"🪵",
+  "와인":"🍷","포트와인":"🍷","레드와인":"🍷","화이트와인":"🍷","와이니":"🍷","포트":"🍷",
+  "몰트":"🌾","맥아":"🌾","그레인":"🌾","곡물":"🌾","슈가케인":"🌾","슈가 케인":"🌾","식혜":"🌾","누룽지":"🌾",
+  "미네랄":"__svg_mineral","감칠맛":"__svg_mineral","짭조름":"__svg_mineral",
+  "훈연":"__svg_smoke","스모키":"__svg_smoke","피트":"__svg_smoke","훈제":"__svg_smoke",
+  "발효":"🍶","콤부차":"🍶","막걸리":"🍶","사케":"🍶","미림":"🍶","과발효":"🍶","식초산":"🍶","주류":"🍶",
+  "버터산":"🧀","치즈향":"🧀","젖산":"🧀","유산균":"🧀","치즈":"🧀",
+  "샴페인":"🍾","스파클링":"🍾","샴페인산미":"🍾","스파클링산미":"🍾",
+  "위스키":"🥃","럼":"🥃","버번":"🥃",
+  "우유":"🥛","밀크":"🥛","연유":"🥛","두유":"🥛","오트밀크":"🥛","밀크티":"🥛","라떼":"🥛",
+  "요거트":"__svg_yogurt","요구르트":"__svg_yogurt","크림치즈":"__svg_yogurt",
+  "소다":"🥤","탄산":"🥤","사이다":"🥤",
+  "팝콘":"🍿",
+  "스타프루츠":"__svg_starfruit",
+  "흙":"__svg_earthy","흙내":"__svg_earthy","어시":"__svg_earthy","머디":"__svg_earthy",
   /* ── 영문 ── */
-  "white floral":"🌼","green apple":"🍏","sugar cane":"🌾","floral":"🌸",
-  "apple":"🍎","peach":"🍑","jasmine":"🌸","lemon":"🍋","orange":"🍊",
-  "strawberry":"🍓","raspberry":"🍓","blueberry":"🫐","chocolate":"🍫",
-  "caramel":"🍮","vanilla":"🍦","honey":"🍯","grape":"🍇","cherry":"🍒",
-  "mango":"🥭","melon":"🍈","blackcurrant":"🍇","blackberry":"🍇",
-  "raisin":"🫙","dried fruit":"🫙","tobacco":"🚬","woody":"🪵","cedar":"🪵","견과":"__svg_nuts","견과류":"__svg_nuts","헤이즐넛":"__svg_nuts","아몬드":"__svg_nuts","호두":"__svg_nuts","땅콩":"__svg_nuts","피칸":"__svg_nuts","마카다미아":"__svg_nuts","잣":"__svg_nuts","nut":"__svg_nuts","hazelnut":"__svg_nuts","almond":"__svg_nuts","walnut":"__svg_nuts","pecan":"__svg_nuts","캐러멜":"__svg_caramel","카라멜":"__svg_caramel","다크캐러멜":"__svg_caramel","다크카라멜":"__svg_caramel","캐러멜소스":"__svg_caramel","카라멜라떼":"__svg_caramel","캐러멜라떼":"__svg_caramel","토피":"__svg_caramel","버터스카치":"__svg_caramel","caramel":"__svg_caramel","dark caramel":"__svg_caramel","toffee":"__svg_caramel","butterscotch":"__svg_caramel","솜사탕":"__svg_cotton","맑은 단맛":"🍯","맑은단맛":"🍯","깨끗한 단맛":"🍯","깨끗한단맛":"🍯","깔끔한 단맛":"🍯","깔끔한단맛":"🍯","클린 스위트":"🍯","clean sweet":"🍯","맑은 sweetness":"🍯","솜사탕향":"__svg_cotton","cotton candy":"__svg_cotton","candy floss":"__svg_cotton","홍시":"__svg_hongsi","감":"__svg_hongsi","단감":"__svg_hongsi","자스민":"__svg_jasmine","재스민":"__svg_jasmine","쟈스민":"__svg_jasmine","제스민":"__svg_jasmine","제즈민":"__svg_jasmine","자스민향":"__svg_jasmine","재스민향":"__svg_jasmine","자스민차":"__svg_jasmine","자스민티":"__svg_jasmine","jasmine":"__svg_jasmine","jasmin":"__svg_jasmine","jasminum":"__svg_jasmine","생강":"__svg_ginger","생강청":"__svg_ginger","진저":"__svg_ginger","ginger":"__svg_ginger","생강향":"__svg_ginger","곶감":"__svg_gotgam","건시":"__svg_gotgam","곶감향":"__svg_gotgam"};
-// 카테고리별 키워드 부분 매칭 (v3 확장: SCA 9대 카테고리 완전 커버)
+  "peach":"🍑","apricot":"🍑","nectarine":"🍑","white peach":"🍑",
+  "plum":"__svg_plum","damson":"__svg_plum","prune plum":"__svg_plum",
+  "ume":"__svg_maesil","greengage":"__svg_maesil","green plum":"__svg_maesil",
+  "bergamot":"__svg_bergamot",
+  "lemon":"🍋","citrus":"🍋","yuzu":"🍋","lime":"🍋","lemon zest":"🍋",
+  "orange":"🍊","mandarin":"🍊","tangerine":"🍊","grapefruit":"🍊","clementine":"🍊","blood orange":"🍊",
+  "grape":"🍇","muscat":"🍇","concord":"🍇",
+  "blackcurrant":"__svg_blackberry","blackberry":"__svg_blackberry","cassis":"__svg_blackberry","boysenberry":"__svg_blackberry",
+  "strawberry":"🍓","raspberry":"🍓","mixed berry":"🍓","wild berry":"🍓",
+  "blueberry":"🫐","mulberry":"🫐","loganberry":"🫐","elderberry":"🫐","huckleberry":"🫐",
+  "cherry":"🍒","cranberry":"🍒","dark cherry":"🍒","maraschino":"🍒","morello":"🍒","dried cherry":"🍒",
+  "pineapple":"🍍","tropical":"🍍","jackfruit":"🍍",
+  "mango":"🥭","alphonso":"🥭","ataulfo":"🥭",
+  "melon":"🍈","lychee":"🍈","guava":"🍈","papaya":"🍈","honeydew":"🍈","longan":"🍈",
+  "green apple":"🍏","granny smith":"🍏","green mango":"🍏","unripe mango":"🍏","raw mango":"🍏",
+  "kiwi":"🥝","kiwifruit":"🥝",
+  "pear":"🍐","quince":"🍐","asian pear":"🍐","nashi":"🍐","loquat":"🍐",
+  "olive":"🫒","olive oil":"🫒",
+  "coconut":"🥥","coconut milk":"🥥",
+  "watermelon":"🍉",
+  "apple":"🍎","red apple":"🍎","fuji apple":"🍎",
+  "bell pepper":"🫑","tomato stem":"🫑","tomato leaf":"🫑","capsicum":"🫑","green pepper":"🫑",
+  "passion":"__svg_passion","hibiscus":"__svg_passion","passionfruit":"__svg_passion","passion fruit":"__svg_passion",
+  "raisin":"__svg_raisin","dried fruit":"__svg_raisin","sultana":"__svg_raisin","dried apricot":"__svg_raisin","dried mango":"__svg_raisin","prune":"__svg_raisin","tamarind":"__svg_raisin",
+  "fig":"__svg_fig","dried fig":"__svg_fig","fig jam":"__svg_fig",
+  "caramel":"__svg_caramel","dark caramel":"__svg_caramel","toffee":"__svg_caramel","butterscotch":"__svg_caramel","dulce de leche":"__svg_caramel",
+  "cotton candy":"__svg_cotton","candy floss":"__svg_cotton",
+  "chocolate":"🍫","cacao":"🍫","cocoa":"🍫","dark chocolate":"🍫","milk chocolate":"🍫","mocha":"🍫",
+  "honey":"__svg_honey","brown sugar":"__svg_honey","maple":"__svg_honey","molasses":"__svg_honey","treacle":"__svg_honey","clean sweet":"__svg_honey",
+  "vanilla":"__svg_vanilla","vanilla bean":"__svg_vanilla","creme brulee":"__svg_vanilla",
+  "jelly":"🍬","candy":"🍬","sour candy":"🍬","gummy":"🍬","bubblegum":"🍬","hard candy":"🍬",
+  "jasmine":"__svg_jasmine","jasmin":"__svg_jasmine","jasminum":"__svg_jasmine","blossom":"__svg_jasmine","floral":"__svg_jasmine","flower":"__svg_jasmine","orange blossom":"__svg_jasmine",
+  "rose":"🌹","rosehip":"🌹","damask rose":"🌹",
+  "lavender":"__svg_lavender","lilac":"__svg_lavender","lily":"__svg_lavender","geranium":"__svg_lavender",
+  "white floral":"🌼","chamomile":"🌼","elderflower":"🌼","chrysanthemum":"🌼","acacia":"🌼","linden":"🌼",
+  "herb":"🌿","mint":"🌿","basil":"🌿","thyme":"🌿","rosemary":"🌿","pandan":"🌿","mugwort":"🌿","lemongrass":"🌿",
+  "hay":"🌱","grassy":"🌱","green":"🌱","vegetal":"🌱","under-ripe":"🌱","fresh grass":"🌱",
+  "nut":"__svg_nuts","hazelnut":"__svg_nuts","almond":"__svg_nuts","walnut":"__svg_nuts","peanut":"__svg_nuts","pecan":"__svg_nuts","macadamia":"__svg_nuts","hazel":"__svg_nuts",
+  "peanut butter":"🥜","cashew":"🥜",
+  "ginger":"__svg_ginger","ginger root":"__svg_ginger",
+  "anise":"__svg_anise","star anise":"__svg_anise","licorice":"__svg_anise","fennel":"__svg_anise",
+  "nutmeg":"__svg_nutmeg","cinnamon":"__svg_nutmeg","pepper":"__svg_nutmeg","black pepper":"__svg_nutmeg","white pepper":"__svg_nutmeg","allspice":"__svg_nutmeg","spicy":"__svg_nutmeg",
+  "clove":"__svg_clove","cardamom":"__svg_clove",
+  "butter":"__svg_butter","cream":"__svg_butter","milky":"__svg_butter","brown butter":"__svg_butter","clotted cream":"__svg_butter","browned butter":"__svg_butter",
+  "earl grey":"🍵","green tea":"🍵","oolong":"🍵","pu-erh":"🍵","rooibos":"🍵","darjeeling":"🍵",
+  "granola":"__svg_cereal","oatmeal":"__svg_cereal","muesli":"__svg_cereal","porridge":"__svg_cereal",
+  "tobacco":"__svg_tobacco","ashy":"__svg_tobacco","ash":"__svg_tobacco","smoky dark":"__svg_tobacco",
+  "woody":"🪵","cedar":"🪵","oak":"🪵","sandalwood":"🪵","wood":"🪵","teak":"🪵",
+  "wine":"🍷","red wine":"🍷","white wine":"🍷","port":"🍷","winey":"🍷","vinous":"🍷",
+  "malt":"🌾","grain":"🌾","cereal":"🌾","oat":"🌾","barley":"🌾","sugar cane":"🌾",
+  "mineral":"__svg_mineral","umami":"__svg_mineral","savory":"__svg_mineral","salty":"__svg_mineral","brine":"__svg_mineral","minerality":"__svg_mineral",
+  "smoky":"__svg_smoke","peaty":"__svg_smoke","peat":"__svg_smoke","burnt":"__svg_smoke","campfire":"__svg_smoke","smoked":"__svg_smoke",
+  "fermented":"🍶","kombucha":"🍶","winey-sour":"🍶","lactic":"🍶","sake":"🍶","makgeolli":"🍶",
+  "butyric":"🧀","cheesy":"🧀","lactic acid":"🧀","dairy sour":"🧀",
+  "champagne":"🍾","sparkling acidity":"🍾","effervescent":"🍾",
+  "whiskey":"🥃","rum":"🥃","bourbon":"🥃","whisky":"🥃","spirit":"🥃",
+  "milk":"🥛","dairy":"🥛","condensed milk":"🥛","oat milk":"🥛","soy milk":"🥛",
+  "yogurt":"__svg_yogurt","yoghurt":"__svg_yogurt","cream cheese":"__svg_yogurt","buttermilk":"__svg_yogurt","kefir":"__svg_yogurt",
+  "soda":"🥤","sparkling":"🥤","fizzy":"🥤","tonic":"🥤","cola":"🥤","cider":"🥤",
+  "popcorn":"🍿",
+  "star fruit":"__svg_starfruit","starfruit":"__svg_starfruit","carambola":"__svg_starfruit",
+  "earthy":"__svg_earthy","muddy":"__svg_earthy","damp":"__svg_earthy","musty":"__svg_earthy","dirty":"__svg_earthy",
+};
+// 카테고리별 키워드 부분 매칭 (v2 매핑테이블 기준)
 const FCAT = [
-  /* ── FRUITY: Berry ── */
-  ["🫐", ["블루베리","오디","뽕나무","엘더베리","blueberry","mulberry","boysenberry","loganberry","elderberry","huckleberry","bilberry"]],
-  ["🍇", ["블랙커런트","블랙베리","카시스","포도","청포도","머스캣","거봉","머루","머루포도","캠벨","흑포도","청포도향","포도향","포도주스","blackcurrant","blackberry","cassis","grape","muscat","concord","muscadine","concord grape"]],
-  ["🍓", ["딸기","라즈베리","mixed berry","strawberry","raspberry","wild berry","딸기잼"]],
-  ["🍒", ["체리","크랜베리","다크체리","건체리","오미자","오미자청","석류","구기자","cherry","cranberry","dark cherry","maraschino","morello","dried cherry","omija","pomegranate","goji berry","goji"]],
-
-  /* ── FRUITY: Dried Fruit ── */
-  ["🫙", ["건포도","건자두","건살구","건망고","건과일","무화과","raisin","sultana","dried fruit","dried grape","dried apricot","dried mango","prune","fig","date","tamarind","타마린드","대추야자"]],
-
-  /* ── FRUITY: Citrus ── */
-  ["🍋", ["레몬","시트러스","시트론","유자","라임","레몬그라스","유자청","청귤","레몬필","lemon","citrus","citron","yuzu","lime","lemon zest","lemon curd","citrus peel","yuzu tea"]],
-  ["🍊", ["오렌지","감귤","귤","만다린","클레멘타인","자몽","그레이프프루트","홍시","감","곶감","단감","금귤","카라카라","오렌지필","자몽필","핑크자몽","블러드오렌지","orange","mandarin","tangerine","grapefruit","clementine","blood orange","persimmon","orange peel","grapefruit peel","kumquat","cara cara"]],
-  ["🍋‍🟩", ["베르가못","bergamot"]],
-
-  /* ── FRUITY: Stone Fruit ── */
-  ["🍑", ["복숭아","황도","백도","피치","살구","자두","복숭아껍질","복숭아즙","매실","매실청","살구잼","복숭아잼","자두잼","apricot","plum","peach","nectarine","peach skin","white peach"]],
-
-  /* ── FRUITY: Other Fruit ── */
-  ["🍎", ["사과","적사과","홍사과","apple","red apple","fuji apple"]],
-  ["🍏", ["청사과","풋사과","그린망고","그린 망고","덜익은망고","green apple","granny smith","green mango","unripe mango","raw mango"]],
+  /* ── 과일: Stone Fruit ── */
+  ["🍑", ["복숭아","황도","백도","피치","살구","복숭아껍질","복숭아즙","복숭아잼","살구잼","apricot","peach","nectarine","peach skin","white peach"]],
+  ["__svg_plum", ["자두","자두잼","plum","damson","prune plum"]],
+  ["__svg_maesil", ["매실","매실청","매실향","ume","greengage","green plum"]],
+  /* ── 과일: Citrus ── */
+  ["🍋", ["레몬","시트러스","시트론","유자","라임","레몬그라스","유자청","청귤","레몬필","레몬즙","라임즙","lemon","citrus","citron","yuzu","lime","lemon zest","lemon curd","citrus peel"]],
+  ["__svg_bergamot", ["베르가못","bergamot"]],
+  ["🍊", ["오렌지","감귤","귤","만다린","클레멘타인","자몽","그레이프프루트","금귤","오렌지필","자몽필","핑크자몽","블러드오렌지","orange","mandarin","tangerine","grapefruit","clementine","blood orange","orange peel","kumquat"]],
+  /* ── 과일: Berry ── */
+  ["🫐", ["블루베리","오디","뽕나무","엘더베리","blueberry","mulberry","loganberry","elderberry","huckleberry","bilberry"]],
+  ["__svg_blackberry", ["블랙커런트","블랙베리","카시스","블랙베리잼","blackcurrant","blackberry","cassis","boysenberry"]],
+  ["🍓", ["딸기","라즈베리","딸기잼","strawberry","raspberry","mixed berry","wild berry"]],
+  ["🍒", ["체리","크랜베리","다크체리","건체리","건크랜베리","오미자","오미자청","석류","구기자","cherry","cranberry","dark cherry","maraschino","morello","dried cherry","pomegranate","goji"]],
+  /* ── 과일: Other ── */
+  ["🍍", ["파인애플","트로피컬","잭프루트","pineapple","tropical","jackfruit"]],
   ["🥭", ["망고","mango","alphonso","ataulfo"]],
-  ["🍍", ["파인애플","트로피컬","pineapple","tropical","jackfruit","잭프루트"]],
-  ["🍈", ["멜론","메론","리치","구아바","파파야","용안","longan","melon","lychee","guava","papaya","honeydew","cantaloupe"]],
-  ["🍉", ["수박","watermelon"]],
+  ["🍈", ["멜론","메론","리치","구아바","파파야","용안","melon","lychee","guava","papaya","honeydew","longan"]],
+  ["🍏", ["청사과","풋사과","그린망고","그린 망고","덜익은망고","green apple","granny smith","green mango","unripe mango","raw mango"]],
+  ["🍎", ["사과","적사과","홍사과","apple","red apple","fuji apple"]],
   ["🥝", ["키위","kiwi","kiwifruit"]],
-  ["🍐", ["배","배청","배향","모과","모과청","asian pear","pear","quince","nashi","poire","배꿀","비파","loquat"]],
-  ["🥥", ["코코넛","coconut","coconut milk","코코넛밀크"]],
-  ["🌺", ["패션","패숀","히비스커스","passion","hibiscus","passionfruit","passion fruit"]],
-
-  /* ── FLORAL ── */
-  ["__svg_jasmine", ["자스민","재스민","쟈스민","자스민향","재스민향","자스민차","자스민티","jasmine","jasmin","jasminum","플로럴","벚꽃","오렌지블라썸","금목서","목서","계화","blossom","floral","flower","orange blossom","osmanthus"]],
-  ["🌼", ["캐모마일","화이트 플로럴","엘더플라워","아카시아","국화","국화차","chrysanthemum","chamomile","elderflower","white floral","acacia","linden"]],
-  ["🌹", ["장미","로즈","로즈힙","rose","rosehip","damask rose"]],
-  ["🌷", ["라벤더","라일락","백합","튤립","제라늄","lavender","lilac","lily","tulip","geranium"]],
-
-  /* ── SWEET ── */
-  ["🍯", ["꿀","벌꿀","흑설탕","흑당","대추","브라운슈거","메이플","졸인설탕","시럽","쌀엿","원당","황설탕","사탕수수","맑은단맛","맑은 단맛","깨끗한단맛","깨끗한 단맛","깔끔한단맛","깔끔한 단맛","honey","brown sugar","maple","molasses","treacle","agave","허니","caramelized","설탕","sugar","clean sweetness","pure sweetness","cane sugar"]],
-  ["🍮", ["캐러멜","카라멜","토피","버터스카치","caramel","dark caramel","toffee","butterscotch","dulce de leche"]],
-  ["🍦", ["바닐라","바닐라빈","크렘브륄레","vanilla","vanilla bean","creme brulee"]],
-  ["🫚", ["버터","크림","버터크림","butter","cream","clotted cream","browned butter","milky","밀키"]],
-  ["🥛", ["요거트","요구르트","밀크","우유","크림치즈","연유","두유","오트밀크","밀크티","라떼","yogurt","yoghurt","milk","dairy","cream cheese","buttermilk","kefir","latte","condensed milk","oat milk","soy milk","milk tea"]],
-  ["🌾", ["몰트","맥아","그레인","곡물","시리얼","귀리","보리","호밀","슈가케인","슈가 케인","식혜","누룽지","누룽지향","쌀","흑미","율무","보리차","옥수수차","malt","grain","cereal","oat","barley","rye","sugar cane","wheat","rice","sikhye","barley tea","corn tea","black rice"]],
-  ["🥣", ["후르트링","그래놀라","오트밀","muesli","granola","oatmeal","porridge"]],
-
-  /* ── NUTTY / COCOA ── */
-  ["🌰", ["견과","헤이즐넛","아몬드","호두","땅콩","밤","피칸","마카다미아","피스타치오","캐슈","프랄린","흑임자","잣","nut","hazel","hazelnut","almond","walnut","peanut","chestnut","praline","pecan","macadamia","pistachio","cashew","marzipan","pine nut","black sesame"]],
+  ["🍐", ["배","배청","배향","모과","모과청","배꿀","비파","pear","quince","asian pear","nashi","loquat"]],
+  ["🥥", ["코코넛","코코넛밀크","coconut","coconut milk"]],
+  ["🍉", ["수박","watermelon"]],
+  ["__svg_passion", ["패션후르츠","패션","패숀","히비스커스","passion","hibiscus","passionfruit","passion fruit"]],
+  /* ── 건과일 ── */
+  ["__svg_raisin", ["건포도","건자두","건살구","건망고","건과일","대추야자","타마린드","raisin","sultana","dried fruit","dried grape","dried apricot","dried mango","prune","tamarind"]],
+  ["__svg_fig", ["무화과","건무화과","무화과잼","fig","dried fig","fig jam"]],
+  /* ── 달콤함 ── */
+  ["__svg_caramel", ["캐러멜","카라멜","다크캐러멜","다크카라멜","캐러멜소스","카라멜라떼","캐러멜라떼","토피","버터스카치","caramel","dark caramel","toffee","butterscotch","dulce de leche"]],
+  ["__svg_cotton", ["솜사탕","솜사탕향","cotton candy","candy floss"]],
   ["🍫", ["초콜릿","초콜렛","다크초코","카카오","밀크초콜릿","화이트초콜릿","모카","cacao","cocoa","chocolate","dark chocolate","milk chocolate","white chocolate","mocha","ganache"]],
-
-  /* ── SPICES ── 신규 추가 ── */
-  ["🌶", ["후추","흑후추","넛메그","육두구","pepper","black pepper","white pepper","nutmeg","allspice","spicy","pungent","chile"]],
-  ["🫚", ["아니스","스타아니스","리코리스","감초","펜넬","생강","생강청","진저","ginger","anise","star anise","licorice","fennel","absinthe","ginger root"]],
-  ["🫙", ["정향","카다몬","팔각","올스파이스","clove","cardamom","star anise","allspice","일라이치","cardamon"]],
-  ["🌿", ["시나몬","계피","허브","민트","바질","타임","로즈마리","쑥","쑥향","판단","pandan","mugwort","cinnamon","herb","mint","basil","thyme","rosemary","sage","eucalyptus","lavender herb","lemongrass","레몬그라스"]],
-
-  /* ── GREEN / VEGETATIVE ── 신규 추가 ── */
-  ["🌱", ["풀향","풀내","그라시","헤이","덜익은","새싹","hay","grassy","green","vegetal","under-ripe","fresh grass","cut grass","hay-like","straw"]],
+  ["__svg_honey", ["꿀","벌꿀","흑설탕","흑당","대추","브라운슈거","메이플","맑은단맛","맑은 단맛","깨끗한단맛","깨끗한 단맛","깔끔한단맛","깔끔한 단맛","honey","brown sugar","maple","molasses","treacle","agave","clean sweetness","cane sugar","설탕","sugar"]],
+  ["__svg_vanilla", ["바닐라","바닐라빈","크렘브륄레","vanilla","vanilla bean","creme brulee"]],
+  ["🍬", ["젤리","캔디","사탕","과일사탕","과일젤리","하드캔디","보리사탕","jelly","candy","sour candy","gummy","bubblegum","hard candy","fruit candy"]],
+  /* ── 꽃·허브 ── */
+  ["__svg_jasmine", ["자스민","재스민","쟈스민","자스민향","재스민향","자스민차","자스민티","플로럴","벚꽃","오렌지블라썸","jasmine","jasmin","jasminum","blossom","floral","flower","orange blossom"]],
+  ["🌹", ["장미","로즈","로즈힙","rose","rosehip","damask rose"]],
+  ["__svg_lavender", ["라벤더","라일락","백합","튤립","제라늄","lavender","lilac","lily","tulip","geranium"]],
+  ["🌼", ["캐모마일","화이트 플로럴","엘더플라워","아카시아","국화","국화차","캐모마일차","white floral","chamomile","elderflower","chrysanthemum","acacia","linden"]],
+  ["🌿", ["허브","민트","바질","타임","로즈마리","쑥","쑥향","판단","레몬그라스","herb","mint","basil","thyme","rosemary","pandan","mugwort","sage","eucalyptus","lemongrass"]],
+  ["🌱", ["풀향","풀내","그라시","헤이","덜익은","새싹","hay","grassy","green","vegetal","under-ripe","fresh grass","cut grass","straw"]],
   ["🫑", ["피망","토마토줄기","채소향","야채향","bell pepper","tomato stem","tomato leaf","capsicum","green pepper"]],
-  ["🫒", ["올리브","흙","흙내","어시","머디","earthy","muddy","damp","musty","dirty","olive","papery","woody base"]],
-
-  /* ── SOUR / FERMENTED ── 신규 추가 ── */
-  ["🍶", ["발효향","콤부차","와이니발효","막걸리","사케","미림","fermented","kombucha","winey-sour","lactic","발효","과발효","makgeolli","sake","mirin","rice wine","omakase"]],
-  ["🧀", ["버터산","치즈향","젖산","유산균","butyric","cheesy","lactic acid","dairy sour","치즈"]],
-  ["🍾", ["샴페인산미","스파클링산미","탄산","사이다","스파클링","champagne","sparkling acidity","effervescent","fizzy acid","샴페인","탄산산미","cider","sparkling water"]],
-
-  /* ── ROASTED 세분화 ── */
-  ["☕", ["로스티","비스킷","토스트","그레이엄","roasty","biscuit","graham","toast","brown butter","browned"]],
-  ["🚬", ["타바코","담배","재","어시향","tobacco","ashy","ash","smoky dark","탄향","탄내"]],
-  ["🪵", ["우디","시더","오크","나무향","우드","woody","cedar","oak","sandalwood","wood","teak"]],
-  ["💨", ["훈연","스모키","피트","smoky","peaty","peat","burnt","campfire","smoked","훈제"]],
-
-  /* ── ROASTED: Tea ── */
-  ["🍵", ["홍차","얼그레이","녹차","우롱","보이차","루이보스","다르질링","earl grey","green tea","oolong","pu-erh","rooibos","darjeeling","assam","ceylon","sencha","matcha","캐모마일","chamomile"]],
-
-  /* ── OTHER ── */
-  ["🍷", ["와인","포트와인","레드와인","화이트와인","와이니","포트","wine","red wine","white wine","port","winey","vinous","grape wine"]],
-  ["🍶", ["발효","콤부차","사케","식초산","fermented","vinegar","acetic","boozy","booze","사케","주류"]],
+  ["🫒", ["올리브","올리브오일","olive","olive oil","green olive"]],
+  ["__svg_earthy", ["흙","흙내","어시","머디","earthy","muddy","damp","musty","dirty"]],
+  /* ── 로스팅·견과 ── */
+  ["☕", ["로스티","비스킷","토스트","그레이엄","roasty","biscuit","graham","toast","browned"]],
+  ["__svg_nuts", ["견과","견과류","아몬드","헤이즐넛","호두","땅콩","밤","피칸","마카다미아","피스타치오","잣","프랄린","nut","hazel","hazelnut","almond","walnut","peanut","chestnut","praline","pecan","macadamia","pistachio","marzipan","pine nut"]],
+  ["🥜", ["캐슈넛","캐슈","피넛버터","피넛","peanut butter","cashew"]],
+  /* ── 향신료 ── */
+  ["__svg_ginger", ["생강","생강청","진저","생강향","ginger","ginger root"]],
+  ["__svg_anise", ["아니스","스타아니스","리코리스","감초","펜넬","anise","star anise","licorice","fennel","absinthe"]],
+  ["__svg_nutmeg", ["넛메그","시나몬","계피","육두구","후추","흑후추","nutmeg","cinnamon","allspice","pepper","black pepper","white pepper","spicy"]],
+  ["__svg_clove", ["정향","카다몬","일라이치","팔각","올스파이스","clove","cardamom"]],
+  ["__svg_butter", ["버터","크림","버터크림","밀키","butter","cream","clotted cream","browned butter","milky","brown butter"]],
+  /* ── 차·음료·기타 ── */
+  ["🍵", ["홍차","얼그레이","보이차","녹차","우롱","루이보스","다르질링","earl grey","green tea","oolong","pu-erh","rooibos","darjeeling","assam","ceylon","sencha","matcha"]],
+  ["__svg_cereal", ["그래놀라","오트밀","후르트링","muesli","granola","oatmeal","porridge"]],
+  ["__svg_tobacco", ["타바코","담배","재","어시향","탄향","탄내","tobacco","ashy","ash","smoky dark"]],
+  ["🪵", ["우디","시더","오크","나무","우드","나무향","woody","cedar","oak","sandalwood","wood","teak"]],
+  ["🍷", ["와인","포트와인","레드와인","화이트와인","와이니","포트","wine","red wine","white wine","port","winey","vinous"]],
+  ["🌾", ["몰트","맥아","그레인","곡물","시리얼","귀리","보리","호밀","슈가케인","슈가 케인","식혜","누룽지","malt","grain","cereal","oat","barley","rye","sugar cane","wheat","rice","sikhye"]],
+  ["__svg_mineral", ["미네랄","감칠맛","짭조름","mineral","umami","savory","salty","brine","minerality","terroir"]],
+  ["__svg_smoke", ["훈연","스모키","피트","훈제","smoky","peaty","peat","burnt","campfire","smoked"]],
+  ["🍶", ["발효","발효향","콤부차","막걸리","사케","미림","와이니발효","과발효","식초산","주류","fermented","kombucha","winey-sour","lactic","sake","makgeolli","mirin","vinegar","acetic","boozy"]],
+  ["🧀", ["버터산","치즈향","젖산","유산균","치즈","butyric","cheesy","lactic acid","dairy sour"]],
+  ["🍾", ["샴페인","샴페인산미","스파클링산미","스파클링","탄산산미","champagne","sparkling acidity","effervescent"]],
   ["🥃", ["위스키","럼","버번","whiskey","rum","bourbon","whisky","spirit"]],
-  ["🌊", ["감칠맛","짭조름","미네랄","umami","savory","salty","brine","mineral","minerality","saline","terroir"]],
-  ["🥜", ["캐슈넛","캐슈","피넛버터","peanut butter","cashew","피넛"]],
+  ["🥛", ["밀크","우유","연유","두유","오트밀크","밀크티","라떼","milk","dairy","condensed milk","oat milk","soy milk","milk tea","latte"]],
+  ["__svg_yogurt", ["요거트","요구르트","크림치즈","yogurt","yoghurt","cream cheese","buttermilk","kefir"]],
+  ["🥤", ["소다","탄산","사이다","soda","sparkling","fizzy","tonic","cola","cider","fizzy acid","sparkling water"]],
   ["🍿", ["팝콘","popcorn"]],
-  ["🍬", ["젤리","캔디","사탕","과일사탕","과일젤리","솜사탕","하드캔디","보리사탕","jelly","candy","sour candy","gummy","bubblegum","hard candy","cotton candy","fruit candy","fruit jelly"]],
-  ["🥤", ["소다","탄산","soda","sparkling","fizzy","tonic","cola"]],
-  ["⭐", ["스타프루츠","star fruit","starfruit","carambola"]],
-  ["🍋", ["레몬즙","lemon juice","lime juice","라임즙","라임","lime"]],
+  ["__svg_starfruit", ["스타프루츠","star fruit","starfruit","carambola"]],
 ];
 const fe = function(n){
   if(!n) return "✨";
@@ -496,13 +577,14 @@ function showToast(m){S.toast=m;if(S.toastT)clearTimeout(S.toastT);S.toastT=setT
 function fchips(flavors,sz){
   if(!flavors||!flavors.length) return "";
   var isSmall=sz==="small";
+  // boxSz: 아이콘 컨테이너 크기
   var boxSz=isSmall?17:24;
-  var imgSz=isSmall?14:20;
-  var emoFont=isSmall?"13px":"20px";
+  // emoFont: 이모지는 OS마다 실제 렌더 크기가 font-size보다 큼 (보통 ×1.1~1.2)
+  // 잘리지 않으려면 font-size를 boxSz보다 작게 설정해야 함
+  var emoFont=isSmall?"14px":"18px";
   var txtSz=isSmall?"9px":"10px";
   var pad=isSmall?"5px 4px":"8px 5px";
   var chipH=isSmall?'auto':'60px';
-  var bigIcons={'hongsi':0.85,'nuts':1,'caramel':1};
   var grad=getFlavorGradient(flavors);
   var barHtml=grad?'<div style="height:'+(isSmall?'3px':'4px')+';border-radius:2px;margin-bottom:'+(isSmall?'8px':'10px')+';background:linear-gradient(90deg,'+grad+');">'+'</div>':"";
   var chips=flavors.map(function(f){
@@ -510,15 +592,17 @@ function fchips(flavors,sz){
     var icoHtml;
     if(ico.indexOf('__svg_')===0){
       var svgKey=ico.slice(6);
-      var sz2=bigIcons[svgKey]?Math.round(imgSz*1.3):imgSz;
-      var svgStr=getSvgIcon(svgKey,String(sz2));
-      var wrap='<div style="width:'+boxSz+'px;height:'+boxSz+'px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:visible;">';
-      icoHtml=wrap+(svgStr||'<span style="font-size:'+emoFont+';">✨</span>')+'</div>';
+      var svgStr=getSvgIcon(svgKey,String(boxSz));
+      // CSS로 크기 강제 고정 — viewBox 여백 차이를 보정
+      var svgFixed=svgStr?svgStr.replace('<svg ','<svg style="width:'+boxSz+'px;height:'+boxSz+'px;display:block;" '):null;
+      var wrap='<div style="width:'+boxSz+'px;height:'+boxSz+'px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">';
+      icoHtml=wrap+(svgFixed||'<span style="font-size:'+emoFont+';">✨</span>')+'</div>';
     } else {
+      // 이모지: font-size를 boxSz보다 작게 → 잘림 없이 컨테이너 안에 수납
       var wrap='<div style="width:'+boxSz+'px;height:'+boxSz+'px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">';
       icoHtml=wrap+'<span style="font-size:'+emoFont+';line-height:1;">'+ico+'</span></div>';
     }
-    return '<div class="fchip" style="height:'+chipH+';display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:2px;background:#fffaf2;border:0.5px solid rgba(42,26,12,0.09);border-radius:10px;padding:'+pad+';">'  
+    return '<div class="fchip" style="height:'+chipH+';display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:2px;background:#fffaf2;border:0.5px solid rgba(42,26,12,0.09);border-radius:10px;padding:'+pad+';">'
       +icoHtml
       +'<span style="font-size:'+txtSz+';color:#7a4e2a;font-weight:300;text-align:center;width:100%;word-break:keep-all;overflow-wrap:break-word;line-height:1.3;margin-top:auto;">'+f+'</span>'
       +'</div>';
@@ -526,13 +610,38 @@ function fchips(flavors,sz){
   return barHtml+'<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;">'+chips+'</div>';
 }
 var SVG_ICONS={};
-SVG_ICONS['hongsi']='<svg width="__SZ__" height="__SZ__" viewBox="4 4 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M24 15 C24 10 21 6 18 8 C21 11 23 13 24 15Z" fill="#4a8028"/><path d="M24 15 C24 10 27 6 30 8 C27 11 25 13 24 15Z" fill="#3a6a20"/><path d="M24 15 C19 8 15 10 15 15 C18 12 22 13 24 15Z" fill="#5a9030"/><path d="M24 15 C29 8 33 10 33 15 C30 12 26 13 24 15Z" fill="#4a8028"/><line x1="24" y1="9" x2="24" y2="16" stroke="#2a5010" stroke-width="2.5" stroke-linecap="round"/><line x1="20" y1="12" x2="28" y2="12" stroke="#2a5010" stroke-width="2" stroke-linecap="round"/><ellipse cx="24" cy="30" rx="17" ry="16" fill="#e05825"/><ellipse cx="18" cy="23" rx="5" ry="4" fill="rgba(255,255,255,0.22)"/><path d="M24 44 Q20 42 24 40 Q28 42 24 44Z" fill="rgba(0,0,0,0.15)"/></svg>';
+SVG_ICONS['hongsi']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M24 15 C24 10 21 6 18 8 C21 11 23 13 24 15Z" fill="#4a8028"/><path d="M24 15 C24 10 27 6 30 8 C27 11 25 13 24 15Z" fill="#3a6a20"/><path d="M24 15 C19 8 15 10 15 15 C18 12 22 13 24 15Z" fill="#5a9030"/><path d="M24 15 C29 8 33 10 33 15 C30 12 26 13 24 15Z" fill="#4a8028"/><line x1="24" y1="9" x2="24" y2="16" stroke="#2a5010" stroke-width="2.5" stroke-linecap="round"/><line x1="20" y1="12" x2="28" y2="12" stroke="#2a5010" stroke-width="2" stroke-linecap="round"/><ellipse cx="24" cy="32" rx="17" ry="16" fill="#e05825"/><ellipse cx="18" cy="25" rx="5" ry="4" fill="rgba(255,255,255,0.22)"/></svg>';
 SVG_ICONS['gotgam']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="36" rx="27" ry="21" fill="#c05a30"/><ellipse cx="32" cy="15" rx="11" ry="5" fill="#9a3c1e"/><ellipse cx="16" cy="30" rx="5" ry="2.5" fill="rgba(255,248,238,0.52)" transform="rotate(-18,16,30)"/><ellipse cx="46" cy="26" rx="4" ry="2" fill="rgba(255,248,238,0.48)" transform="rotate(12,46,26)"/><ellipse cx="26" cy="52" rx="5" ry="2" fill="rgba(255,248,238,0.44)" transform="rotate(6,26,52)"/><circle cx="32" cy="19" r="7" fill="#5e2c08"/><circle cx="32" cy="19" r="5.5" fill="#7a3e14"/><circle cx="32" cy="19" r="3.8" fill="#5a2a08"/><circle cx="32" cy="19" r="1.8" fill="#3e1a04"/><circle cx="32" cy="19" r="6.5" fill="none" stroke="rgba(0,0,0,0.2)" stroke-width="0.7"/><ellipse cx="32" cy="36" rx="27" ry="21" fill="rgba(255,248,238,0.09)"/></svg>';
-SVG_ICONS['ginger']='<svg width="__SZ__" height="__SZ__" viewBox="3 7 58 48" xmlns="http://www.w3.org/2000/svg"><ellipse cx="34" cy="34" rx="18" ry="15" fill="#b87830"/><ellipse cx="50" cy="22" rx="11" ry="9" fill="#b07028"/><ellipse cx="16" cy="44" rx="10" ry="8" fill="#b87830"/><ellipse cx="54" cy="38" rx="6" ry="5" fill="#a86820"/><ellipse cx="42" cy="14" rx="6" ry="5" fill="#b07028"/><path d="M22 28 Q26 24 32 26" stroke="#7a4c14" stroke-width="1.3" fill="none" stroke-linecap="round"/><path d="M28 36 Q32 30 38 32" stroke="#7a4c14" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M36 44 Q40 38 46 40" stroke="#7a4c14" stroke-width="1.1" fill="none" stroke-linecap="round"/><path d="M30 26 Q26 30 22 34" stroke="#7a4810" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M42 28 Q44 34 44 40" stroke="#7a4810" stroke-width="2.2" fill="none" stroke-linecap="round"/><ellipse cx="12" cy="44" rx="7" ry="6" fill="#e8c860" transform="rotate(-15,12,44)"/><ellipse cx="12" cy="44" rx="5" ry="4" fill="#f0d870" transform="rotate(-15,12,44)"/><ellipse cx="12" cy="44" rx="7" ry="6" fill="none" stroke="#c8a030" stroke-width="1" transform="rotate(-15,12,44)"/></svg>';
-SVG_ICONS['jasmine']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M28 62 C28 52 27 42 30 30 C32 20 36 12 38 6" stroke="#b85068" stroke-width="2.8" fill="none" stroke-linecap="round"/><ellipse cx="38" cy="10" rx="6.5" ry="12" fill="#6aaa28" stroke="#1a0e00" stroke-width="1.8" transform="rotate(-18 38 10)"/><ellipse cx="50" cy="43" rx="7" ry="13" fill="#6aaa28" stroke="#1a0e00" stroke-width="1.8" transform="rotate(28 50 43)"/><g transform="translate(9 18) rotate(-25)"><ellipse cx="0" cy="-5.5" rx="4" ry="6.5" fill="white" stroke="#1a0e00" stroke-width="1.7"/></g><g transform="translate(22 22)"><ellipse cx="0" cy="-9" rx="5" ry="7" fill="white" stroke="#1a0e00" stroke-width="1.8" transform="rotate(0)"/><ellipse cx="0" cy="-9" rx="5" ry="7" fill="white" stroke="#1a0e00" stroke-width="1.8" transform="rotate(72)"/><ellipse cx="0" cy="-9" rx="5" ry="7" fill="white" stroke="#1a0e00" stroke-width="1.8" transform="rotate(144)"/><ellipse cx="0" cy="-9" rx="5" ry="7" fill="white" stroke="#1a0e00" stroke-width="1.8" transform="rotate(216)"/><ellipse cx="0" cy="-9" rx="5" ry="7" fill="white" stroke="#1a0e00" stroke-width="1.8" transform="rotate(288)"/><circle cx="0" cy="0" r="4.8" fill="#f5c030" stroke="#1a0e00" stroke-width="1.8"/></g><g transform="translate(18 36)"><ellipse cx="0" cy="-8" rx="4.5" ry="6.5" fill="white" stroke="#1a0e00" stroke-width="1.7" transform="rotate(0)"/><ellipse cx="0" cy="-8" rx="4.5" ry="6.5" fill="white" stroke="#1a0e00" stroke-width="1.7" transform="rotate(144)"/><ellipse cx="0" cy="-8" rx="4.5" ry="6.5" fill="white" stroke="#1a0e00" stroke-width="1.7" transform="rotate(288)"/><circle cx="0" cy="0" r="4.2" fill="#f5c030" stroke="#1a0e00" stroke-width="1.7"/></g></svg>';
-SVG_ICONS['nuts']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><image href="data:image/png;base64,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" x="0" y="0" width="64" height="64"/></svg>';
-SVG_ICONS['caramel']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><image href="data:image/png;base64,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" x="0" y="0" width="64" height="64"/></svg>';
-SVG_ICONS['cotton']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><image href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAbBUlEQVR4nNV7d3gVVfr/5z0zc3tycxMIQapRQ1WQoICKhGJBsRMQEMXVRXexLbqisHhDs6Co8LXsrl8ldje2FVAUdKkiImAQiNJDCS2k3z4z5/3+ceeGSwgQkN/z7O99nnnmZnLmnPP2ct4hNBGYWQAQAEwi4qa+dybAzFRQUEALFixQACAcDlNJSYmZm5srPB4P5+XlySlTpkhmpjPZyxm9x8yCmVVmptNd8DShfn6n0wlmFl6vF95UL1RVTR4nzupipwvMrAFgIjJOMkYFgMSYBPGI6pflpLE0f/58Z35+figSibg//PDDXh999NFl1XV1vaprqh0Om50FsPqqfgPWTX12xjqXy7VvxYoV3oyMjGh2dnZESnlG0pBYXLG4m3wpp3hHWGrR8NkxcySNaYxjZD2nxPuFb7x1X/fcHutdbhc3T0/nLtkX8EXZF3Cn9tmc1aw52xx2viAnZ+/EJyZOYuZsZnYBoN8lmUkbV5KvJrxHzGxLuhzM7GJmzZqDxo4dqzGz3VpDY2aPdXdaz9WVK1emMHNWfn7+G3aHgzucm81z/jrJ2PPl8gj/sMXkH7ZyZPlGPrRwVfS95+fE+vbqzZqq8oBBg1Ywcydmbl5UVGQ7A7x/nzpbSDkbXpaIEwDY7XYwc+748eMnXn/D9UtzOnf6pXlWiw25PXsWD7lxSJHf7x/LzBfccuutnyqKwg+PvlsP/7A5xiX7mTeWcd2KDVz7/caD4R82hXjjPuYt5cyb95hvTJ9p2DWN+1x+2S5m7g6A/H7/Se2CxWQtgTwzO5L/keCidopJEpxOXAnEE5yn2traZszsZeZW48aNm53ZIuuIw27n89u242t6X8m3DxrCV158CbdukcV2u53Pz8mpAsDTH55g8LZDJq/fzTU//bq54pet9x86dKhbVTTQIxYMXlK5/3C/6rW//Se2dKPk4lL9y5dfjwHgAVdfvYKZPZs2bUq3pKpRHCykhTXGwczO0+T5cQRIiHbiSuhyGjPn5vXvv0FRBN866Bpe8c6nUXP1thj/vI+5eB/zD7+aR75bHftw5myj2/kdeNS1N0pev8c0ftzC1b/tfIGZ00OHKu+KlOxeHF7924HImq3bKtZvnV63aefrxuptzEs2Mq/bwTP+9IhOJHj69KcfYGZ3v3791CbgkCCAo8k6YFn0JsUAzHzupZdeuuCX9T93njvteX3EVUMIql0FAVXhuiopZJ03wm1Vpx1QNei1tRwRRA4d0G0AWqY/EqsK3pbmzeiLuiAQiQCCAJsTME3UhOoO2zLTPsLByrHC7dAuGXWjMB223zZv3HgFEVUhybucCk7Hl55y0lmzZjmZWbv15lun/vTTT50/eHa2PuKmkQrYVAN67eojLoxSe3e+wt46ayKnp3K4mdtfw6FNmtNJbhZSKASHAbhqjJfTWO0r9x0w9UCtjJkxRjQmjboqA3V1pt1uS9V9ruJYqv1Xe2YL5a784XL7tq0dPv300x5r165VZ8+ebW+qgTubQQ0xs7rsu2VXDB4yePGI64bgzYnPgWOmEvRpr3PHdk9p2/Y9IYPhGzgQbqcx2aNubQOZ3M5lUpqIGWwSEZgBhsnghIs8ugARwBJQFZDLjkg4ApfNiXU7NhtX3jVMffixxya/8fd/TC8/Uq5Yhtg81abPSjTFzOT3+wkAz3519p80VVUK7n3QRFRXqoX+o6dju8m0aedCh7Q96grIHLch7GRKpMREN0+U0yiiQwLECSEjKEQk4j+PgiSAicCGBNeG2aYzOBJBmxYtFZvNxl99/dWfr79pyGtvFr55Q8Iuncoz1AcgScRgIjol5RqAACCZWbRt1660W3aHNvNfmWtGa6sp3KbFID5QMcxnT7k/VlkeE4qiAiCWTACkYAYIzCAGIBKIM8eJkRQ1giwiQDIEA7pgEBGkINzxt/FYv6UE4VgM1ZEgrhow8PN58+Y9/DGwf3NBAU+ZMkU2tvFTWszGwNIvbfPmzbZzzjlH8fl8EQC+devWDayuqMzqdn1nZodL0euqdztaN9sd3r3/dgR0yQQNkokFEJdmhqLZBVyuuJGLxmAGg5IFCQhCY+aW2JICAApbxDAYH0x7CRLMdTJmvlH0Hvx/n3NLv/79Wy5bsuQGXNMliCkIn4hzICJJRIZ1NYn7GzZs0Lp06RLz+XzNHn744adzOnZYPXDQwPfqggGtU9tzQZEoFChZcuPOT11C9ZoKhEqCVJNNMgDVENCcblEHszTCxvsB0p+pEcYyxZsqVBYgCTQ0Ywl6HA2z4s+YAGFI2HRJGdDUiQ88qr7410mxFcuW9Z7i9/8lv09+LD8/v9HI9oyMoN/vVwsKCpSlS5f2eeSRR/5esnlThwG9LsMNffK463k51CO7A1xOF0gQhM0BU4+AAZBuspKSSrFwBKQq0Tq7/FrJaf20uq9ykGqgpeqyrQuQdNvKa2c7AzFhEh+rA4irRrJ6JH4LEJgAZhNsmrC1aGb2ves2URaoKdm5ZVvPhQsX8uDBg00iMqwIUAIwT5sAS5YsUQcOHGhs2LDhhhtvvumjSEWN662ZLxvX9h2gIKwTYjpkJAxIBgiQBMmKEEJCKqkeUePgzxWX6zWPL12vg8HKlj3/cqmuLEgJODUE7DTajETae2NimlFbaxKonnNSHq/GCfooTDAEQ0JCmiacmc3YP/s5mvXxu6FAVW0egE0AoogLTT0BTtcGUMeOHe2maba+8MKuc4IHDru+fulN4+Jel6n64Yo4dyxuCEEJkRUwpRQOlwizuc7Vse0zVHJgTqh8Z0tidrlMpTmCNQYEMcKKypp8TfO6P+dQCCxZgI4TgnrOJz83KW5GBURcKiIGVM0GSBZV5VUuX3OfZiFPACLWnU6XAKJDTk7wlttum1ayaXP7fz34lHFxZns1UlEBIQhEBEFHjRehXm+Z7HYIVf4U3LJ3VJrq7a2GA4AQkLEIkyCVALCuwy1Fiqgx7uSoAVIEoYHIJ98bBWYIS1J++bUEbren1tfctx9AGPG4gImIE3M2mQAcLyOZNbW1bdu0b3v71bm9eHDvPBGSMWg2N0g3rUDl2PesLStmIABoynAbTGHEDkpVMkzTJBKUcMWQgsDSZBEKsamSAB+lJFkzJWwAM8ef0TF7hGSG3ZOC1cVrzC+WfauOHD36OwA7LaRFojhjhfTc5EBo2LBhQgiB2S++2LW6vKLlqL7XsF1RhXTbQZIBEhAJAWtAgLjrNmGPSZ8rBq9gFkwQZLGSkWThhSBTkIiLc1yqqN7k14dK0DQboAocfcL160kCooDidLj4+9Wre2/evPlCRVFkaWlpPcOtzFBtMgF8Pp9QFAVbd+zorgmFc1q0kUZNAMwMhQSUBFckH0ODxPYUBiTrLNlgRtwCcYMr+QVOQvYoNeOkEAyU79wDvSYCoaggxNckIgghYISC6Ne9N339aiEf2b3v3D/84d5/GYZx3qJFixq6eBZWentKQqxbtw6qoiDF680hgOxSgIM6jKogiAVixDBsCqAINBpyAQl+Ni1JaWQYMwOW6JPBOFS8BTIQBQnlmKBBCAXRmkr0uTBXvPDQE8aaNatzHn/88T+PHTsWABRrfiYiUwDQ0IR4wOPxMAmBYF1diaEbXGvGiFx2cCACQ9eh2jTE9hxGZWkZoJyVFOM4EABYEHQh0axTNtxeL2r3HASEeoy0EANsUxCtrsLQiy8Xl+d05c/nzxsF4NyioqJ6t5pQgTDimZztZClkXl6eDIfD6NOnzwZTU6h43w7hSE2BDEcRDYRQu/MAKkvL4PKmQPBxwouE2CekI9mYJV8nAmaOv8txBE1IqB47jFgMTIBMIgEBEFKAiOCKGGJEr/68d+/uFq+/8krH/Px8pbi42G0FQzaRFAbHTlbssA4ixMiRIze2bt9uz9vfzqdqPSxVuw0qC1Tu3o+sizrClZEGNk+kBEchrgynH4gSxz0CByIIVFTC07I5yEqO6ollxcpEhKip49JOF0onFF6+YkVHAIZhGAljKE9LVq3UsvKPY+5+q3jPDrz27w/Zm90OdRUVSPWmwubzIBbT4wauCVwFjhKiyQQhxC2/JqC57ZAwQcTHWBbmuKLLSAymYaJZRjpSPR6qrK32eDwe/bnnngsTUQRAtMkESFIPl2BOZWnCdGlEGamIBEPQ3E5AMgh8XBJzJtAY4eo9igSEw4bUVlkIVdWANQEpBCQzWEqwlBAmECqvApkMQ0roLOH1+eyBQKAeZyJqehwAQOTl5QFA1uzXX72nb4dueHTkPYRoCDa3A7FoLJ7jEh0jjg2ROZVEHId0khQJAJIYBjFMAEbMgKEQ2PItAoirAwlEquqgH6qGKhTsO3SI6uqCsDvsvwHQrrjiinoWNUqAxoxhYWGhlpeXh6nTp954cG+Z99FbRpsuUikqdaS0ykQ4EoYRCEPVtOP8d1NUoSlAVlglhAJ5uAblW3Yi1ZMKkgwmAjQFitsBIxZDoOwwNBOwaRr+vXqpUN0O+eQTE0oA6Jdffnm9kTqOABbyxz0vLS0FALlmzZorm3u83LVFGw5VVkOAYPe4kdIqC/tKtiJWG4QQolGkm0KE+jA3KdVNgAkJRVFQvecA9hf/Cl96Bjw+L8xIFELEw/DQkWqE9hyEyoDqcmB3uMr8ePV/qFOHTj92zun8U15ensjNza0/z0yclBAAw/IIzMzHmfEuXboQAN5eWpqR3bI1NfM1o0gkAocJGDDha5EBDTKeslry0zB5Sdwb1e8GCU9jYwQIzBKuTB9SmqfD5nLC1HVoJqH2wCGEqmqgSMBpEqSiwNWyGT8zewoqQgH52l8emwmAx40bx8neTiCeEGlI4vrJ3GE4HGaP3QGnZoMMRhCtCYEYMIwYUlpkwO5xQhrmiSO5E/zdFC/AAGAyHE4nNLcDbBqWXSBAN2GrCMEZMaHZ7RA+D09891WjcOUiZdiokS/ffNvN3xYUFGjDhg07JhxOnMzGAJjW0Vajh4yvvvqqnp6ezm1btIztLz+MunAINkkIH6qEqsfzAUM3AIMhThJYNszjm2obksdJKSFNCVgFUdgEHGkpsHk9iLlt+GbnBvOaKQ/SnEWfasNHjXrv3bcKJy9cuFAvKCjQk+YTzGwXFvKGxXUDgH7c6gAyMzNFZWUlXZCTs2FreRl2VR5gl8MJGQihas9+wDAhVAWmFZafKqoDACGE5debBg2jRol4gVQCUNNS8N3+XzHoufE8co5f2W8GD0+a9Lcn33/nnRnFS5farrvuumgjUwphRYEM1CcIje7H7/cDgHLv3Xd/B5uG95Z8LVS7CiF1yJo61Owqgx4MgxQFpAiQTY0XRxpBwCqFwwxGgJgZL2o2VgHGURE9LmAisoofDKmbECajrOIw/1y6HUNHjJy9a/vO3n+bOHHWxx9/vK97Xl7QmlJJpMFEJAFEmhwHdO3aNZaXl4fL+vZd3rt3n+/++fWn4sdD2wy3NwUuVqCGDdTu2o/AzjKEy8oRKTsCGdMBy5rXS0QcG6hCweHSvYiFwlA09Wg4y0clRFK8aikbNYgABMEUACkCsUMVaOvLlGmpqdSzW7fVmqbtGjNmjDJs2LAAESWk+pjiwekGQhg3bhwDiMwtLCzwNPPV3PPyVLUMYdPePA0GSygxE2ZtCOEjVYjuK4epG0jO6smq58dLMQKuFA9CtQGQpkJXCVIApBAUVT2a+kqGpqpQGlSbEskVCQJHdEQqayF1A1FD54rqap+u69S+fftj2neIyEykwccQsqmQn58vFy1aRB2yz1v51JQp9x0WpnHNpHHKFzt/Zq15KtIzfEh1OOBWbHCwAOtGPHtL3oR1N6SB1JbNETxwBJUlu6DqDBUKzFAMwfJKaDYNpKpQHQ5U7z2EUHk1hKocay8YUElF+Eg1FEVBWV2VkKak1q1b7wGALl26nBI/FTgm+JEnc4HW/4J+v9/25/vuW9wyM3Po+Ecffeb26Y936t8tlwd0vpS6tjgHbrsT5zi8aFPnBbzuxLsWAaxqsSFBNhUtOp2PQ1t2IXSgEqwKmIYJAYloIARPWjqqgyHU7T2I5h3agaUJIU0IxK2/ptkRqQkgVFWLlunNeNX2EvJlpAfuueee3VY806hBPwanBt0UCZEhy0icEDZt2pTepUuXCADfTdff+Nm8r+ZfAiEYUgpFCDx5/QhMGXk/ZJb3uMJlcrCjKAqEyYjWhaBHYrA7nYBKqCjbDzNqgJ12NG+dBSXVAYpErbI7AIMRqqhFuLwSbmFDnU2YvR4fo7Tu3umbld8tHWLt/5R5uQBgQ5zzehL3T+jIOd78pD3//PMhh8MRml5Q8OB/li276MoL2/PquY+Jxa9NQKvMdOwO1AAkEAmEIZQT91tJKWEIhupzw9UqAyLNDcVlR1aHbLToloNzOp4LLdUBMkyQsEOyimhVBFVb9yJSuh9KIAybx4GXvvwQh8N1GHf/uH8AUPPz85uUk6o4ekgQx/wEoXAyFBQUaIWFhbb22TlPvfDirAl9LzoXdw9ohY6+CPZQDKlKGAerjsBgHaG9FVBVguZxwTBNKPHD4Hoqx90iQKaEJAlJgJCMmIynvSwIejCE2gPlUIUWD4DCBkiagBDwetPwxS+r9Rc/f08bdN3g+SPy8xcs/HGh8+OPP440hQCJmrx6sobHo8B07bWDbQsXLozNnDlzdsHU6Q/2aOc15owfqpRt/5kyWrbEwYo6bK1y44U3v+RVM9+gthEX6tQYPO1awZ6WAiSCH+Z4BZelVeNH/YFKvcs0AYUEanfuQfhIFRw2O4gUsKrCoWpw+jyYv/EHfdTzk7U2nS7YsXnDxpuI6Fc0QfQTkLCSTewHILFq1aroszNnzpw+/ZkHLz63mfHHW3upe7avo6hqw5Yd29Cv3+UIRiVXhIL06Y9L2O62wxYxUVe6HzW7yhA+UotodRB6bRh1h6tgBiNQEipiub74UgA5bIjU1IGOBJCVkg6vx8Nuj4tVj0Nui1aYD7w/h0fNeko7r0unLQsXfXu1oiibrYCtydAkPbFOhRS73W5MnuSf8cJLsyYO6N7euLt/a1VTDJQfPowWrVohGlXw/U4pny/8QpyX08Go3rdX/cb/MndMyaJQOAKpCRAp8VyBAWmaMMiEp1UmnOneuE+3iMGmiUhtGKF9h0GQ+OTn5VxWXU7BcAg/l27Hzzu2wtQUs1/fK99ZsGDBLAC/WYbvtAoPpySAhTwxs5gy7dkZz8yY8fj5mao59f6rRIZaR6UHqtCrR1foigtP/c8ic/7q7crwEcOLXnn9tXndu3V7NyUm6ZPJL5sdUpsrodpaGKZuHaAQFM0GGYsiZugQKU5objeEpkE3DcSC8QJLZmoavtq3CTcVPAJfRrpBQMDj9ZbmXdmv+N47/1B47ZBrl4VCIRQVFSkNM70zIgAntZIzMw0ePNi2cuXK6JMTnpz53KxZf72yaxtj8l191CN7t+NITS169uqJ7OyO8L++2Jj59nx19F1j5r1TOHccgKq5//u/1zzun/y2LWx4Jg4bY1x/UR/KtDtJIcE6M44E65BidwoXKxQNheKRHQNSxlXBQSrkOT45eMbD2FZzuPK3TSWDfD5fFYBDiCdxSmFhoTpmzJjoWWvhX7t2rWYRAQDI6XTi6adnzHS5U7l/t2x9+Sv3y6JHL+d3x/fnla/czRvmjuMHhl6pa4rGo+68+3NmbrtkyZK0Bx980M7Mvu/X/jikV5/exQ6HnbN86Tyw68V8a68ruX+Xi7lFqo8Hd+/Fu97+yjTfXcbB177i2lfncXDOF2y8/hVX/n2BObrvNTGbpvH0qVMbKnd9k3UDBh7XxH0yaHQCADx48GDbwoULTf/kaZNenvNSwUXZ6cZfhvZQPbIabl8myvcdgA4bCr/9zfhqXak6YsSIzz744INxq1atkueff34oMzNTbtmyxdWhQ4cKAGkF0wquWbNm7S379uw998CBA7J1qzbGBR07VS5evPCGDGHHQ9cPl70v6MIZbg8HpY41O38Vry/4RGytPIiRI0e88Y/X/zGhZ8+egbVr1xpJZ6rHATehjb8pIFxOF2a+8NxspzuFr+3TSd+z4Cl55Mu/8p5/T+D3H7uCl88ZzY+Pukq32T085q4x85m5fUlJSQbH21DtSYUVAgA1nuAoHO8WtzGzj5lTFs5bMLrHpZdsdLidnJ6SwuekpXNWaio7HXZum91+y4xpM/7IzO7Fixd7k4u1VlqrnOw0qymgWhtN1APBzKrH4zHGj3982hT/jIe6tk037hncVbVHy3EwDKxesRJ5/a/Gu0t2mjPf/04dOnxU0dzCuY/OmTOnfPDgwbDmShgjK9ZhKigoUHr27Em5ubnRLVu28Lhx4yK7d+8Wjz322IfX3nD9N2++/Xb3kpJNA/aV7Xenp3r1nC4dV/9l3EPfKIpSEzNitoKCgoYFDQWAHfFKVvIhs9EUe2ARTmtYAheapmHq9OnPeFK8fHPfi/Tid8fLwgdyee8nj/D/3Nud1//zT/zUfUN1AHzn3WP/zcxt1q9f3vxMOVBcXOxetWqVM1GoYOsTGWbWlixZoqJBxmqNS3yD4LLuGic1azcFrPGu+gd+v18ws93v9z/t8KTywEs664eWvyy/e2YIL5+dz2teHcqfPXUTTxpziw6Ah48c8Rkzp1l9uWd8HJwQ5aKiItvcuXMdRUVFHr/f7/D7/eqJ5uWkDvUzXTexNoD6Mz+89dZbNzVLy+Crcy/Qd80vkJvfHM3/vK8bl30xgb96diiPvfFynaDw8GHDP2bm5mvXrm32ezbw3wSKqiroP2jgu1lpaXLr59P1/Z89xC/e1YmXvnQrH1owiYf2uUAHwPkj73yPmZvn5uZq3ITPav7bob4/2GazgRjnpHqd7HAqtOw/36Nb5w7o0q0bpr29zPjkhx3q6Dvu+KTo/bfHr1+/XpswYYI8g57i/1pQiAj33XffNLfdwX+8sVdkw7uPmLU/zDHGjxqgCwgeNXrUPGZujpN0lln6/Hv18rSM2dmahywj2P7CC7uvd9rtPLD3RXxRThu2KXa+Y+QdnzGzz/q662QEUPgUnSan2HSiU+V3qdYZzWO91JKZLx12+x2zLu6RW3xxj0vXjB//xGRm7jhr1qzT/8Do/zeoqtqVxlzXwuVywfLJxMy0fXtx5tq1a0/6NdmJ4GyoRRPXUa144Cy0ZzReyT4jsHTx/7m3OFNCN5oOJ54n99Qmxp+qWnyizZ21dPUsw3EUszaaIAwnnRfGy3ZnIGL/rcgDwP8B0LlBUeu0wtsAAAAASUVORK5CYII=" x="0" y="0" width="64" height="64"/></svg>';
+SVG_ICONS['ginger']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><ellipse cx="34" cy="36" rx="18" ry="15" fill="#b87830"/><ellipse cx="50" cy="24" rx="11" ry="9" fill="#b07028"/><ellipse cx="16" cy="46" rx="10" ry="8" fill="#b87830"/><ellipse cx="54" cy="40" rx="6" ry="5" fill="#a86820"/><ellipse cx="42" cy="16" rx="6" ry="5" fill="#b07028"/><path d="M22 30 Q26 26 32 28" stroke="#7a4c14" stroke-width="1.3" fill="none" stroke-linecap="round"/><path d="M28 38 Q32 32 38 34" stroke="#7a4c14" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M30 28 Q26 32 22 36" stroke="#7a4810" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M42 30 Q44 36 44 42" stroke="#7a4810" stroke-width="2.2" fill="none" stroke-linecap="round"/><ellipse cx="12" cy="46" rx="7" ry="6" fill="#e8c860" transform="rotate(-15,12,46)"/><ellipse cx="12" cy="46" rx="5" ry="4" fill="#f0d870" transform="rotate(-15,12,46)"/></svg>';
+
+
+
+
+SVG_ICONS['maesil']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="13" r="7.5" fill="#84cc16"/><ellipse cx="10" cy="11" rx="2.5" ry="1.8" fill="rgba(255,255,255,0.22)"/><path d="M12 5.5 C12 3.5 13.5 2 14 3" stroke="#4a8028" stroke-width="1.2" fill="none"/><path d="M12 5.5 C11 4 9 3.5 9.5 4.5" stroke="#4a8028" stroke-width="1" fill="none"/></svg>';
+SVG_ICONS['plum']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg"><ellipse cx="18" cy="20" rx="11" ry="10.5" fill="#7b1fa2"/><ellipse cx="14.5" cy="17" rx="3.5" ry="2.5" fill="rgba(255,255,255,0.15)"/><path d="M18 10 L19 5" stroke="#5d4037" stroke-width="1.8" stroke-linecap="round"/><path d="M19 7 Q23 5 24 8" fill="#66bb6a" stroke="#2e7d32" stroke-width="0.5"/></svg>';
+SVG_ICONS['bergamot']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg"><ellipse cx="18" cy="19" rx="11" ry="10" fill="#c0ca33"/><circle cx="12" cy="17" r="1.2" fill="rgba(255,255,255,0.08)"/><circle cx="16" cy="23" r="1" fill="rgba(255,255,255,0.06)"/><circle cx="22" cy="16" r="1.1" fill="rgba(255,255,255,0.07)"/><ellipse cx="15" cy="15.5" rx="4" ry="3" fill="rgba(255,255,255,0.15)"/><ellipse cx="18" cy="10.5" rx="3" ry="2" fill="#9e9d24"/><path d="M18 9 L18 5" stroke="#5d4037" stroke-width="1.5" stroke-linecap="round"/><path d="M18 7 Q15 5 14 7" fill="#7cb342" stroke="#558b2f" stroke-width="0.5"/></svg>';
+SVG_ICONS['blackberry']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="20" r="3.6" fill="#1a0a0a"/><circle cx="13.5" cy="18.5" r="3.3" fill="#2d0f0f"/><circle cx="22.5" cy="18.5" r="3.3" fill="#1a0a0a"/><circle cx="15.5" cy="23" r="3.1" fill="#3b1515"/><circle cx="20.5" cy="23" r="3.1" fill="#2d0f0f"/><circle cx="18" cy="26" r="2.8" fill="#1a0a0a"/><circle cx="11.5" cy="21.5" r="2.6" fill="#3b1515"/><circle cx="24.5" cy="21.5" r="2.6" fill="#3b1515"/><circle cx="17.5" cy="19" r="1.2" fill="rgba(255,255,255,0.18)"/><circle cx="13" cy="17.5" r="1" fill="rgba(255,255,255,0.14)"/><circle cx="22" cy="17.5" r="1" fill="rgba(255,255,255,0.14)"/><path d="M18 14.5 L18 7.5" stroke="#4e342e" stroke-width="1.8" stroke-linecap="round"/><path d="M18 10 Q14 7 12 9.5" fill="#43a047" stroke="#2e7d32" stroke-width="0.6"/><path d="M18 10 Q22 7 24 9.5" fill="#43a047" stroke="#2e7d32" stroke-width="0.6"/></svg>';
+SVG_ICONS['fig']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="12" cy="14" rx="7.5" ry="7" fill="#6b3fa0"/><path d="M12 7 C12 4 14 2 15 3 C13 5 12.5 6 12 7Z" fill="#4a8028"/><path d="M12 7 C11 4 9 2.5 9 4 C10 5 11 6 12 7Z" fill="#3a6a20"/><ellipse cx="9.5" cy="12" rx="2.2" ry="1.8" fill="rgba(255,255,255,0.12)"/></svg>';
+SVG_ICONS['honey']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="12" cy="14" rx="7" ry="6.5" fill="#f59e0b"/><path d="M8 8.5 L16 8.5 L15 6.5 Q12 4.5 9 6.5 Z" fill="#d97706"/><ellipse cx="10" cy="12" rx="2" ry="1.5" fill="rgba(255,255,255,0.25)"/><line x1="12" y1="5.5" x2="12" y2="2.5" stroke="#92400e" stroke-width="1.5" stroke-linecap="round"/></svg>';
+SVG_ICONS['vanilla']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 18 Q4 12 8 6 Q10 3 13 4 Q15 5 14 8 Q12 14 10 20" stroke="#451a03" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M10 20 Q12 14 14 8 Q15 5 17 6 Q20 8 18 14 Q16 18 15 20" stroke="#78350f" stroke-width="1.8" stroke-linecap="round" fill="none"/><circle cx="9" cy="10" r="0.6" fill="#451a03"/><circle cx="11" cy="13" r="0.6" fill="#451a03"/><circle cx="13" cy="10" r="0.6" fill="#78350f"/><circle cx="15" cy="13" r="0.6" fill="#78350f"/></svg>';
+SVG_ICONS['lavender']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="12" y1="22" x2="12" y2="8" stroke="#4a8028" stroke-width="1.5" stroke-linecap="round"/><ellipse cx="12" cy="8" rx="2" ry="2.5" fill="#8b5cf6"/><ellipse cx="12" cy="5.5" rx="1.8" ry="2.2" fill="#a78bfa"/><ellipse cx="12" cy="3.5" rx="1.5" ry="1.8" fill="#c4b5fd"/><ellipse cx="10" cy="7" rx="1.5" ry="2" fill="#7c3aed" transform="rotate(-15,10,7)"/><ellipse cx="14" cy="7" rx="1.5" ry="2" fill="#7c3aed" transform="rotate(15,14,7)"/><path d="M12 16 Q8 14 7 16" stroke="#4a8028" stroke-width="1" fill="none"/><path d="M12 18 Q16 16 17 18" stroke="#4a8028" stroke-width="1" fill="none"/></svg>';
+SVG_ICONS['anise']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="6" fill="none" stroke="#78350f" stroke-width="1.2"/><line x1="12" y1="6" x2="12" y2="18" stroke="#78350f" stroke-width="1"/><line x1="6" y1="12" x2="18" y2="12" stroke="#78350f" stroke-width="1"/><line x1="8" y1="8" x2="16" y2="16" stroke="#78350f" stroke-width="0.8"/><line x1="16" y1="8" x2="8" y2="16" stroke="#78350f" stroke-width="0.8"/><circle cx="12" cy="12" r="2" fill="#78350f"/></svg>';
+SVG_ICONS['nutmeg']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="13" r="6" fill="#a16207"/><circle cx="12" cy="13" r="4" fill="#92400e" opacity="0.3"/><line x1="12" y1="7" x2="12" y2="4" stroke="#78350f" stroke-width="1.5" stroke-linecap="round"/><ellipse cx="10.5" cy="11.5" rx="1.5" ry="1" fill="rgba(255,255,255,0.15)"/></svg>';
+SVG_ICONS['raisin']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="9" cy="14" r="3.5" fill="#7c2d12"/><circle cx="15" cy="13" r="3" fill="#92400e"/><circle cx="12" cy="16" r="3.2" fill="#7c2d12"/><circle cx="10" cy="11" r="2.5" fill="#92400e"/><path d="M11 8 C11 6 13 5 13 7" stroke="#4a8028" stroke-width="1" fill="none"/></svg>';
+SVG_ICONS['clove']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="12" cy="14" rx="4" ry="5" fill="#92400e"/><path d="M12 9 L12 4" stroke="#78350f" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="6" x2="14" y2="6" stroke="#78350f" stroke-width="1" stroke-linecap="round"/></svg>';
+SVG_ICONS['butter']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="8" rx="3" ry="3" width="14" height="10" fill="#fde68a"/><rect x="6.5" y="9.5" rx="2" ry="2" width="11" height="7" fill="#fef3c7"/><path d="M7 8 Q12 5 17 8" fill="#f59e0b"/><ellipse cx="10.5" cy="12.5" rx="2.5" ry="1.5" fill="rgba(245,158,11,0.2)"/></svg>';
+SVG_ICONS['cereal']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg"><ellipse cx="18" cy="24" rx="14" ry="6" fill="#c0392b"/><ellipse cx="18" cy="18" rx="14" ry="6" fill="#e74c3c"/><ellipse cx="18" cy="18" rx="12" ry="4.5" fill="#ffeaa7"/><circle cx="13" cy="17" r="2.2" fill="#e17055"/><circle cx="18" cy="16.5" r="2.2" fill="#00b894"/><circle cx="23" cy="17" r="2.2" fill="#fdcb6e"/><circle cx="15.5" cy="19" r="2" fill="#6c5ce7"/><circle cx="20.5" cy="19" r="2" fill="#e17055"/></svg>';
+SVG_ICONS['tobacco']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 19 Q8 11 12 9 Q16 7 19 5" stroke="#78716c" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M5 19 Q9 15 13 14 Q17 13 20 9" stroke="#a8a29e" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.35"/><path d="M8 16 Q10 12 13 11" stroke="#57534e" stroke-width="0.8" fill="none"/></svg>';
+SVG_ICONS['mineral']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4 L16 10 L20 10 L17 14 L19 20 L12 17 L5 20 L7 14 L4 10 L8 10 Z" fill="none" stroke="#6b7280" stroke-width="1.2"/><path d="M12 6 L14.5 10.5 L18 10.5 L15.5 13.5 L17 18 L12 15.5 L7 18 L8.5 13.5 L6 10.5 L9.5 10.5 Z" fill="#e5e7eb" opacity="0.6"/><circle cx="12" cy="12" r="2" fill="#9ca3af" opacity="0.4"/></svg>';
+SVG_ICONS['smoke']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 21 C7 21 7 17 9 15 C11 13 9 11 9 9 C9 7 11 5 12 5" stroke="#78716c" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M12 21 C12 21 12 18 14 16 C16 14 14 12 14 10 C14 8 15 7 16 6" stroke="#a8a29e" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M17 21 C17 21 17 19 18 18 C19 17 18 15 18 14" stroke="#d6d3d1" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg>';
+SVG_ICONS['passion']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="12" cy="13" rx="8" ry="7" fill="#7c2d12"/><ellipse cx="12" cy="13" rx="6.5" ry="5.5" fill="#fbbf24"/><circle cx="10" cy="11.5" r="0.8" fill="#92400e"/><circle cx="13" cy="12" r="0.8" fill="#92400e"/><circle cx="11.5" cy="14" r="0.8" fill="#92400e"/><circle cx="14" cy="14.5" r="0.7" fill="#92400e"/><circle cx="9.5" cy="13.5" r="0.7" fill="#92400e"/><path d="M12 6 Q12 4 14 5" stroke="#4a8028" stroke-width="1" fill="none"/></svg>';
+SVG_ICONS['yogurt']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg"><path d="M9 14 L11 30 Q12 32 18 32 Q24 32 25 30 L27 14 Z" fill="#f5f5f5" stroke="#bdbdbd" stroke-width="0.8"/><ellipse cx="18" cy="14" rx="9.5" ry="3" fill="#e0e0e0" stroke="#bdbdbd" stroke-width="0.6"/><path d="M26 13 L30 10" stroke="#9e9e9e" stroke-width="1.5" stroke-linecap="round"/><path d="M14 14 Q16 12 18 14 Q20 16 22 14" stroke="#f8bbd0" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="15" cy="22" r="1.5" fill="#e91e63" opacity="0.6"/><circle cx="20" cy="25" r="1.2" fill="#e91e63" opacity="0.5"/></svg>';
+SVG_ICONS['starfruit']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3 L14 9 L20 9.5 L15.5 13.5 L17 20 L12 16 L7 20 L8.5 13.5 L4 9.5 L10 9 Z" fill="#fde047" stroke="#ca8a04" stroke-width="0.8"/><path d="M12 5 L13.5 9.5 L18 10 L14.5 13 L16 18 L12 15 L8 18 L9.5 13 L6 10 L10.5 9.5 Z" fill="#fef08a" opacity="0.5"/></svg>';
+SVG_ICONS['earthy']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 20 Q8 14 12 16 Q16 18 20 12" stroke="#78716c" stroke-width="1.5" fill="none"/><circle cx="8" cy="17" r="1.8" fill="#78716c" opacity="0.35"/><circle cx="15" cy="14" r="1.2" fill="#78716c" opacity="0.25"/><circle cx="12" cy="19" r="2" fill="#57534e" opacity="0.25"/></svg>';
+SVG_ICONS['caramel']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="12" rx="4" ry="4" width="16" height="13" fill="#d4860b"/><ellipse cx="18" cy="15.5" rx="5" ry="3" fill="rgba(255,255,255,0.15)"/><path d="M10 15 Q6 12 4 14 Q3 16 6 18 Q3 20 4 22 Q6 24 10 21" fill="#f5d98e" stroke="#c9a84c" stroke-width="0.5"/><path d="M26 15 Q30 12 32 14 Q33 16 30 18 Q33 20 32 22 Q30 24 26 21" fill="#f5d98e" stroke="#c9a84c" stroke-width="0.5"/></svg>';
+SVG_ICONS['cotton']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg"><line x1="18" y1="22" x2="18" y2="34" stroke="#d4a76a" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="18" cy="14" rx="11" ry="10" fill="#f48fb1"/><ellipse cx="13" cy="10" rx="6" ry="5.5" fill="#f06292"/><ellipse cx="24" cy="11" rx="5.5" ry="5" fill="#ec407a"/><ellipse cx="18" cy="7" rx="7" ry="5" fill="#f48fb1"/><ellipse cx="11" cy="15" rx="5" ry="4.5" fill="#f06292"/><ellipse cx="25" cy="16" rx="4.5" ry="4" fill="#f48fb1"/><ellipse cx="15" cy="9" rx="3.5" ry="2.5" fill="rgba(255,255,255,0.25)"/></svg>';
+SVG_ICONS['jasmine']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg"><g transform="translate(18 15)"><ellipse cx="0" cy="-6.5" rx="3.2" ry="5.5" fill="#fffde7" stroke="#e8d5a3" stroke-width="0.6" transform="rotate(0)"/><ellipse cx="0" cy="-6.5" rx="3.2" ry="5.5" fill="#fffde7" stroke="#e8d5a3" stroke-width="0.6" transform="rotate(72)"/><ellipse cx="0" cy="-6.5" rx="3.2" ry="5.5" fill="#fffde7" stroke="#e8d5a3" stroke-width="0.6" transform="rotate(144)"/><ellipse cx="0" cy="-6.5" rx="3.2" ry="5.5" fill="#fffde7" stroke="#e8d5a3" stroke-width="0.6" transform="rotate(216)"/><ellipse cx="0" cy="-6.5" rx="3.2" ry="5.5" fill="#fffde7" stroke="#e8d5a3" stroke-width="0.6" transform="rotate(288)"/><circle cx="0" cy="0" r="3.5" fill="#f9e547"/><circle cx="0" cy="0" r="2" fill="#f0c929"/></g><path d="M26 10 Q30 8 32 12" fill="#4caf50" stroke="#2e7d32" stroke-width="0.6"/><g transform="translate(28 22) scale(0.55)"><ellipse cx="0" cy="-5" rx="2.5" ry="4" fill="#fffde7" stroke="#e8d5a3" stroke-width="0.6" transform="rotate(0)"/><ellipse cx="0" cy="-5" rx="2.5" ry="4" fill="#fffde7" stroke="#e8d5a3" stroke-width="0.6" transform="rotate(120)"/><ellipse cx="0" cy="-5" rx="2.5" ry="4" fill="#fffde7" stroke="#e8d5a3" stroke-width="0.6" transform="rotate(240)"/><circle cx="0" cy="0" r="2.5" fill="#f9e547"/></g></svg>';
+SVG_ICONS['nuts']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg"><ellipse cx="13" cy="20" rx="7" ry="8" fill="#8d6748"/><path d="M7 14 Q8 10 13 10 Q18 10 19 14" fill="#5d4037"/><ellipse cx="11" cy="17" rx="2.5" ry="2" fill="rgba(255,255,255,0.12)"/><ellipse cx="24" cy="18" rx="5" ry="9" fill="#d4a76a" transform="rotate(15,24,18)"/><ellipse cx="23" cy="15" rx="1.8" ry="2.5" fill="rgba(255,255,255,0.15)" transform="rotate(15,23,15)"/></svg>';
 function getSvgIcon(k,sz){var t=SVG_ICONS[k];return t?t.replace(/__SZ__/g,sz):null;}
 function stHtml(v,id,sz,ed){
   return [1,2,3,4,5].map(function(s){return '<span class="star'+(s<=v?" on":"")+'" style="font-size:'+(sz||16)+'px;" '+(ed?'onclick="setStar(\''+id+'\','+s+')"':'')+'>★</span>';}).join("");
