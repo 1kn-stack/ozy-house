@@ -4,24 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>OZY HOUSE</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=Hahmlet:wght@200;300;400&family=Noto+Sans+KR:wght@200;300;400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#f5f5f7;--card:#fff;--h1:#2c2c2e;--h2:#3a3a3c;
-  --ac:#ff9f0a;--acs:#fff9f0;
-  --t1:#1c1c1e;--t2:#636366;--t3:#8e8e93;
-  --ib:#d1d1d6;--ibg:#f5f5f7;
-  --nav:rgba(28,28,30,0.97);
+  --bg:#f4ece0;--card:#fffaf2;--h1:#2a1a0c;--h2:#3d2510;
+  --ac:#b84830;--acs:#fbeee8;
+  --t1:#28160a;--t2:#7a4e2a;--t3:#b89070;
+  --ib:rgba(42,26,12,0.15);--ibg:#f4ece0;
+  --nav:#2a1a0c;
 }
 body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100vh;color:var(--t1);}
 #app{max-width:480px;margin:0 auto;min-height:100vh;background:var(--bg);}
 @media(min-width:768px){
-  body{background:#e5e5ea;}
-  #app{margin:32px auto;border-radius:24px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,0.18);min-height:auto;}
+  body{background:#2a1a0c;}
+  #app{margin:32px auto;border-radius:24px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,0.4);min-height:auto;}
   .bnav{border-radius:0 0 24px 24px;}
 }
-.bebas{font-family:'Bebas Neue',cursive;}
+.bebas{font-family:'Cardo',serif;font-weight:700;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 .cani{animation:fadeUp .28s ease both;}
@@ -33,11 +33,11 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100vh
 .lbl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);display:block;margin-bottom:6px;margin-top:14px;}
 .btnp{width:100%;background:var(--h1);color:#fff;border:none;border-radius:14px;padding:15px;font-size:15px;font-family:inherit;font-weight:700;cursor:pointer;margin-top:18px;}
 .btns{background:var(--card);color:var(--t2);border:1px solid var(--ib);border-radius:12px;padding:11px 18px;font-size:13px;font-family:inherit;cursor:pointer;}
-.star{font-size:18px;cursor:pointer;color:#d1d1d6;transition:color .1s;display:inline-block;line-height:1;}.star.on{color:#ff9f0a;}
-.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--nav);border-top:0.5px solid rgba(255,255,255,0.08);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom);max-width:480px;margin:0 auto;}
-@media(min-width:768px){.bnav{left:50%;transform:translateX(-50%);right:auto;width:480px;}}
-.nbtn{flex:1;background:none;border:none;color:#636366;padding:10px 0 13px;font-family:inherit;font-size:9px;cursor:pointer;border-top:2px solid transparent;letter-spacing:0.5px;}
-.nbtn.on{color:#ff9f0a;border-top-color:#ff9f0a;}
+.star{font-size:18px;cursor:pointer;color:rgba(42,26,12,0.15);transition:color .1s;display:inline-block;line-height:1;}.star.on{color:#b84830;}
+.bnav{position:fixed;bottom:0;left:0;right:0;background:rgba(244,236,224,0.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:0.5px solid rgba(42,26,12,0.12);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom);max-width:480px;margin:0 auto;}
+@media(min-width:768px){.bnav{left:50%;transform:translateX(-50%);right:auto;width:480px;border-radius:0 0 24px 24px;}}
+.nbtn{flex:1;background:none;border:none;color:#a07858;padding:10px 0 13px;font-family:'Hahmlet',serif;font-size:8px;cursor:pointer;border-top:2px solid transparent;letter-spacing:1.5px;text-transform:uppercase;font-weight:300;}
+.nbtn.on{color:#28160a;border-top-color:#b84830;font-weight:400;}
 .dz{border:2px dashed var(--ib);border-radius:16px;padding:36px 20px;text-align:center;cursor:pointer;background:var(--ibg);transition:all .2s;}
 .dz.over{border-color:var(--ac);background:var(--acs);}
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--h1);color:#fff;padding:10px 22px;border-radius:30px;font-size:13px;z-index:300;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.2);}
@@ -61,52 +61,134 @@ const BC = collection(db,"beans");
 const DC = collection(db,"diary");
 const SC = doc(db,"settings","admin");
 
-const EMO = {"무화과":"🫐","베르가못":"🍋‍🟩","복숭아":"🍑","포도":"🍇","자스민":"🌸","레몬":"🍋","홍차":"🍵","후르트링":"🥣","초콜릿":"🍫","다크초콜릿":"🍫","캐러멜":"🍮","견과류":"🌰","사과":"🍎","오렌지":"🍊","딸기":"🍓","블루베리":"🫐","체리":"🍒","망고":"🥭","파인애플":"🍍","바닐라":"🍦","허브":"🌿","장미":"🌹","아몬드":"🌰","헤이즐넛":"☕","꿀":"🍯","라즈베리":"🍓","감귤":"🍊","멜론":"🍈","자두":"🍑","살구":"🍑","패션후르츠":"🌺","시트러스":"🍋","캐모마일":"🌼","얼그레이":"🍵","크랜베리":"🍒","키위":"🥝","화이트 플로럴":"🌼","청사과":"🍏","슈가 케인":"🌾","팝콘":"🍿","수박":"🍉","white floral":"🌼","green apple":"🍏","sugar cane":"🌾","floral":"🌸","apple":"🍎","peach":"🍑","jasmine":"🌸","lemon":"🍋","orange":"🍊","strawberry":"🍓","raspberry":"🍓","blueberry":"🫐","chocolate":"🍫","caramel":"🍮","vanilla":"🍦","honey":"🍯","grape":"🍇","cherry":"🍒","mango":"🥭","melon":"🍈"};
-// 카테고리별 키워드 부분 매칭
+const EMO = {
+  /* ── 과일 ── */
+  "무화과":"🍯","베르가못":"🍋‍🟩","복숭아":"🍑","포도":"🍇","자스민":"🌸","레몬":"🍋",
+  "홍차":"🍵","후르트링":"🥣","초콜릿":"🍫","다크초콜릿":"🍫","캐러멜":"🍮","견과류":"🌰",
+  "사과":"🍎","오렌지":"🍊","딸기":"🍓","블루베리":"🫐","체리":"🍒","망고":"🥭",
+  "파인애플":"🍍","바닐라":"🍦","허브":"🌿","장미":"🌹","아몬드":"🌰","헤이즐넛":"🌰",
+  "꿀":"🍯","라즈베리":"🍓","감귤":"🍊","멜론":"🍈","자두":"🍑","살구":"🍑",
+  "패션후르츠":"🌺","시트러스":"🍋","캐모마일":"🌼","얼그레이":"🍵","크랜베리":"🍒",
+  "키위":"🥝","화이트 플로럴":"🌼","청사과":"🍏","풋사과":"🍏","그린망고":"🍏","그린 망고":"🍏","슈가 케인":"🌾","팝콘":"🍿",
+  "수박":"🍉","리치":"🍈","구아바":"🍈","코코넛":"🥥",
+  /* ── 블랙커런트·블랙베리 분리 ── */
+  "블랙커런트":"🍇","블랙베리":"🍇","카시스":"🍇","블랙베리잼":"🍇",
+  /* ── 건과일 ── */
+  "건포도":"🫙","건자두":"🫙","건살구":"🫙","건망고":"🫙","대추야자":"🫙",
+  "건체리":"🍒","건크랜베리":"🍒","무화과잼":"🫙","타마린드":"🫙",
+  /* ── Spices ── */
+  "시나몬":"🌿","계피":"🌿","넛메그":"🌶","육두구":"🌶","후추":"🌶","흑후추":"🌶",
+  "아니스":"🫚","스타아니스":"🫚","리코리스":"🫚","감초":"🫚","펜넬":"🫚",
+  "정향":"🫙","카다몬":"🫙","일라이치":"🫙","팔각":"🫙","올스파이스":"🫙",
+  /* ── Green/Vegetative ── */
+  "풀향":"🌱","풀내":"🌱","그라시":"🌱","헤이":"🌱","덜익은":"🌱",
+  "피망":"🫑","토마토줄기":"🫑","채소향":"🫑","야채향":"🫑",
+  "올리브":"🫒","흙":"🫒","흙내":"🫒","어시":"🫒","머디":"🫒",
+  /* ── Sour/Fermented ── */
+  "발효":"🍶","콤부차":"🍶","와이니":"🍷","식초":"🫙","초산":"🫙",
+  "버터산":"🧀","치즈향":"🧀","젖산":"🧀","유산균":"🧀",
+  "샴페인":"🍾","스파클링":"🍾","위스키":"🥃","보이차":"🍵",
+  /* ── Roasted 세분화 ── */
+  "타바코":"🚬","담배":"🚬","재":"🚬","어시향":"🚬",
+  "우디":"🪵","시더":"🪵","오크":"🪵","나무":"🪵","우드":"🪵",
+  "몰트":"🌾","맥아":"🌾","그레인":"🌾","곡물":"🌾",
+  /* ── 기타 ── */
+  "흑설탕":"🍯","흑당":"🍯","대추":"🍯","브라운슈거":"🍯","메이플":"🍯",
+  "버터":"🫚","크림":"🫚","바닐라빈":"🍦","크렘브륄레":"🍦",
+  "와인":"🍷","포트와인":"🍷","레드와인":"🍷","화이트와인":"🍷",
+  "미네랄":"🌊","감칠맛":"🌊","짭조름":"🌊","훈연":"💨","스모키":"💨","피트":"💨",
+  /* ── 영문 ── */
+  "white floral":"🌼","green apple":"🍏","sugar cane":"🌾","floral":"🌸",
+  "apple":"🍎","peach":"🍑","jasmine":"🌸","lemon":"🍋","orange":"🍊",
+  "strawberry":"🍓","raspberry":"🍓","blueberry":"🫐","chocolate":"🍫",
+  "caramel":"🍮","vanilla":"🍦","honey":"🍯","grape":"🍇","cherry":"🍒",
+  "mango":"🥭","melon":"🍈","blackcurrant":"🍇","blackberry":"🍇",
+  "raisin":"🫙","dried fruit":"🫙","tobacco":"🚬","woody":"🪵","cedar":"🪵"};
+// 카테고리별 키워드 부분 매칭 (v3 확장: SCA 9대 카테고리 완전 커버)
 const FCAT = [
-  ["🍑", ["복숭아","황도","백도","피치","살구","자두","apricot","plum","peach","nectarine"]],
-  ["🍋", ["레몬","시트러스","시트론","유자","레몬그라스","lemon","citrus","citron","yuzu"]],
-  ["🍊", ["오렌지","감귤","귤","만다린","클레멘타인","자몽","그레이프프루트","orange","mandarin","tangerine","grapefruit","clementine"]],
-  ["🍎", ["사과","적사과","홍사과","apple","red apple"]],
-  ["🍏", ["청사과","풋사과","green apple","granny"]],
-  ["🍇", ["포도","청포도","머스캣","그레이프","grape","muscat"]],
-  ["🍓", ["딸기","라즈베리","베리류","mixed berry","strawberry","raspberry","berry"]],
-  ["🫐", ["블루베리","무화과","베리","blueberry","fig","berry"]],
-  ["🍒", ["체리","크랜베리","cherry","cranberry"]],
-  ["🥭", ["망고","mango"]],
-  ["🍍", ["파인애플","pineapple"]],
-  ["🍈", ["멜론","메론","melon"]],
-  ["🍉", ["수박","watermelon"]],
-  ["🥝", ["키위","kiwi"]],
-  ["🌺", ["패션","패숀","passion","hibiscus","히비스커스"]],
-  ["🍫", ["초콜릿","초콜렛","다크초코","카카오","cacao","cocoa","chocolate"]],
-  ["🍮", ["캐러멜","카라멜","toffee","토피","butterscotch","버터스카치","caramel"]],
-  ["🍦", ["바닐라","vanilla"]],
-  ["🍯", ["꿀","벌꿀","honey","honeysuckle","허니"]],
-  ["🌾", ["곡물","시리얼","귀리","보리","grain","cereal","oat","sugar cane","슈가케인","슈가 케인"]],
-  ["🥣", ["후르트링","그래놀라","오트밀","muesli","granola"]],
-  ["🍿", ["팝콘","popcorn"]],
-  ["🌰", ["견과","헤이즐넛","아몬드","호두","땅콩","밤","nut","hazel","almond","walnut","peanut","chestnut","praline","프랄린"]],
-  ["☕", ["로스티","smoky","스모키","roasty","몰트","malt","biscuit","비스킷","브라운슈거","brown sugar"]],
-  ["🍵", ["홍차","얼그레이","녹차","우롱","보이차","earl grey","green tea","oolong"]],
-  ["🌸", ["자스민","재스민","플로럴","blossom","jasmine","floral","flower"]],
-  ["🌼", ["캐모마일","chamomile","화이트 플로럴","white floral","elderflower","엘더플라워"]],
-  ["🌹", ["장미","rose","로즈"]],
-  ["🌿", ["허브","민트","바질","타임","herb","mint","basil","thyme","lavender","라벤더"]],
-  ["🫚", ["버터","butter","cream","크림"]],
+  /* ── FRUITY: Berry ── */
+  ["🫐", ["블루베리","blueberry","huckleberry","bilberry"]],
+  ["🍇", ["블랙커런트","블랙베리","카시스","포도","청포도","머스캣","blackcurrant","blackberry","cassis","grape","muscat","concord"]],
+  ["🍓", ["딸기","라즈베리","mixed berry","strawberry","raspberry","wild berry","딸기잼"]],
+  ["🍒", ["체리","크랜베리","다크체리","건체리","cherry","cranberry","dark cherry","maraschino","morello","dried cherry"]],
+
+  /* ── FRUITY: Dried Fruit ── */
+  ["🫙", ["건포도","건자두","건살구","건망고","건과일","무화과","raisin","sultana","dried fruit","dried grape","dried apricot","dried mango","prune","fig","date","tamarind","타마린드","대추야자"]],
+
+  /* ── FRUITY: Citrus ── */
+  ["🍋", ["레몬","시트러스","시트론","유자","라임","레몬그라스","lemon","citrus","citron","yuzu","lime","lemon zest","lemon curd"]],
+  ["🍊", ["오렌지","감귤","귤","만다린","클레멘타인","자몽","그레이프프루트","orange","mandarin","tangerine","grapefruit","clementine","blood orange"]],
   ["🍋‍🟩", ["베르가못","bergamot"]],
-  // 이미지에서 추가된 항목들
-  ["🍷", ["와인","포트와인","레드와인","화이트와인","wine","red wine","white wine","port","winey","발효","fermented wine"]],
-  ["🥤", ["소다","탄산","사이다","콜라","이온음료","스포츠음료","soda","sparkling","fizzy","tonic","isotonic"]],
-  ["⭐", ["스타프루츠","카람볼라","star fruit","starfruit","carambola"]],
-  ["🍬", ["젤리","사우어","하리보","풍선껌","껌","캔디","사탕","jelly","candy","sour","haribo","gummy","bubble gum","bubblegum","chewing gum"]],
-  ["🌷", ["백합","튤립","lily","tulip","lilac","라일락"]],
-  ["🥛", ["요거트","요구르트","라떼","밀크","우유","yogurt","yoghurt","milk","latte","dairy","cream cheese","크림치즈"]],
-  ["🌊", ["감칠맛","짭조름","umami","savory","salty brine","mineral","미네랄"]],
-  ["🌸", ["분홍꽃","벚꽃","sakura","blossom","pink flower"]],
-  ["🍯", ["졸인 설탕","brown sugar syrup","시럽","설탕","sugar","syrup","caramelized"]],
-  ["🥜", ["캐슈넛","캐슈","peanut butter","cashew","피넛"]],
-  ["🍋", ["레몬즙","lemon juice","lime juice","라임즙"]],
+
+  /* ── FRUITY: Stone Fruit ── */
+  ["🍑", ["복숭아","황도","백도","피치","살구","자두","apricot","plum","peach","nectarine"]],
+
+  /* ── FRUITY: Other Fruit ── */
+  ["🍎", ["사과","적사과","홍사과","apple","red apple","fuji apple"]],
+  ["🍏", ["청사과","풋사과","그린망고","그린 망고","덜익은망고","green apple","granny smith","green mango","unripe mango","raw mango"]],
+  ["🥭", ["망고","mango","alphonso","ataulfo"]],
+  ["🍍", ["파인애플","트로피컬","pineapple","tropical","jackfruit","잭프루트"]],
+  ["🍈", ["멜론","메론","리치","구아바","파파야","melon","lychee","guava","papaya","honeydew","cantaloupe"]],
+  ["🍉", ["수박","watermelon"]],
+  ["🥝", ["키위","kiwi","kiwifruit"]],
+  ["🥥", ["코코넛","coconut","coconut milk","코코넛밀크"]],
+  ["🌺", ["패션","패숀","히비스커스","passion","hibiscus","passionfruit","passion fruit"]],
+
+  /* ── FLORAL ── */
+  ["🌸", ["자스민","재스민","플로럴","벚꽃","오렌지블라썸","blossom","jasmine","floral","flower","orange blossom"]],
+  ["🌼", ["캐모마일","화이트 플로럴","엘더플라워","아카시아","chamomile","elderflower","white floral","acacia","linden"]],
+  ["🌹", ["장미","로즈","로즈힙","rose","rosehip","damask rose"]],
+  ["🌷", ["라벤더","라일락","백합","튤립","제라늄","lavender","lilac","lily","tulip","geranium"]],
+
+  /* ── SWEET ── */
+  ["🍯", ["꿀","벌꿀","흑설탕","흑당","대추","브라운슈거","메이플","졸인설탕","시럽","honey","brown sugar","maple","molasses","treacle","agave","허니","caramelized","설탕","sugar"]],
+  ["🍮", ["캐러멜","카라멜","토피","버터스카치","caramel","toffee","butterscotch","dulce de leche"]],
+  ["🍦", ["바닐라","바닐라빈","크렘브륄레","vanilla","vanilla bean","creme brulee"]],
+  ["🫚", ["버터","크림","버터크림","butter","cream","clotted cream","browned butter","milky","밀키"]],
+  ["🥛", ["요거트","요구르트","밀크","우유","크림치즈","yogurt","yoghurt","milk","dairy","cream cheese","buttermilk","kefir","latte","라떼"]],
+  ["🌾", ["몰트","맥아","그레인","곡물","시리얼","귀리","보리","호밀","슈가케인","슈가 케인","malt","grain","cereal","oat","barley","rye","sugar cane","wheat"]],
+  ["🥣", ["후르트링","그래놀라","오트밀","muesli","granola","oatmeal","porridge"]],
+
+  /* ── NUTTY / COCOA ── */
+  ["🌰", ["견과","헤이즐넛","아몬드","호두","땅콩","밤","피칸","마카다미아","피스타치오","캐슈","프랄린","nut","hazel","hazelnut","almond","walnut","peanut","chestnut","praline","pecan","macadamia","pistachio","cashew","marzipan"]],
+  ["🍫", ["초콜릿","초콜렛","다크초코","카카오","밀크초콜릿","화이트초콜릿","모카","cacao","cocoa","chocolate","dark chocolate","milk chocolate","white chocolate","mocha","ganache"]],
+
+  /* ── SPICES ── 신규 추가 ── */
+  ["🌶", ["후추","흑후추","넛메그","육두구","pepper","black pepper","white pepper","nutmeg","allspice","spicy","pungent","chile"]],
+  ["🫚", ["아니스","스타아니스","리코리스","감초","펜넬","anise","star anise","licorice","fennel","absinthe"]],
+  ["🫙", ["정향","카다몬","팔각","올스파이스","clove","cardamom","star anise","allspice","일라이치","cardamon"]],
+  ["🌿", ["시나몬","계피","허브","민트","바질","타임","로즈마리","cinnamon","herb","mint","basil","thyme","rosemary","sage","eucalyptus","lavender herb"]],
+
+  /* ── GREEN / VEGETATIVE ── 신규 추가 ── */
+  ["🌱", ["풀향","풀내","그라시","헤이","덜익은","새싹","hay","grassy","green","vegetal","under-ripe","fresh grass","cut grass","hay-like","straw"]],
+  ["🫑", ["피망","토마토줄기","채소향","야채향","bell pepper","tomato stem","tomato leaf","capsicum","green pepper"]],
+  ["🫒", ["올리브","흙","흙내","어시","머디","earthy","muddy","damp","musty","dirty","olive","papery","woody base"]],
+
+  /* ── SOUR / FERMENTED ── 신규 추가 ── */
+  ["🍶", ["발효향","콤부차","와이니발효","fermented","kombucha","winey-sour","lactic","발효","과발효"]],
+  ["🧀", ["버터산","치즈향","젖산","유산균","butyric","cheesy","lactic acid","dairy sour","치즈"]],
+  ["🍾", ["샴페인산미","스파클링산미","champagne","sparkling acidity","effervescent","fizzy acid","샴페인","탄산산미"]],
+
+  /* ── ROASTED 세분화 ── */
+  ["☕", ["로스티","비스킷","토스트","그레이엄","roasty","biscuit","graham","toast","brown butter","browned"]],
+  ["🚬", ["타바코","담배","재","어시향","tobacco","ashy","ash","smoky dark","탄향","탄내"]],
+  ["🪵", ["우디","시더","오크","나무향","우드","woody","cedar","oak","sandalwood","wood","teak"]],
+  ["💨", ["훈연","스모키","피트","smoky","peaty","peat","burnt","campfire","smoked","훈제"]],
+
+  /* ── ROASTED: Tea ── */
+  ["🍵", ["홍차","얼그레이","녹차","우롱","보이차","루이보스","다르질링","earl grey","green tea","oolong","pu-erh","rooibos","darjeeling","assam","ceylon","sencha","matcha","캐모마일","chamomile"]],
+
+  /* ── OTHER ── */
+  ["🍷", ["와인","포트와인","레드와인","화이트와인","와이니","포트","wine","red wine","white wine","port","winey","vinous","grape wine"]],
+  ["🍶", ["발효","콤부차","사케","식초산","fermented","vinegar","acetic","boozy","booze","사케","주류"]],
+  ["🥃", ["위스키","럼","버번","whiskey","rum","bourbon","whisky","spirit"]],
+  ["🌊", ["감칠맛","짭조름","미네랄","umami","savory","salty","brine","mineral","minerality","saline","terroir"]],
+  ["🥜", ["캐슈넛","캐슈","피넛버터","peanut butter","cashew","피넛"]],
+  ["🍿", ["팝콘","popcorn"]],
+  ["🍬", ["젤리","캔디","사탕","jelly","candy","sour candy","gummy","bubblegum"]],
+  ["🥤", ["소다","탄산","soda","sparkling","fizzy","tonic","cola"]],
+  ["⭐", ["스타프루츠","star fruit","starfruit","carambola"]],
+  ["🍋", ["레몬즙","lemon juice","lime juice","라임즙","라임","lime"]],
 ];
 const fe = function(n){
   if(!n) return "✨";
@@ -123,13 +205,12 @@ const fe = function(n){
 };
 // 뱃지 색상 있는 3종
 const PS = {
-  "내추럴": {bg:"#fff5eb",c:"#c05e00",l:"Natural"},
-  "워시드":  {bg:"#eff6ff",c:"#1d4ed8",l:"Washed"},
-  "허니":    {bg:"#fefce8",c:"#a16207",l:"Honey"},
-  // 회색 기타
-  "무산소":           {bg:"#f5f5f7",c:"#636366",l:"Anaerobic"},
-  "카보닉 마세라시옹": {bg:"#f5f5f7",c:"#636366",l:"Carbonic Mac."},
-  "웻헐드":           {bg:"#f5f5f7",c:"#636366",l:"Wet Hulled"}
+  "내추럴": {bg:"transparent",c:"#b06020",bc:"rgba(176,96,32,0.45)",l:"Natural"},
+  "워시드":  {bg:"transparent",c:"#1a5090",bc:"rgba(26,80,144,0.45)",l:"Washed"},
+  "허니":    {bg:"transparent",c:"#807020",bc:"rgba(128,112,32,0.45)",l:"Honey"},
+  "무산소":           {bg:"transparent",c:"#5010a0",bc:"rgba(80,16,160,0.45)",l:"Anaerobic"},
+  "카보닉 마세라시옹": {bg:"transparent",c:"#5010a0",bc:"rgba(80,16,160,0.35)",l:"Carbonic Mac."},
+  "웻헐드":           {bg:"transparent",c:"#306060",bc:"rgba(48,96,96,0.4)",l:"Wet Hulled"}
 };
 // 가공방식 정규화
 const PROCESS_MAP = [
@@ -208,8 +289,8 @@ function normDripper(d){
   }
   return d;
 }
-const FL = {"에티오피아":"🇪🇹","콜롬비아":"🇨🇴","과테말라":"🇬🇹","케냐":"🇰🇪","코스타리카":"🇨🇷","파나마":"🇵🇦","브라질":"🇧🇷","인도네시아":"🇮🇩","페루":"🇵🇪","르완다":"🇷🇼","예멘":"🇾🇪"};
-const gPS = p => { var np=normProcess(p)||p; return PS[np]||{bg:"#f5f5f7",c:"#636366",l:np||""}; };
+const FL = {"에티오피아":"🇪🇹","콜롬비아":"🇨🇴","과테말라":"🇬🇹","케냐":"🇰🇪","코스타리카":"🇨🇷","파나마":"🇵🇦","브라질":"🇧🇷","인도네시아":"🇮🇩","페루":"🇵🇪","르완다":"🇷🇼","예멘":"🇾🇪","에콰도르":"🇪🇨","볼리비아":"🇧🇴","탄자니아":"🇹🇿","우간다":"🇺🇬","부룬디":"🇧🇮","말라위":"🇲🇼","잠비아":"🇿🇲","중국":"🇨🇳","대만":"🇹🇼","인도":"🇮🇳","파푸아뉴기니":"🇵🇬","멕시코":"🇲🇽","온두라스":"🇭🇳","엘살바도르":"🇸🇻","니카라과":"🇳🇮"};
+const gPS = p => { var np=normProcess(p)||p; return PS[np]||{bg:"transparent",c:"#7a5038",bc:"rgba(122,80,56,0.4)",l:np||""}; };
 const gFL = o => FL[o]||"🌍";
 const gRC = r => RC[normRL(r)]||"#ea580c";
 
@@ -267,42 +348,91 @@ function getDegasInfo(b){
   return {status:"ready", daysSince:daysSince, degasEndDate:degasEndDate, totalDays:totalDays};
 }
 
-// 플레이버 → 카드 상단 배경 컬러 매핑
+// 플레이버 → 그라디언트 바 컬러 매핑 (v3 — SCA 9대 카테고리 완전 커버)
 const FLAVOR_COLOR = [
-  // 레드/핑크 계열
-  {keys:["딸기","라즈베리","체리","크랜베리","레드","적포도","strawberry","raspberry","cherry","cranberry","red"],    bg:"#fff0f0", c1:"#ffb3b3", c2:"#ff6b6b"},
-  // 보라/블루베리 계열
-  {keys:["포도","블루베리","무화과","블랙베리","청포도","적포도","grape","blueberry","fig","blackberry","plum","자두"],  bg:"#f3f0ff", c1:"#c4b5fd", c2:"#7c3aed"},
-  // 오렌지/복숭아 계열
-  {keys:["복숭아","황도","백도","살구","오렌지","감귤","패션","망고","peach","apricot","orange","passion","mango"],    bg:"#fff7ed", c1:"#fdba74", c2:"#f97316"},
-  // 노랑/레몬 계열
-  {keys:["레몬","시트러스","자몽","유자","파인애플","lemon","citrus","grapefruit","yuzu","pineapple"],               bg:"#fefce8", c1:"#fde68a", c2:"#eab308"},
-  // 초록 계열
-  {keys:["청사과","키위","허브","민트","green apple","kiwi","herb","mint"],                                         bg:"#f0fdf4", c1:"#86efac", c2:"#16a34a"},
-  // 갈색/초콜릿/캐러멜 계열
-  {keys:["초콜릿","카카오","캐러멜","헤이즐넛","아몬드","견과","몰트","chocolate","cocoa","caramel","hazel","almond","nut","malt"], bg:"#fdf6ec", c1:"#d4a76a", c2:"#92400e"},
-  // 플로럴/장미 계열
-  {keys:["자스민","재스민","장미","백합","플로럴","분홍꽃","jasmine","rose","lily","floral","flower"],              bg:"#fdf4ff", c1:"#f0abfc", c2:"#a21caf"},
-  // 홍차/차 계열
-  {keys:["홍차","얼그레이","녹차","우롱","tea","earl grey","oolong"],                                              bg:"#fdf8ee", c1:"#d4a76a", c2:"#78350f"},
-  // 와인/베리 복합 계열
-  {keys:["와인","wine","winey"],                                                                                   bg:"#fdf2f8", c1:"#f9a8d4", c2:"#9d174d"},
-  // 바닐라/크림 계열
-  {keys:["바닐라","크림","버터","vanilla","cream","butter"],                                                       bg:"#fefce8", c1:"#fde68a", c2:"#b45309"},
+  /* ── Berry 분리 ── */
+  {keys:["그린망고","그린 망고","green mango","unripe mango","raw mango"], c:"#4ade80"},
+  {keys:["블루베리","blueberry","huckleberry","bilberry"], c:"#3b0764"},
+  {keys:["블랙커런트","블랙베리","카시스","blackcurrant","blackberry","cassis"], c:"#4c1d95"},
+  {keys:["포도","청포도","머스캣","grape","muscat","concord"], c:"#6d28d9"},
+  {keys:["라즈베리","딸기","raspberry","strawberry","wild berry"], c:"#e11d48"},
+  {keys:["체리","크랜베리","cherry","cranberry","dark cherry"], c:"#9f1239"},
+  /* ── Dried Fruit ── */
+  {keys:["건포도","건자두","무화과","raisin","dried fruit","fig","prune","tamarind","타마린드","건과일","date"], c:"#78350f"},
+  /* ── Citrus ── */
+  {keys:["레몬","시트러스","유자","라임","lemon","citrus","yuzu","lime","bergamot","베르가못"], c:"#fbbf24"},
+  {keys:["오렌지","감귤","자몽","orange","grapefruit","mandarin","tangerine"], c:"#f97316"},
+  /* ── Stone Fruit ── */
+  {keys:["복숭아","살구","자두","peach","apricot","plum","nectarine"], c:"#fb923c"},
+  /* ── Tropical ── */
+  {keys:["패션후르츠","파인애플","망고","passion","pineapple","mango","tropical"], c:"#f59e0b"},
+  {keys:["코코넛","coconut"], c:"#fef9c3"},
+  {keys:["키위","청사과","green apple","kiwi","grassy","풀향","vegetal"], c:"#4ade80"},
+  /* ── Floral ── */
+  {keys:["자스민","재스민","jasmine","floral","flower","blossom","orange blossom"], c:"#f472b6"},
+  {keys:["장미","rose","rosehip"], c:"#fb7185"},
+  {keys:["캐모마일","엘더플라워","chamomile","elderflower","white floral","화이트 플로럴"], c:"#818cf8"},
+  {keys:["라벤더","lavender","lilac","라일락"], c:"#a78bfa"},
+  /* ── Sweet ── */
+  {keys:["꿀","흑설탕","메이플","honey","brown sugar","maple","molasses","설탕","sugar"], c:"#f59e0b"},
+  {keys:["캐러멜","토피","버터스카치","caramel","toffee","butterscotch"], c:"#b45309"},
+  {keys:["바닐라","크림","버터","vanilla","cream","butter","milky"], c:"#fde68a"},
+  /* ── Nutty/Cocoa ── */
+  {keys:["초콜릿","카카오","chocolate","cocoa","cacao","dark chocolate","mocha"], c:"#92400e"},
+  {keys:["헤이즐넛","아몬드","견과","프랄린","hazel","almond","nut","praline","pecan"], c:"#a16207"},
+  {keys:["몰트","맥아","그레인","malt","grain","cereal","barley"], c:"#ca8a04"},
+  /* ── Spices — 신규 ── */
+  {keys:["후추","넛메그","pepper","nutmeg","spicy","pungent"], c:"#7f1d1d"},
+  {keys:["아니스","리코리스","감초","anise","licorice","fennel"], c:"#1e3a5f"},
+  {keys:["시나몬","계피","cinnamon","allspice","clove","정향","카다몬","cardamom"], c:"#92400e"},
+  /* ── Green/Vegetative — 신규 ── */
+  {keys:["풀향","풀내","그라시","헤이","grassy","hay","cut grass","vegetal","덜익은","under-ripe"], c:"#16a34a"},
+  {keys:["피망","채소향","bell pepper","tomato stem","capsicum","야채향"], c:"#15803d"},
+  {keys:["올리브","흙","어시","earthy","muddy","musty","olive","dirty"], c:"#713f12"},
+  /* ── Sour/Fermented — 신규 ── */
+  {keys:["발효","콤부차","fermented","kombucha","lactic","winey-sour"], c:"#831843"},
+  {keys:["버터산","치즈향","butyric","cheesy","lactic acid"], c:"#854d0e"},
+  {keys:["샴페인","스파클링","champagne","sparkling acidity","effervescent"], c:"#7e22ce"},
+  {keys:["식초","초산","vinegar","acetic"], c:"#a16207"},
+  /* ── Tea ── */
+  {keys:["홍차","얼그레이","루이보스","earl grey","rooibos","darjeeling","tea"], c:"#be185d"},
+  {keys:["녹차","우롱","보이차","green tea","oolong","pu-erh","matcha"], c:"#15803d"},
+  /* ── Roasted 세분화 ── */
+  {keys:["로스티","비스킷","토스트","roasty","biscuit","toast","brown butter"], c:"#92400e"},
+  {keys:["타바코","담배","재","tobacco","ashy","ash","탄향"], c:"#44403c"},
+  {keys:["우디","시더","오크","woody","cedar","oak","wood"], c:"#78350f"},
+  {keys:["훈연","스모키","피트","smoky","peaty","burnt","campfire"], c:"#292524"},
+  /* ── Wine/Spirits ── */
+  {keys:["와인","포트","wine","port","winey","vinous"], c:"#9d174d"},
+  {keys:["위스키","럼","whiskey","rum","bourbon","boozy"], c:"#7c2d12"},
+  /* ── Other ── */
+  {keys:["미네랄","감칠맛","mineral","umami","savory","brine","terroir"], c:"#38bdf8"},
 ];
 
-function getFlavorBg(flavors){
-  if(!flavors||!flavors.length) return null;
-  var joined = flavors.join(" ").toLowerCase();
+function getFlavorColor(name){
+  if(!name) return "#b89070";
+  var lo=name.toLowerCase();
   for(var i=0;i<FLAVOR_COLOR.length;i++){
     var fc=FLAVOR_COLOR[i];
     for(var j=0;j<fc.keys.length;j++){
-      if(joined.indexOf(fc.keys[j])!==-1){
-        return {bg:fc.bg, c1:fc.c1, c2:fc.c2};
-      }
+      if(lo.indexOf(fc.keys[j])!==-1) return fc.c;
     }
   }
-  return null;
+  return "#b89070";
+}
+
+function getFlavorGradient(flavors){
+  if(!flavors||!flavors.length) return null;
+  var colors=flavors.map(function(f){return getFlavorColor(f);});
+  if(colors.length===1) return colors[0]+' 0%, '+colors[0]+' 100%';
+  return colors.map(function(c,i){return c+' '+(i/(colors.length-1)*100).toFixed(0)+'%';}).join(', ');
+}
+
+function getFlavorBg(flavors){
+  if(!flavors||!flavors.length) return null;
+  var grad=getFlavorGradient(flavors);
+  if(!grad) return null;
+  return {grad:grad, c1:getFlavorColor(flavors[0]), c2:getFlavorColor(flavors[flavors.length-1])};
 }
 
 let beans=[], diaries=[], cachedStreak=0;
@@ -356,9 +486,18 @@ const fdD = async id => deleteDoc(doc(db,"diary",id));
 function showToast(m){S.toast=m;if(S.toastT)clearTimeout(S.toastT);S.toastT=setTimeout(()=>{S.toast="";render();},2400);render();}
 
 function fchips(flavors,sz){
-  sz=sz||"big";
-  const p=sz==="big"?"10px 14px":"7px 10px",es=sz==="big"?"26px":"20px",ts=sz==="big"?"11px":"10px",mw=sz==="big"?"58px":"44px";
-  return (flavors||[]).map(function(f){return '<div class="fchip" style="display:flex;flex-direction:column;align-items:center;background:#f5f5f7;border:1px solid rgba(0,0,0,0.06);border-radius:14px;padding:'+p+';min-width:'+mw+'"><span style="font-size:'+es+';margin-bottom:3px;">'+fe(f)+'</span><span style="font-size:'+ts+';color:#3a3a3c;font-weight:500;text-align:center;">'+f+'</span></div>';}).join("");
+  if(!flavors||!flavors.length) return "";
+  var isSmall=sz==="small";
+  var emoSz=isSmall?"15px":"20px", txtSz=isSmall?"9px":"10px", pad=isSmall?"6px 4px":"8px 4px";
+  var grad=getFlavorGradient(flavors);
+  var barHtml=grad?'<div style="height:'+(isSmall?'3px':'4px')+';border-radius:2px;margin-bottom:'+(isSmall?'8px':'10px')+';background:linear-gradient(90deg,'+grad+');"></div>':"";
+  var chips=flavors.map(function(f){
+    return '<div class="fchip" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:#fffaf2;border:0.5px solid rgba(42,26,12,0.09);border-radius:10px;padding:'+pad+';">'
+      +'<span style="font-size:'+emoSz+';line-height:1.1;">'+fe(f)+'</span>'
+      +'<span style="font-size:'+txtSz+';color:#7a4e2a;font-weight:300;text-align:center;width:100%;word-break:keep-all;overflow-wrap:break-word;line-height:1.3;">'+f+'</span>'
+      +'</div>';
+  }).join("");
+  return barHtml+'<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;">'+chips+'</div>';
 }
 function stHtml(v,id,sz,ed){
   return [1,2,3,4,5].map(function(s){return '<span class="star'+(s<=v?" on":"")+'" style="font-size:'+(sz||16)+'px;" '+(ed?'onclick="setStar(\''+id+'\','+s+')"':'')+'>★</span>';}).join("");
@@ -370,7 +509,14 @@ window.setStar = function(id,v){
   if(id==="edit"&&S.editData){S.editData.rating=v;render();}
   if(id==="diary"){S.diaryForm.rating=v;render();}
 };
-window.toggleRec = function(id){S.recOpen=S.recOpen===id?null:id;render();};
+window.toggleRec = function(id){
+  var el=document.getElementById('rec-'+id);
+  var btn=document.getElementById('rec-btn-'+id);
+  if(!el) return;
+  var isOpen=el.style.display!=='none';
+  el.style.display=isOpen?'none':'block';
+  if(btn) btn.textContent='추출 레시피 '+(isOpen?'▼':'▲');
+};
 window.setTab = function(t){S.tab=t;S.detail=null;S.editMode=false;pushHistory();render();};
 window.setFilter = function(f){S.filter=f;render();};
 window.openDetail = function(id){S.detail=id;S.editMode=false;pushHistory();render();};
@@ -723,9 +869,9 @@ async function parseImg(file){
 }
 
 // ── 렌더 헬퍼
-var HG = 'background:linear-gradient(160deg,#2c2c2e,#3a3a3c)';
-var IS = 'width:100%;border:1px solid #d1d1d6;border-radius:12px;padding:10px 13px;font-size:13px;font-family:inherit;background:#f5f5f7;color:#1c1c1e;outline:none;box-sizing:border-box;';
-var IL = 'font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#8e8e93;display:block;margin-bottom:5px;margin-top:13px;';
+var HG = 'background:#2a1a0c;font-family:Hahmlet,serif;';
+var IS = 'width:100%;border:1px solid rgba(42,26,12,0.15);border-radius:12px;padding:10px 13px;font-size:13px;font-family:inherit;background:#f4ece0;color:#28160a;outline:none;box-sizing:border-box;';
+var IL = 'font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#b89070;display:block;margin-bottom:5px;margin-top:13px;font-weight:200;';
 
 function mkLbl(t){return '<label style="'+IL+'">'+t+'</label>';}
 function mkInp(val,fn){return '<input style="'+IS+'" value="'+esc(val)+'" oninput="'+fn+'">';}
@@ -755,14 +901,14 @@ function mkProcess(val,fn){
 function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 
 function rGuestNotes(notes, beanId){
-  if(!notes||!notes.length) return '<div style="font-size:13px;color:#8e8e93;font-style:italic;">아직 게스트 소감이 없어요</div>';
+  if(!notes||!notes.length) return '<div style="font-size:13px;color:#b89070;font-style:italic;">아직 게스트 소감이 없어요</div>';
   return notes.map(function(g,gi){
     return '<div style="background:#fff;border-radius:14px;padding:14px;margin-bottom:8px;border:0.5px solid rgba(0,0,0,0.06);">'
       +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">'
-      +'<div><b style="font-size:13px;">'+esc(g.name)+'</b><span style="font-size:11px;color:#8e8e93;margin-left:8px;">'+esc(g.date)+'</span></div>'
-      +'<button onclick="deleteGuest(\''+beanId+'\','+gi+')" style="background:none;border:none;font-size:11px;color:#c7c7cc;cursor:pointer;font-family:inherit;padding:0;">삭제</button>'
+      +'<div><b style="font-size:13px;">'+esc(g.name)+'</b><span style="font-size:11px;color:#b89070;margin-left:8px;">'+esc(g.date)+'</span></div>'
+      +'<button onclick="deleteGuest(\''+beanId+'\','+gi+')" style="background:none;border:none;font-size:11px;color:rgba(42,26,12,0.18);cursor:pointer;font-family:inherit;padding:0;">삭제</button>'
       +'</div>'
-      +'<div style="font-size:13px;color:#3a3a3c;line-height:1.6;">'+esc(g.note)+'</div>'
+      +'<div style="font-size:13px;color:#3d2510;line-height:1.6;">'+esc(g.note)+'</div>'
       +'</div>';
   }).join("");
 }
@@ -780,48 +926,51 @@ function rMenu(){
   avail.forEach(function(b){(b.flavor||[]).slice(0,2).forEach(function(f){if(topFlavors.indexOf(f)===-1)topFlavors.push(f);});});
   var html='<div style="'+HG+';padding:52px 22px 28px;text-align:center;position:relative;overflow:hidden;">'
     +'<div style="position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(255,159,10,0.12),transparent 70%);border-radius:50%;pointer-events:none;"></div>'
-    +'<div class="bebas" style="font-size:58px;color:#fff;line-height:1;margin-bottom:6px;letter-spacing:2px;cursor:default;" onclick="titleTap()">OZY HOUSE</div>'
-    +'<div style="font-size:12px;letter-spacing:3px;color:rgba(255,255,255,0.45);text-transform:uppercase;margin-bottom:16px;">Bean Lineup</div>'
-    +'<div style="background:rgba(255,159,10,0.15);border:1px solid rgba(255,159,10,0.3);border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:10px;text-align:left;">'
-    +'<span style="font-size:24px;">☕</span>'
-    +'<div style="flex:1;">'
-    +'<div style="color:#ff9f0a;font-size:13px;font-weight:600;">'+avail.length+'종의 원두가 준비됐어요</div>'
-    +'<div style="color:rgba(255,255,255,0.3);font-size:11px;margin-top:2px;">'
-    +(nextDegas?'🫧 D-'+nextDegas.remaining+'일 후 새 원두':'오늘도 좋은 커피 한 잔 ☕')
+
+    +'<div style="font-family:Cardo,serif;font-size:32px;font-weight:700;color:#fff;line-height:1;margin-bottom:4px;cursor:default;" onclick="titleTap()">OZY HOUSE</div>'
+    +'<div style="font-size:8px;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,0.16);margin-bottom:20px;font-weight:200;">Bean Lineup</div>'
+    +'<div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;text-align:left;">'
+    +'<div style="display:flex;align-items:baseline;gap:6px;">'
+    +'<span style="font-family:Cardo,serif;font-size:42px;font-weight:700;color:#fff;line-height:1;">'+avail.length+'</span>'
+    +'<span style="font-family:Hahmlet,serif;font-size:13px;font-weight:300;color:rgba(255,255,255,0.7);letter-spacing:0.3px;">종의 원두</span>'
     +'</div>'
-    +'</div></div>'
+    +'<div style="font-size:11px;font-weight:200;color:rgba(255,255,255,0.4);text-align:right;line-height:1.7;">'
+    +(nextDegas?'🫧 D-'+nextDegas.remaining+'일 후<br>새 원두 예정':'오늘도<br>좋은 커피')
+    +'</div>'
+    +'</div>'
     +'</div><div style="padding:14px 14px 88px;">';
-  if(!avail.length) html+='<div style="text-align:center;padding:80px 0;color:#8e8e93;">☕<br><br>오늘은 원두가 없어요</div>';
+  if(!avail.length) html+='<div style="text-align:center;padding:80px 0;color:#b89070;">☕<br><br>오늘은 원두가 없어요</div>';
   avail.forEach(function(b,i){
-    var ps=gPS(b.process),rc=gRC(b.roastLevel),open=S.recOpen===b.id;
+    var ps=gPS(b.process),rc=gRC(b.roastLevel);
     var fc=getFlavorBg(b.flavor);
-    var cardBg=fc?'background:linear-gradient(180deg,'+fc.c1+'55 0%,'+fc.bg+' 50%,rgba(255,255,255,0) 100%)':'background:linear-gradient(135deg,'+ps.bg+',#fff)';
-    var borderCol=fc?fc.c1+'66':'rgba(0,0,0,0.06)';
-    html+='<div class="cani" onclick="openDetail(\''+b.id+'\')" style="background:#fff;border-radius:20px;margin-bottom:14px;box-shadow:0 2px 16px rgba(0,0,0,0.07);border:0.5px solid '+borderCol+';overflow:hidden;animation-delay:'+(i*.07)+'s;cursor:pointer;">'
-      +'<div style="'+cardBg+';padding:18px 18px 24px;">'
-      +'<div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">'
-      +'<span style="background:'+ps.bg+';color:'+ps.c+';border-radius:20px;padding:3px 11px;font-size:11px;font-weight:600;">'+(b.process||ps.l)+'</span>'
-      +'<span style="background:'+rc+'18;color:'+rc+';border-radius:20px;padding:3px 11px;font-size:11px;font-weight:600;">'+(b.roastLevel||"")+'</span>'
+    var cardBg='background:var(--card)';
+    var borderCol='rgba(42,26,12,0.09)';
+    html+='<div class="cani" onclick="openDetail(\''+b.id+'\')" style="background:var(--card);border-radius:14px;margin-bottom:12px;border:1px solid rgba(42,26,12,0.08);overflow:hidden;animation-delay:'+(i*.07)+'s;cursor:pointer;">'
+      +'<div style="padding:16px 18px 4px;">'
+      +'<div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;align-items:center;">'
+      +'<span style="border:0.5px solid '+ps.bc+';color:'+ps.c+';border-radius:3px;padding:3px 8px;font-size:8px;font-weight:300;letter-spacing:1px;text-transform:uppercase;line-height:1.2;">'+ps.l+'</span>'
+      +'<span style="border:0.5px solid rgba(42,26,12,0.2);color:#7a4e2a;border-radius:3px;padding:3px 8px;font-size:8px;font-weight:300;letter-spacing:0.5px;line-height:1.2;">'+(b.roastLevel||"")+'</span>'
       +'</div>'
-      +(b.roaster?'<div style="font-size:11px;color:#ff9f0a;font-weight:600;margin-bottom:4px;">🏪 '+esc(b.roaster)+'</div>':"")
-      +'<div style="font-size:'+(b.name&&b.name.length>20?'14px':b.name&&b.name.length>14?'16px':'18px')+';font-weight:700;color:#1c1c1e;line-height:1.3;margin-bottom:4px;word-break:keep-all;overflow-wrap:break-word;">'+esc(b.name||"")+'</div>'
-      +'<div style="font-size:12px;color:#8e8e93;margin-bottom:'+(b.tagline?0:16)+'px;">'+gFL(b.origin)+' '+(b.origin||"")+(b.region?" · "+b.region:"")+(b.variety?" · "+b.variety:"")+'</div>'
-      +(b.tagline?'<div style="font-style:italic;font-size:12px;color:#636366;border-left:2px solid #ff9f0a;padding-left:10px;margin-top:8px;margin-bottom:0;">"'+esc(b.tagline)+'"</div>':"")
-      +'</div><div style="padding:14px 18px 18px;background:'+(fc?fc.bg+'44':'transparent')+'">'
-      +'<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#8e8e93;margin-bottom:10px;">Flavor Notes</div>'
-      +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">'+fchips(b.flavor)+'</div>';
+      +(b.roaster?'<div style="font-size:10px;color:#b89070;font-weight:200;margin-bottom:4px;">'+esc(b.roaster)+'</div>':"")
+      +'<div style="font-family:Cardo,serif;font-size:'+(b.name&&b.name.length>20?'16px':b.name&&b.name.length>14?'18px':'20px')+';font-weight:700;color:#28160a;line-height:1.25;margin-bottom:4px;word-break:keep-all;overflow-wrap:break-word;">'+esc(b.name||"")+'</div>'
+      +'<div style="font-size:10px;color:#b89070;font-weight:200;margin-bottom:'+(b.tagline?0:14)+'px;">'+gFL(b.origin)+' '+(b.origin||"")+(b.region?" · "+b.region:"")+(b.variety?" · "+b.variety:"")+'</div>'
+      +(b.tagline?'<div style="font-style:italic;font-size:12px;color:#7a4e2a;border-left:2px solid #b84830;padding-left:10px;margin-top:8px;margin-bottom:0;">"'+esc(b.tagline)+'"</div>':"")
+      +'</div><div style="padding:0 18px 16px;">'
+      +'<div style="font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:#b89070;font-weight:200;margin-bottom:10px;">컵 노트</div>'
+      +'<div style="margin-bottom:14px;">'+fchips(b.flavor)+'</div>';
     if(b.recipe&&(b.recipe.hot&&typeof b.recipe.hot==="object"?b.recipe.hot.pour:b.recipe.hot)){
       var nr=normalizeRecipe(b.recipe);
-      html+='<div style="margin-bottom:12px;"><button onclick="event.stopPropagation();toggleRec(\''+b.id+'\')" style="background:none;border:1px solid #d1d1d6;border-radius:20px;padding:7px 14px;font-size:12px;color:#636366;cursor:pointer;font-family:inherit;">🔬 추출 레시피 '+(open?"▲":"▼")+'</button>';
-      if(open) html+='<div style="margin-top:10px;background:#f5f5f7;border-radius:12px;padding:13px 15px;font-size:12px;color:#3a3a3c;line-height:1.9;">'
+      html+='<div style="margin-bottom:12px;">'
+        +'<button id="rec-btn-'+b.id+'" onclick="event.stopPropagation();toggleRec(\''+b.id+'\')" style="background:none;border:1px solid rgba(42,26,12,0.15);border-radius:20px;padding:7px 14px;font-size:12px;color:#7a4e2a;cursor:pointer;font-family:inherit;">추출 레시피 ▼</button>'
+        +'<div id="rec-'+b.id+'" style="display:none;margin-top:10px;background:#f4ece0;border-radius:12px;padding:13px 15px;font-size:12px;color:#3d2510;line-height:1.9;">'
         +'<div><b>드리퍼</b> '+(nr.dripper||"")+'</div>'
         +(nr.hot.pour?'<div style="margin-top:6px;"><b style="color:#c05e00;">☀️ Hot</b> · 원두 '+(nr.hot.beans||"-")+' · 물온도 '+(nr.hot.waterTemp||"-")+' · 분쇄도 '+(nr.hot.grind||"-")+'<br>'+nr.hot.pour+'</div>':"")
         +(nr.iced.pour?'<div style="margin-top:6px;"><b style="color:#1d4ed8;">🧊 Iced</b> · 원두 '+(nr.iced.beans||"-")+' · 물온도 '+(nr.iced.waterTemp||"-")+' · 분쇄도 '+(nr.iced.grind||"-")+'<br>'+nr.iced.pour+'</div>':"")
+        +'</div>'
         +'</div>';
-      html+='</div>';
     }
-    html+='<button onclick="event.stopPropagation();openGuest(\''+b.id+'\')" style="width:100%;background:#2c2c2e;color:#fff;border:none;border-radius:14px;padding:14px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">✏️ 마셔봤어요 — 소감 남기기</button>'
-      +((b.guestNotes&&b.guestNotes.length)?'<div style="margin-top:8px;font-size:12px;color:#8e8e93;text-align:center;">💬 '+b.guestNotes.length+'명이 소감을 남겼어요</div>':"")
+    html+='<button onclick="event.stopPropagation();openGuest(\''+b.id+'\')" style="width:100%;background:#2a1a0c;color:#fff;border:none;border-radius:14px;padding:14px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">✏️ 마셔봤어요 — 소감 남기기</button>'
+      +((b.guestNotes&&b.guestNotes.length)?'<div style="margin-top:8px;font-size:12px;color:#b89070;text-align:center;">💬 '+b.guestNotes.length+'명이 소감을 남겼어요</div>':"")
       +'</div></div>';
   });
   return html+'</div>';
@@ -848,9 +997,9 @@ function rArchive(){
   var emptyCount=beans.filter(function(b){return b.status==="empty";}).length;
   var html='<div style="'+HG+';padding:52px 22px 28px;position:sticky;top:0;z-index:50;">'
     +'<div class="bebas" style="font-size:36px;color:#fff;">BEAN ARCHIVE</div>'
-    +'<div style="color:rgba(255,255,255,0.35);font-size:12px;margin-top:2px;">총 '+beans.length+'종 기록됨</div>'
+    +'<div style="color:rgba(255,255,255,0.35);font-size:12px;margin-top:2px;" style="font-family:Hahmlet,serif;">총 '+beans.length+'종 기록됨</div>'
     +'<div style="background:rgba(255,159,10,0.15);border:1px solid rgba(255,159,10,0.3);border-radius:14px;padding:12px 16px;margin-top:14px;display:flex;align-items:center;justify-content:space-around;">'
-    +'<div style="text-align:center;"><div style="font-size:20px;font-weight:700;color:#ff9f0a;">'+availCount+'</div><div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px;">보유</div></div>'
+    +'<div style="text-align:center;"><div style="font-size:20px;font-weight:700;color:#b84830;">'+availCount+'</div><div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px;">보유</div></div>'
     +'<div style="width:1px;height:28px;background:rgba(255,255,255,0.1);"></div>'
     +'<div style="text-align:center;"><div style="font-size:20px;font-weight:700;color:#63b3ed;">'+degasCount2+'</div><div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px;">🫧 디개싱</div></div>'
     +'<div style="width:1px;height:28px;background:rgba(255,255,255,0.1);"></div>'
@@ -859,34 +1008,34 @@ function rArchive(){
     +'<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">'
     +filters.map(function(f){
       var on=S.filter===f.v;
-      return '<button onclick="setFilter(\''+f.v+'\')" style="background:'+(on?'#ff9f0a':'rgba(255,255,255,0.08)')+';color:'+(on?'#fff':'rgba(255,255,255,0.5)')+';border:none;border-radius:20px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:inherit;font-weight:'+(on?'600':'400')+';">'+f.l+'</button>';
+      return '<button onclick="setFilter(\''+f.v+'\')" style="background:'+(on?'#b84830':'rgba(255,255,255,0.08)')+';color:'+(on?'#fff':'rgba(255,255,255,0.5)')+';border:none;border-radius:20px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:inherit;font-weight:'+(on?'600':'400')+';">'+f.l+'</button>';
     }).join("")
     +'</div></div><div style="padding:10px 14px 96px;">';
-  if(!fil.length) html+='<div style="text-align:center;padding:60px 0;color:#8e8e93;"><div style="font-size:36px;margin-bottom:12px;">📭</div>아직 기록이 없어요</div>';
+  if(!fil.length) html+='<div style="text-align:center;padding:60px 0;color:#b89070;"><div style="font-size:36px;margin-bottom:12px;">📭</div>아직 기록이 없어요</div>';
   fil.forEach(function(b,i){
     var ps=gPS(b.process);
     var dg=getDegasInfo(b);
     var isDegassing=b.status==="available"&&dg.status==="degassing";
-    html+='<div class="cani" onclick="openDetail(\''+b.id+'\')" style="background:#fff;border-radius:16px;margin-bottom:10px;border:0.5px solid '+(isDegassing?'rgba(99,179,237,0.4)':'rgba(0,0,0,0.06)')+';padding:16px;display:flex;gap:12px;align-items:flex-start;cursor:pointer;opacity:'+(b.status==="empty"?.5:1)+';animation-delay:'+(i*.05)+'s;box-shadow:0 1px 8px rgba(0,0,0,0.05);">'
+    html+='<div class="cani" onclick="openDetail(\''+b.id+'\')" style="background:var(--card);border-radius:14px;margin-bottom:10px;border:1px solid '+(isDegassing?'rgba(99,179,237,0.3)':'rgba(42,26,12,0.08)')+';padding:16px;display:flex;gap:12px;align-items:flex-start;cursor:pointer;opacity:'+(b.status==="empty"?.5:1)+';animation-delay:'+(i*.05)+'s;">'
       +'<div style="flex:1;">'
       +'<div style="display:flex;gap:5px;margin-bottom:6px;flex-wrap:wrap;">'
-      +'<span style="background:'+ps.bg+';color:'+ps.c+';border-radius:20px;padding:2px 9px;font-size:10px;font-weight:600;">'+(b.process||"")+'</span>'
+      +'<span style="border:0.5px solid '+ps.bc+';color:'+ps.c+';border-radius:3px;padding:2px 6px;font-size:8px;font-weight:300;letter-spacing:1px;text-transform:uppercase;">'+ps.l+'</span>'
       +(isDegassing?'<span style="background:#ebf8ff;color:#2b6cb0;border-radius:20px;padding:2px 9px;font-size:10px;font-weight:600;">🫧 D+'+dg.daysSince+'</span>':"")
-      +(b.status==="empty"?'<span style="background:#f5f5f7;color:#8e8e93;border-radius:20px;padding:2px 9px;font-size:10px;">소진</span>':"")
+      +(b.status==="empty"?'<span style="background:#f4ece0;color:#b89070;border-radius:20px;padding:2px 9px;font-size:10px;">소진</span>':"")
       +'</div>'
-      +(b.roaster?'<div style="font-size:11px;color:#ff9f0a;font-weight:600;margin-bottom:2px;">🏪 '+esc(b.roaster)+'</div>':"")
-      +'<div style="font-weight:700;font-size:'+(b.name&&b.name.length>20?'11px':b.name&&b.name.length>14?'13px':'15px')+';color:#1c1c1e;margin-bottom:3px;word-break:keep-all;overflow-wrap:break-word;line-height:1.35;">'+esc(b.name||"")+'</div>'
-      +'<div style="font-size:11px;color:#8e8e93;margin-bottom:8px;">'+gFL(b.origin)+' '+(b.origin||"")+(b.region?" · "+b.region:"")+'</div>'
-      +'<div style="display:flex;gap:4px;">'+(b.flavor||[]).slice(0,5).map(function(f){return '<span style="font-size:18px;">'+fe(f)+'</span>';}).join("")+'</div>'
+      +(b.roaster?'<div style="font-size:10px;color:#b89070;font-weight:200;margin-bottom:2px;">'+esc(b.roaster)+'</div>':"")
+      +'<div style="font-family:Cardo,serif;font-weight:700;font-size:'+(b.name&&b.name.length>20?'13px':b.name&&b.name.length>14?'15px':'17px')+';color:#28160a;margin-bottom:3px;word-break:keep-all;overflow-wrap:break-word;line-height:1.3;">'+esc(b.name||"")+'</div>'
+      +'<div style="font-size:11px;color:#b89070;margin-bottom:8px;">'+gFL(b.origin)+' '+(b.origin||"")+(b.region?" · "+b.region:"")+'</div>'
+      +((b.flavor&&b.flavor.length)?'<div style="margin-top:2px;">'+fchips(b.flavor,'small')+'</div>':"")
       +(isDegassing?'<div style="font-size:11px;color:#2b6cb0;margin-top:6px;">'+dg.remaining+'일 후 음용 추천 · '+dg.degasEndDate+'까지</div>':"")
       +'</div>'
       +'<div style="text-align:right;flex-shrink:0;">'
       +stHtml(b.rating||0,"",13)
-      +((b.guestNotes&&b.guestNotes.length)?'<div style="font-size:10px;color:#ff9f0a;margin-top:4px;">💬 '+b.guestNotes.length+'</div>':"")
-      +'<div style="font-size:10px;color:#c7c7cc;margin-top:4px;">'+(b.roastDate||"")+'</div>'
+      +((b.guestNotes&&b.guestNotes.length)?'<div style="font-size:10px;color:#b84830;margin-top:4px;">💬 '+b.guestNotes.length+'</div>':"")
+      +'<div style="font-size:10px;color:rgba(42,26,12,0.18);margin-top:4px;">'+(b.roastDate||"")+'</div>'
       +'</div></div>';
   });
-  return html+'</div><button onclick="openAdd()" style="position:fixed;bottom:80px;right:20px;width:52px;height:52px;border-radius:50%;background:#ff9f0a;color:#fff;font-size:26px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(255,159,10,0.4);z-index:80;display:flex;align-items:center;justify-content:center;">+</button>';
+  return html+'</div><button onclick="openAdd()" style="position:fixed;bottom:80px;right:20px;width:52px;height:52px;border-radius:50%;background:#b84830;color:#fff;font-size:26px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(255,159,10,0.4);z-index:80;display:flex;align-items:center;justify-content:center;">+</button>';
 }
 
 function rDetail(id){
@@ -902,16 +1051,16 @@ function rDetail(id){
       +'<div class="bebas" style="font-size:28px;color:#fff;">수정하기</div>'
       +'<div style="color:rgba(255,255,255,0.35);font-size:12px;margin-top:4px;">'+esc(b.name)+'</div>'
       +'</div><div style="padding:20px 20px 100px;">'
-      +'<div style="background:#fff9f0;border:1px solid #ffd6a0;border-radius:14px;margin-bottom:18px;position:relative;overflow:hidden;">'
+      +'<div style="background:#fbeee8;border:1px solid #ffd6a0;border-radius:14px;margin-bottom:18px;position:relative;overflow:hidden;">'
       +'<div id="edit-dz" contenteditable="true" onpaste="editScanPaste(event)" oninput="this.innerHTML=\'\'" style="position:absolute;inset:0;opacity:0;cursor:default;z-index:1;-webkit-user-select:text;user-select:text;"></div>'
       +'<div style="padding:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;pointer-events:none;">'
       +'<div>'
       +'<div style="font-size:13px;font-weight:600;color:#c05e00;">🔄 이미지로 다시 스캔</div>'
-      +'<div style="font-size:11px;color:#8e8e93;margin-top:2px;">'+(isMobile?'영역을 <b style="color:#ff9f0a;">길게 눌러</b> 붙여넣기 또는 파일 선택':'<b style="color:#ff9f0a;">Ctrl+V</b> 붙여넣기 또는 파일 선택')+'</div>'
+      +'<div style="font-size:11px;color:#b89070;margin-top:2px;">'+(isMobile?'영역을 <b style="color:#b84830;">길게 눌러</b> 붙여넣기 또는 파일 선택':'<b style="color:#b84830;">Ctrl+V</b> 붙여넣기 또는 파일 선택')+'</div>'
       +'</div>'
       +(editScanState==="scanning"
-        ? '<div style="font-size:12px;color:#8e8e93;pointer-events:none;">분석 중...</div>'
-        : '<label style="pointer-events:all;background:#ff9f0a;color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;position:relative;z-index:2;">파일 선택<input type="file" accept="image/*" style="display:none;" onchange="editScanImg(this)"></label>'
+        ? '<div style="font-size:12px;color:#b89070;pointer-events:none;">분석 중...</div>'
+        : '<label style="pointer-events:all;background:#b84830;color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;position:relative;z-index:2;">파일 선택<input type="file" accept="image/*" style="display:none;" onchange="editScanImg(this)"></label>'
       )
       +'</div>'
       +'</div>'
@@ -935,8 +1084,8 @@ function rDetail(id){
       +'<div class="g2">'
       +'<div>'+mkLbl("드리퍼")+mkDripper(e.rDripper,"editInput('rDripper',this.value)")+'</div>'
       +'</div>'
-      +'<div style="background:#f9f9f9;border-radius:14px;padding:14px;margin-top:14px;border:1px solid #e5e5ea;">'
-      +'<div style="font-size:11px;font-weight:700;color:#ff9f0a;letter-spacing:1px;margin-bottom:10px;">☀️ HOT</div>'
+      +'<div style="background:#f9f9f9;border-radius:14px;padding:14px;margin-top:14px;border:1px solid rgba(42,26,12,0.1);">'
+      +'<div style="font-size:11px;font-weight:700;color:#b84830;letter-spacing:1px;margin-bottom:10px;">☀️ HOT</div>'
       +'<div class="g2">'
       +'<div>'+mkLbl("원두량")+mkInp(e.rHotBeans,"editInput('rHotBeans',this.value)")+'</div>'
       +'<div>'+mkLbl("물온도")+mkInp(e.rHotTemp,"editInput('rHotTemp',this.value)")+'</div>'
@@ -956,14 +1105,14 @@ function rDetail(id){
       +mkLbl("나의 소감")+mkTA(e.myNote,"editInput('myNote',this.value)")
       +'<label style="'+IL+';margin-top:14px;">평점</label>'
       +'<div style="margin-top:4px;">'+stHtml(e.rating||4,"edit",24,true)+'</div>'
-      +'<button onclick="saveEdit()" style="width:100%;background:#ff9f0a;color:#fff;border:none;border-radius:14px;padding:15px;font-size:15px;font-family:inherit;font-weight:700;cursor:pointer;margin-top:20px;">저장하기 ✅</button>'
+      +'<button onclick="saveEdit()" style="width:100%;background:#b84830;color:#fff;border:none;border-radius:14px;padding:15px;font-size:15px;font-family:inherit;font-weight:700;cursor:pointer;margin-top:20px;">저장하기 ✅</button>'
       +'</div>';
   }
 
   var dateInfo="";
-  if(b.roastDate) dateInfo+='<div style="font-size:12px;color:#8e8e93;">🗓 로스팅 <b style="color:#3a3a3c;">'+b.roastDate+'</b></div>';
-  if(b.startDate) dateInfo+='<div style="font-size:12px;color:#8e8e93;">☕ 소비 시작 <b style="color:#3a3a3c;">'+b.startDate+'</b></div>';
-  if(b.status==="empty"&&b.emptyDate) dateInfo+='<div style="font-size:12px;color:#8e8e93;">✅ 소진 <b style="color:#3a3a3c;">'+b.emptyDate+'</b></div>';
+  if(b.roastDate) dateInfo+='<div style="font-size:12px;color:#b89070;">🗓 로스팅 <b style="color:#3d2510;">'+b.roastDate+'</b></div>';
+  if(b.startDate) dateInfo+='<div style="font-size:12px;color:#b89070;">☕ 소비 시작 <b style="color:#3d2510;">'+b.startDate+'</b></div>';
+  if(b.status==="empty"&&b.emptyDate) dateInfo+='<div style="font-size:12px;color:#b89070;">✅ 소진 <b style="color:#3d2510;">'+b.emptyDate+'</b></div>';
   // 디개싱 정보
   var dg=getDegasInfo(b);
   var degasHtml="";
@@ -1007,14 +1156,14 @@ function rDetail(id){
   var detailHG = fc
     ? 'background:linear-gradient(160deg,'+fc.c2+','+fc.c1+'bb)'
     : HG;
-  var textOnColor = fc ? '#1c1c1e' : '#fff';
+  var textOnColor = fc ? '#28160a' : '#fff';
   var textOnColorMuted = fc ? 'rgba(0,0,0,0.45)' : 'rgba(255,255,255,0.4)';
   var textOnColorFaint = fc ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.3)';
 
   return '<div style="'+detailHG+';padding:52px 22px 28px;">'
     +'<button onclick="closeDetail()" style="background:rgba(0,0,0,0.1);border:none;color:'+textOnColor+';opacity:.7;font-size:13px;cursor:pointer;padding:6px 14px;border-radius:20px;margin-bottom:20px;font-family:inherit;">← 뒤로</button>'
     +'<div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">'
-    +'<span style="background:'+ps.bg+';color:'+ps.c+';border-radius:20px;padding:3px 12px;font-size:11px;font-weight:600;">'+(b.process||ps.l)+'</span>'
+    +'<span style="border:0.5px solid '+ps.bc+';color:'+ps.c+';border-radius:3px;padding:2px 7px;font-size:8px;font-weight:300;letter-spacing:1px;text-transform:uppercase;">'+ps.l+'</span>'
     +'<span style="background:'+rc+'22;color:'+rc+';border-radius:20px;padding:3px 12px;font-size:11px;font-weight:600;">'+(b.roastLevel||"")+'</span>'
     +'</div>'
     // [수정] esc() 적용
@@ -1026,52 +1175,52 @@ function rDetail(id){
     +degasHtml
     +(dateInfo?'<div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;">'+dateInfo+'</div>':"")
     +'<div style="margin-bottom:24px;">'
-    +'<div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#8e8e93;font-weight:600;margin-bottom:12px;">FLAVOR NOTES</div>'
+    +'<div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#b89070;font-weight:600;margin-bottom:12px;">FLAVOR NOTES</div>'
     +'<div style="display:flex;gap:10px;flex-wrap:wrap;">'+fchips(b.flavor||[])+'</div>'
-    +(b.tagline?'<div style="margin-top:14px;font-style:italic;font-size:13px;color:#636366;border-left:2px solid #ff9f0a;padding-left:12px;line-height:1.6;">"'+esc(b.tagline)+'"</div>':"")
+    +(b.tagline?'<div style="margin-top:14px;font-style:italic;font-size:13px;color:#7a4e2a;border-left:2px solid #b84830;padding-left:12px;line-height:1.6;">"'+esc(b.tagline)+'"</div>':"")
     +'</div>'
     +'<div style="margin-bottom:24px;">'
-    +'<div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#8e8e93;font-weight:600;margin-bottom:12px;">MY NOTE</div>'
+    +'<div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#b89070;font-weight:600;margin-bottom:12px;">MY NOTE</div>'
     +stHtml(b.rating||0,"",18)
-    +'<p style="margin-top:10px;font-size:14px;color:#3a3a3c;line-height:1.8;font-style:italic;">'+(b.myNote?esc(b.myNote):"아직 소감이 없어요")+'</p>'
+    +'<p style="margin-top:10px;font-size:14px;color:#3d2510;line-height:1.8;font-style:italic;">'+(b.myNote?esc(b.myNote):"아직 소감이 없어요")+'</p>'
     +'</div>'
     +(function(){
       var nr=normalizeRecipe(b.recipe);
       var hasRecipe=nr.hot.pour||nr.iced.pour;
       if(!hasRecipe) return "";
       return '<div style="margin-bottom:24px;">'
-        +'<div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#8e8e93;font-weight:600;margin-bottom:12px;">BREWING RECIPE</div>'
+        +'<div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#b89070;font-weight:600;margin-bottom:12px;">BREWING RECIPE</div>'
         +'<div style="background:#fff;border-radius:16px;padding:16px;border:0.5px solid rgba(0,0,0,0.06);">'
-        +(nr.dripper?'<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:12px;border-bottom:0.5px solid rgba(0,0,0,0.06);"><div style="color:#8e8e93;font-size:10px;">드리퍼</div><div style="font-weight:600;color:#1c1c1e;font-size:13px;">'+esc(nr.dripper)+'</div></div>':"")
-        +(nr.hot.pour?'<div style="background:#fff9f0;border-radius:12px;padding:12px;margin-bottom:8px;">'
+        +(nr.dripper?'<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:12px;border-bottom:0.5px solid rgba(0,0,0,0.06);"><div style="color:#b89070;font-size:10px;">드리퍼</div><div style="font-weight:600;color:#28160a;font-size:13px;">'+esc(nr.dripper)+'</div></div>':"")
+        +(nr.hot.pour?'<div style="background:#fbeee8;border-radius:12px;padding:12px;margin-bottom:8px;">'
           +'<div style="font-size:11px;font-weight:700;color:#c05e00;margin-bottom:8px;">☀️ HOT</div>'
           +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;">'
-          +(nr.hot.beans?'<div><div style="color:#8e8e93;font-size:10px;margin-bottom:2px;">원두</div><div style="font-weight:600;color:#1c1c1e;font-size:12px;">'+esc(nr.hot.beans)+'</div></div>':"")
-          +(nr.hot.waterTemp?'<div><div style="color:#8e8e93;font-size:10px;margin-bottom:2px;">물온도</div><div style="font-weight:600;color:#1c1c1e;font-size:12px;">'+esc(nr.hot.waterTemp)+'</div></div>':"")
-          +(nr.hot.grind?'<div><div style="color:#8e8e93;font-size:10px;margin-bottom:2px;">분쇄도</div><div style="font-weight:600;color:#1c1c1e;font-size:12px;">'+esc(nr.hot.grind)+'</div></div>':"")
+          +(nr.hot.beans?'<div><div style="color:#b89070;font-size:10px;margin-bottom:2px;">원두</div><div style="font-weight:600;color:#28160a;font-size:12px;">'+esc(nr.hot.beans)+'</div></div>':"")
+          +(nr.hot.waterTemp?'<div><div style="color:#b89070;font-size:10px;margin-bottom:2px;">물온도</div><div style="font-weight:600;color:#28160a;font-size:12px;">'+esc(nr.hot.waterTemp)+'</div></div>':"")
+          +(nr.hot.grind?'<div><div style="color:#b89070;font-size:10px;margin-bottom:2px;">분쇄도</div><div style="font-weight:600;color:#28160a;font-size:12px;">'+esc(nr.hot.grind)+'</div></div>':"")
           +'</div>'
-          +'<div style="font-size:12px;color:#3a3a3c;">'+esc(nr.hot.pour)+'</div>'
+          +'<div style="font-size:12px;color:#3d2510;">'+esc(nr.hot.pour)+'</div>'
           +'</div>':"")
         +(nr.iced.pour?'<div style="background:#eff6ff;border-radius:12px;padding:12px;">'
           +'<div style="font-size:11px;font-weight:700;color:#1d4ed8;margin-bottom:8px;">🧊 ICED</div>'
           +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;">'
-          +(nr.iced.beans?'<div><div style="color:#8e8e93;font-size:10px;margin-bottom:2px;">원두</div><div style="font-weight:600;color:#1c1c1e;font-size:12px;">'+esc(nr.iced.beans)+'</div></div>':"")
-          +(nr.iced.waterTemp?'<div><div style="color:#8e8e93;font-size:10px;margin-bottom:2px;">물온도</div><div style="font-weight:600;color:#1c1c1e;font-size:12px;">'+esc(nr.iced.waterTemp)+'</div></div>':"")
-          +(nr.iced.grind?'<div><div style="color:#8e8e93;font-size:10px;margin-bottom:2px;">분쇄도</div><div style="font-weight:600;color:#1c1c1e;font-size:12px;">'+esc(nr.iced.grind)+'</div></div>':"")
+          +(nr.iced.beans?'<div><div style="color:#b89070;font-size:10px;margin-bottom:2px;">원두</div><div style="font-weight:600;color:#28160a;font-size:12px;">'+esc(nr.iced.beans)+'</div></div>':"")
+          +(nr.iced.waterTemp?'<div><div style="color:#b89070;font-size:10px;margin-bottom:2px;">물온도</div><div style="font-weight:600;color:#28160a;font-size:12px;">'+esc(nr.iced.waterTemp)+'</div></div>':"")
+          +(nr.iced.grind?'<div><div style="color:#b89070;font-size:10px;margin-bottom:2px;">분쇄도</div><div style="font-weight:600;color:#28160a;font-size:12px;">'+esc(nr.iced.grind)+'</div></div>':"")
           +'</div>'
-          +'<div style="font-size:12px;color:#3a3a3c;">'+esc(nr.iced.pour)+'</div>'
+          +'<div style="font-size:12px;color:#3d2510;">'+esc(nr.iced.pour)+'</div>'
           +'</div>':"")
         +'</div></div>';
     })()
     +'<div style="margin-bottom:24px;">'
     +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">'
-    +'<div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#8e8e93;font-weight:600;">GUEST NOTES ('+(b.guestNotes||[]).length+')</div>'
-    +'<button onclick="openGuest(\''+b.id+'\')" style="background:#ff9f0a;color:#fff;border:none;border-radius:20px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;">+ 추가</button>'
+    +'<div style="font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#b89070;font-weight:600;">GUEST NOTES ('+(b.guestNotes||[]).length+')</div>'
+    +'<button onclick="openGuest(\''+b.id+'\')" style="background:#b84830;color:#fff;border:none;border-radius:20px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;">+ 추가</button>'
     +'</div>'
     +rGuestNotes(b.guestNotes||[], b.id)
     +'</div>'
     +'<div style="display:flex;gap:8px;">'
-    +'<button class="btns" onclick="openEdit(\''+b.id+'\')" style="flex:1;border-color:#ff9f0a;color:#ff9f0a;">✏️ 수정</button>'
+    +'<button class="btns" onclick="openEdit(\''+b.id+'\')" style="flex:1;border-color:#b84830;color:#b84830;">✏️ 수정</button>'
     +'<button class="btns" onclick="toggleStatus(\''+b.id+'\')" style="flex:1;">'+(b.status==="available"?"소진 처리":"다시 보유")+'</button>'
     +'<button class="btns" onclick="deleteBean(\''+b.id+'\')" style="flex:1;color:#ff3b30;border-color:#ffd7d5;">삭제</button>'
     +'</div></div>';
@@ -1083,46 +1232,46 @@ function rAdd(){
   var html='<div class="mbg" onclick="if(event.target===this)closeAdd()"><div class="mbox">'
     +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
     +'<div style="font-size:18px;font-weight:700;">'+(S.addManual?'원두 직접 입력 ✍️':'원두 스캔 추가 ✨')+'</div>'
-    +'<button onclick="closeAdd()" style="background:#f5f5f7;border:none;width:30px;height:30px;border-radius:50%;font-size:18px;cursor:pointer;color:#636366;display:flex;align-items:center;justify-content:center;">×</button>'
-    +'</div><div style="font-size:13px;color:#8e8e93;margin-bottom:20px;">어떤 로스터리 이미지든 자동으로 인식해요</div>';
+    +'<button onclick="closeAdd()" style="background:#f4ece0;border:none;width:30px;height:30px;border-radius:50%;font-size:18px;cursor:pointer;color:#7a4e2a;display:flex;align-items:center;justify-content:center;">×</button>'
+    +'</div><div style="font-size:13px;color:#b89070;margin-bottom:20px;">어떤 로스터리 이미지든 자동으로 인식해요</div>';
 
   if(s==="upload"){
     var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     var hint = isMobile
       ? '탭해서 갤러리 선택'
-      : '드래그 · 탭해서 선택 · <b style="color:#ff9f0a;">Ctrl+V 붙여넣기</b>';
+      : '드래그 · 탭해서 선택 · <b style="color:#b84830;">Ctrl+V 붙여넣기</b>';
     // contenteditable: 모바일 길게누르기 붙여넣기 + PC Ctrl+V 모두 지원
     // 파일 선택은 별도 버튼으로 분리 (드롭존 클릭 시 키보드 올라오는 문제 방지)
     html+='<div class="dz'+(S.addDrag?' over':'')+'" ondragover="handleDragOver(event)" ondragleave="handleDragLeave()" ondrop="handleFileDrop(event)" style="position:relative;padding:0;">'
       +'<div id="dz-main" contenteditable="true" onpaste="handleDzPaste(event)" oninput="this.innerHTML=\'\'" style="position:absolute;inset:0;opacity:0;cursor:default;"></div>'
       +'<div style="padding:36px 20px;text-align:center;pointer-events:none;">'
       +'<div style="font-size:40px;margin-bottom:10px;">📸</div>'
-      +'<div style="font-weight:600;color:#1c1c1e;margin-bottom:6px;font-size:15px;">이미지를 붙여넣으세요</div>'
-      +'<div style="font-size:12px;color:#8e8e93;line-height:1.8;">'+(isMobile?'이 영역을 <b style="color:#ff9f0a;">길게 눌러</b> 붙여넣기':'<b style="color:#ff9f0a;">Ctrl+V</b> 또는 드래그')+'</div>'
+      +'<div style="font-weight:600;color:#28160a;margin-bottom:6px;font-size:15px;">이미지를 붙여넣으세요</div>'
+      +'<div style="font-size:12px;color:#b89070;line-height:1.8;">'+(isMobile?'이 영역을 <b style="color:#b84830;">길게 눌러</b> 붙여넣기':'<b style="color:#b84830;">Ctrl+V</b> 또는 드래그')+'</div>'
       +'</div>'
       +'</div>'
       +'<input id="fi" type="file" accept="image/*" style="display:none;" onchange="handleFileInput(event)"/>'
-      +'<button onclick="document.getElementById(\'fi\').click()" style="width:100%;background:#f5f5f7;color:#3a3a3c;border:1.5px solid #d1d1d6;border-radius:14px;padding:13px;font-size:14px;font-family:inherit;font-weight:600;cursor:pointer;margin-top:12px;">🗂 갤러리에서 선택</button>'
+      +'<button onclick="document.getElementById(\'fi\').click()" style="width:100%;background:#f4ece0;color:#3d2510;border:1.5px solid rgba(42,26,12,0.15);border-radius:14px;padding:13px;font-size:14px;font-family:inherit;font-weight:600;cursor:pointer;margin-top:12px;">🗂 갤러리에서 선택</button>'
       +(isMobile
         ? '<input id="fi-cam" type="file" accept="image/*" capture="environment" style="display:none;" onchange="handleFileInput(event)"/>'
-          +'<button onclick="document.getElementById(\'fi-cam\').click()" style="width:100%;background:#ff9f0a;color:#fff;border:none;border-radius:14px;padding:13px;font-size:14px;font-family:inherit;font-weight:700;cursor:pointer;margin-top:8px;">📷 카메라로 찍기</button>'
+          +'<button onclick="document.getElementById(\'fi-cam\').click()" style="width:100%;background:#b84830;color:#fff;border:none;border-radius:14px;padding:13px;font-size:14px;font-family:inherit;font-weight:700;cursor:pointer;margin-top:8px;">📷 카메라로 찍기</button>'
         : ''
       )
-      +'<div style="background:#f5f5f7;border-radius:14px;padding:16px;font-size:12px;color:#636366;margin-top:14px;line-height:1.8;">'
-      +'<div style="font-weight:600;margin-bottom:8px;color:#1c1c1e;">📋 인식 가능한 포맷</div>'
-      +'<div class="g2">'+[["🇰🇷 한국 로스터리","플레이버 카드"],["🌍 해외 로스터리","영문 테이블"],["🛒 스마트스토어","상품 상세 캡처"],["📄 기타","원두 정보 이미지"]].map(function(x){return '<div style="background:#fff;border-radius:10px;padding:10px;border:0.5px solid rgba(0,0,0,0.08);"><div style="font-weight:600;margin-bottom:2px;font-size:12px;">'+x[0]+'</div><div style="font-size:11px;color:#8e8e93;">'+x[1]+'</div></div>';}).join("")+'</div></div>'
+      +'<div style="background:#f4ece0;border-radius:14px;padding:16px;font-size:12px;color:#7a4e2a;margin-top:14px;line-height:1.8;">'
+      +'<div style="font-weight:600;margin-bottom:8px;color:#28160a;">📋 인식 가능한 포맷</div>'
+      +'<div class="g2">'+[["🇰🇷 한국 로스터리","플레이버 카드"],["🌍 해외 로스터리","영문 테이블"],["🛒 스마트스토어","상품 상세 캡처"],["📄 기타","원두 정보 이미지"]].map(function(x){return '<div style="background:#fff;border-radius:10px;padding:10px;border:0.5px solid rgba(0,0,0,0.08);"><div style="font-weight:600;margin-bottom:2px;font-size:12px;">'+x[0]+'</div><div style="font-size:11px;color:#b89070;">'+x[1]+'</div></div>';}).join("")+'</div></div>'
       +'<div style="display:flex;align-items:center;gap:12px;margin:16px 0;">'
-      +'<div style="flex:1;height:1px;background:#e5e5ea;"></div>'
-      +'<span style="font-size:12px;color:#8e8e93;">또는</span>'
-      +'<div style="flex:1;height:1px;background:#e5e5ea;"></div>'
+      +'<div style="flex:1;height:1px;background:rgba(42,26,12,0.1);"></div>'
+      +'<span style="font-size:12px;color:#b89070;">또는</span>'
+      +'<div style="flex:1;height:1px;background:rgba(42,26,12,0.1);"></div>'
       +'</div>'
-      +'<button onclick="openManual()" style="width:100%;background:#f5f5f7;color:#3a3a3c;border:1.5px solid #d1d1d6;border-radius:14px;padding:13px;font-size:14px;font-family:inherit;font-weight:600;cursor:pointer;">✍️ 직접 입력하기</button>';
+      +'<button onclick="openManual()" style="width:100%;background:#f4ece0;color:#3d2510;border:1.5px solid rgba(42,26,12,0.15);border-radius:14px;padding:13px;font-size:14px;font-family:inherit;font-weight:600;cursor:pointer;">✍️ 직접 입력하기</button>';
   }
   if(s==="parsing"){
     html+='<div style="text-align:center;padding:40px 16px;">'
       +(S.addPreview?'<img src="'+S.addPreview+'" style="width:100%;max-height:180px;object-fit:cover;border-radius:14px;margin-bottom:20px;opacity:.7;">':"")
       +'<div style="font-size:44px;animation:spin 1.2s linear infinite;display:inline-block;margin-bottom:16px;">☕</div>'
-      +'<div style="font-weight:600;color:#1c1c1e;font-size:15px;">이미지 분석 중...</div></div>';
+      +'<div style="font-weight:600;color:#28160a;font-size:15px;">이미지 분석 중...</div></div>';
   }
   if(s==="error"){
     html+='<div style="text-align:center;padding:30px 16px;">'
@@ -1134,15 +1283,15 @@ function rAdd(){
   // [수정] review 스텝 — html += 체이닝 버그 수정. 모든 내용을 단일 html += 로 연결
   if(s==="review"&&e){
     var reviewBanner = S.addManual
-      ? '<div style="background:#fff9f0;border:1px solid #ffd6a0;border-radius:12px;padding:12px 14px;margin-bottom:16px;"><div style="font-size:12px;color:#c05e00;font-weight:600;">✍️ 직접 입력 모드 — 원두 정보를 입력해주세요</div></div>'
+      ? '<div style="background:#fbeee8;border:1px solid #ffd6a0;border-radius:12px;padding:12px 14px;margin-bottom:16px;"><div style="font-size:12px;color:#c05e00;font-weight:600;">✍️ 직접 입력 모드 — 원두 정보를 입력해주세요</div></div>'
       : '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:12px 14px;margin-bottom:16px;"><div style="font-size:12px;color:#166534;font-weight:600;margin-bottom:4px;">✅ 분석 완료 — 확인 후 수정해주세요</div><div style="font-size:12px;color:#4a8060;">'+gFL(e.origin)+' '+(e.origin||"")+' · '+(e.process||"")+' · '+(e.roastLevel||"")+'</div></div>';
 
     var flavorPreview = fl.length
-      ? '<div style="margin-bottom:14px;"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#8e8e93;margin-bottom:8px;">감지된 플레이버</div><div style="display:flex;gap:7px;flex-wrap:wrap;">'+fchips(fl,"small")+'</div></div>'
+      ? '<div style="margin-bottom:14px;"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#b89070;margin-bottom:8px;">감지된 플레이버</div><div style="display:flex;gap:7px;flex-wrap:wrap;">'+fchips(fl,"small")+'</div></div>'
       : "";
 
     var backBtn = S.addManual
-      ? '<button onclick="closeManual()" style="width:100%;margin-bottom:10px;background:#f5f5f7;color:#636366;border:1px solid #d1d1d6;border-radius:14px;padding:13px;font-size:14px;font-family:inherit;cursor:pointer;">← 이미지로 돌아가기</button>'
+      ? '<button onclick="closeManual()" style="width:100%;margin-bottom:10px;background:#f4ece0;color:#7a4e2a;border:1px solid rgba(42,26,12,0.15);border-radius:14px;padding:13px;font-size:14px;font-family:inherit;cursor:pointer;">← 이미지로 돌아가기</button>'
       : "";
 
     html += reviewBanner
@@ -1167,8 +1316,8 @@ function rAdd(){
       + '<div class="g2">'
       + '<div>'+mkLbl("드리퍼")+mkDripper(e.rDripper,"addInput('rDripper',this.value)")+'</div>'
       + '</div>'
-      + '<div style="background:#f9f9f9;border-radius:14px;padding:14px;margin-top:14px;border:1px solid #e5e5ea;">'
-      + '<div style="font-size:11px;font-weight:700;color:#ff9f0a;letter-spacing:1px;margin-bottom:10px;">☀️ HOT</div>'
+      + '<div style="background:#f9f9f9;border-radius:14px;padding:14px;margin-top:14px;border:1px solid rgba(42,26,12,0.1);">'
+      + '<div style="font-size:11px;font-weight:700;color:#b84830;letter-spacing:1px;margin-bottom:10px;">☀️ HOT</div>'
       + '<div class="g2">'
       + '<div>'+mkLbl("원두량")+mkInp(e.rHotBeans,"addInput('rHotBeans',this.value)")+'</div>'
       + '<div>'+mkLbl("물온도")+mkInp(e.rHotTemp,"addInput('rHotTemp',this.value)")+'</div>'
@@ -1191,7 +1340,7 @@ function rAdd(){
       + backBtn
       + '<div style="display:flex;gap:10px;margin-top:20px;">'
       + '<button onclick="resetScan()" class="btns" style="flex:1;">다시 스캔</button>'
-      + '<button onclick="saveBean()" style="flex:2;background:#2c2c2e;color:#fff;border:none;border-radius:14px;padding:14px;font-size:14px;font-family:inherit;font-weight:700;cursor:pointer;">저장하기 🫘</button>'
+      + '<button onclick="saveBean()" style="flex:2;background:#2a1a0c;color:#fff;border:none;border-radius:14px;padding:14px;font-size:14px;font-family:inherit;font-weight:700;cursor:pointer;">저장하기 🫘</button>'
       + '</div>';
   }
 
@@ -1202,7 +1351,7 @@ function rGuest(){
   var b=beans.find(function(x){return x.id===S.guestId;});if(!b)return "";
   return '<div class="mbg" onclick="if(event.target===this)closeGuest()"><div class="mbox" style="max-height:72vh;">'
     +'<div style="font-size:18px;font-weight:700;margin-bottom:4px;">소감 남기기 ✏️</div>'
-    +'<div style="font-size:13px;color:#8e8e93;margin-bottom:20px;">'+esc(b.name)+'</div>'
+    +'<div style="font-size:13px;color:#b89070;margin-bottom:20px;">'+esc(b.name)+'</div>'
     +mkLbl("이름")+'<input id="guest-name" class="inp" placeholder="이름을 입력해주세요" value="'+esc(S.guestForm.name)+'" style="margin-bottom:4px;">'
     +mkLbl("한 마디")+'<textarea id="guest-note" class="inp" placeholder="이 커피 어떠셨나요? 🍑" style="resize:none;min-height:80px;">'+esc(S.guestForm.note)+'</textarea>'
     +'<button class="btnp" onclick="submitGuest()">기록하기</button>'
@@ -1222,77 +1371,77 @@ function rDiary(){
     +'<div style="color:rgba(255,255,255,0.35);font-size:12px;margin-top:2px;">나의 커피 기록</div>'
     +'<div style="margin-top:16px;background:rgba(255,159,10,0.15);border:1px solid rgba(255,159,10,0.3);border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:10px;">'
     +'<span style="font-size:24px;">'+(streak>=7?"🏆":streak>=3?"🔥":"☕")+'</span>'
-    +'<div><div style="color:#ff9f0a;font-size:13px;font-weight:600;">'+sm+'</div>'
+    +'<div><div style="color:#b84830;font-size:13px;font-weight:600;">'+sm+'</div>'
     +'<div style="color:rgba(255,255,255,0.3);font-size:11px;margin-top:2px;">총 '+diaries.length+'개의 기록</div></div>'
     +'</div></div><div style="padding:14px 14px 96px;">';
 
   if(!te){
     html+='<div style="background:#fff;border-radius:20px;margin-bottom:14px;padding:22px;box-shadow:0 2px 16px rgba(0,0,0,0.07);text-align:center;">'
       +'<div style="font-size:32px;margin-bottom:8px;">✍️</div>'
-      +'<div style="font-weight:700;font-size:15px;color:#1c1c1e;margin-bottom:4px;">오늘의 커피 기록</div>'
-      +'<div style="font-size:13px;color:#8e8e93;margin-bottom:16px;">오늘 마신 커피를 기록해보세요</div>'
-      +'<button onclick="openDiary()" style="background:#2c2c2e;color:#fff;border:none;border-radius:14px;padding:13px 28px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">+ 오늘 기록하기</button>'
+      +'<div style="font-weight:700;font-size:15px;color:#28160a;margin-bottom:4px;">오늘의 커피 기록</div>'
+      +'<div style="font-size:13px;color:#b89070;margin-bottom:16px;">오늘 마신 커피를 기록해보세요</div>'
+      +'<button onclick="openDiary()" style="background:#2a1a0c;color:#fff;border:none;border-radius:14px;padding:13px 28px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">+ 오늘 기록하기</button>'
       +'</div>';
   } else {
-    var mc=MC[te.mood]||"#f5f5f7";
+    var mc=MC[te.mood]||"#f4ece0";
     var teCups=te.cups&&te.cups.length?te.cups:(te.beanId?[{beanId:te.beanId,beanName:te.beanName,brewType:te.brewType||"hot"}]:[]);
     var btag=teCups.map(function(c,ci){
       return '<div style="display:inline-flex;align-items:center;gap:4px;background:'+(c.brewType==="iced"?"#eff6ff":"#fff5eb")+';color:'+(c.brewType==="iced"?"#1d4ed8":"#c05e00")+';border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;margin-bottom:6px;margin-right:4px;">'+(c.brewType==="iced"?"🧊":"☀️")+(ci>0?" "+(ci+1)+"잔":"")+(c.beanName?" · "+esc(c.beanName):"")+'</div>';
     }).join("");
     html+='<div style="background:#fff;border-radius:20px;margin-bottom:14px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.07);">'
       +'<div style="background:'+mc+';padding:16px 18px;display:flex;justify-content:space-between;align-items:center;">'
-      +'<div><div style="font-size:11px;color:#8e8e93;">오늘 · '+te.date+'</div>'
+      +'<div><div style="font-size:11px;color:#b89070;">오늘 · '+te.date+'</div>'
       +function(){
         var cupCount=teCups.length;
-        if(cupCount<=1) return '<div style="font-size:15px;font-weight:700;color:#1c1c1e;">'+te.mood+' 오늘의 한 잔</div>';
+        if(cupCount<=1) return '<div style="font-size:15px;font-weight:700;color:#28160a;">'+te.mood+' 오늘의 한 잔</div>';
         var KOR=["","한","두","세","네","다섯","여섯","일곱","여덟"];
         var countStr=cupCount<KOR.length?KOR[cupCount]+" 잔":cupCount+"잔";
         var yesterday=new Date(new Date(today).getTime()-86400000).toISOString().slice(0,10);
         var yEntry=diaries.find(function(x){return x.date===yesterday;});
         var yCups=yEntry?(yEntry.cups&&yEntry.cups.length?yEntry.cups.length:(yEntry.beanId?1:0)):0;
         var particle=yCups===cupCount?"도":"은";
-        return '<div style="font-size:15px;font-weight:700;color:#1c1c1e;">'+te.mood+' 오늘'+particle+' '+countStr+'</div>';
+        return '<div style="font-size:15px;font-weight:700;color:#28160a;">'+te.mood+' 오늘'+particle+' '+countStr+'</div>';
       }()
-      +(te.beanName?'<div style="font-size:12px;color:#ff9f0a;margin-top:2px;">☕ '+esc(te.beanName)+'</div>':"")
+      +(te.beanName?'<div style="font-size:12px;color:#b84830;margin-top:2px;">☕ '+esc(te.beanName)+'</div>':"")
       +'</div><span style="font-size:28px;">'+te.mood+'</span></div>'
       +'<div style="padding:14px 18px 16px;">'
       +btag
-      +'<div style="font-size:14px;color:#3a3a3c;line-height:1.8;white-space:pre-wrap;">'+esc(te.note)+'</div>'
+      +'<div style="font-size:14px;color:#3d2510;line-height:1.8;white-space:pre-wrap;">'+esc(te.note)+'</div>'
       +'<div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center;">'
       +'<div style="display:flex;gap:2px;">'+stHtml(te.rating||0,"",14)+'</div>'
       +'<div style="display:flex;gap:12px;">'
-      +'<button onclick="openDiaryEdit(\''+te.id+'\')" style="background:none;border:none;font-size:11px;color:#ff9f0a;font-weight:600;cursor:pointer;font-family:inherit;">수정</button>'
-      +'<button onclick="deleteDiary(\''+te.id+'\')" style="background:none;border:none;font-size:11px;color:#c7c7cc;cursor:pointer;font-family:inherit;">삭제</button>'
+      +'<button onclick="openDiaryEdit(\''+te.id+'\')" style="background:none;border:none;font-size:11px;color:#b84830;font-weight:600;cursor:pointer;font-family:inherit;">수정</button>'
+      +'<button onclick="deleteDiary(\''+te.id+'\')" style="background:none;border:none;font-size:11px;color:rgba(42,26,12,0.18);cursor:pointer;font-family:inherit;">삭제</button>'
       +'</div></div></div></div>';
   }
 
   var prev=diaries.filter(function(d){return d.date!==today;});
-  if(prev.length) html+='<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#8e8e93;margin:20px 2px 10px;">이전 기록</div>';
+  if(prev.length) html+='<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#b89070;margin:20px 2px 10px;">이전 기록</div>';
   prev.forEach(function(d,i){
-    var mc=MC[d.mood]||"#f5f5f7";
+    var mc=MC[d.mood]||"#f4ece0";
     var dCups=d.cups&&d.cups.length?d.cups:(d.beanId?[{beanId:d.beanId,beanName:d.beanName,brewType:d.brewType||"hot"}]:[]);
     var btag=dCups.map(function(c,ci){
       return '<div style="display:inline-flex;align-items:center;gap:4px;background:'+(c.brewType==="iced"?"#eff6ff":"#fff5eb")+';color:'+(c.brewType==="iced"?"#1d4ed8":"#c05e00")+';border-radius:20px;padding:2px 9px;font-size:10px;font-weight:600;margin-bottom:6px;margin-right:4px;">'+(c.brewType==="iced"?"🧊":"☀️")+(ci>0?" "+(ci+1)+"잔":"")+(c.beanName?" · "+esc(c.beanName):"")+'</div>';
     }).join("");
     html+='<div class="cani" style="background:#fff;border-radius:16px;margin-bottom:10px;overflow:hidden;border:0.5px solid rgba(0,0,0,0.06);box-shadow:0 1px 8px rgba(0,0,0,0.05);animation-delay:'+(i*.04)+'s;">'
       +'<div style="background:'+mc+';padding:12px 16px;display:flex;justify-content:space-between;align-items:center;">'
-      +'<div><div style="font-size:11px;color:#8e8e93;">'+d.date+'</div>'
-      +(d.beanName?'<div style="font-size:12px;color:#636366;font-weight:500;">☕ '+esc(d.beanName)+'</div>':"")
+      +'<div><div style="font-size:11px;color:#b89070;">'+d.date+'</div>'
+      +(d.beanName?'<div style="font-size:12px;color:#7a4e2a;font-weight:500;">☕ '+esc(d.beanName)+'</div>':"")
       +'</div><span style="font-size:24px;">'+d.mood+'</span></div>'
       +'<div style="padding:12px 16px 14px;">'
       +btag
-      +'<div style="font-size:13px;color:#3a3a3c;line-height:1.7;white-space:pre-wrap;">'+esc(d.note)+'</div>'
+      +'<div style="font-size:13px;color:#3d2510;line-height:1.7;white-space:pre-wrap;">'+esc(d.note)+'</div>'
       +'<div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;">'
       +'<div style="display:flex;gap:2px;">'+stHtml(d.rating||0,"",13)+'</div>'
       +'<div style="display:flex;gap:12px;">'
-      +'<button onclick="openDiaryEdit(\''+d.id+'\')" style="background:none;border:none;font-size:11px;color:#ff9f0a;font-weight:600;cursor:pointer;font-family:inherit;">수정</button>'
-      +'<button onclick="deleteDiary(\''+d.id+'\')" style="background:none;border:none;font-size:11px;color:#c7c7cc;cursor:pointer;font-family:inherit;">삭제</button>'
+      +'<button onclick="openDiaryEdit(\''+d.id+'\')" style="background:none;border:none;font-size:11px;color:#b84830;font-weight:600;cursor:pointer;font-family:inherit;">수정</button>'
+      +'<button onclick="deleteDiary(\''+d.id+'\')" style="background:none;border:none;font-size:11px;color:rgba(42,26,12,0.18);cursor:pointer;font-family:inherit;">삭제</button>'
       +'</div></div></div></div>';
   });
-  if(!diaries.length) html+='<div style="text-align:center;padding:40px 0;color:#8e8e93;"><div style="font-size:36px;margin-bottom:12px;">📝</div>아직 기록이 없어요</div>';
+  if(!diaries.length) html+='<div style="text-align:center;padding:40px 0;color:#b89070;"><div style="font-size:36px;margin-bottom:12px;">📝</div>아직 기록이 없어요</div>';
   // 오늘 기록이 이미 있으면 FAB 버튼으로 추가 기록 제공
   var fab = te
-    ? '<button onclick="openDiary()" style="position:fixed;bottom:80px;right:20px;width:52px;height:52px;border-radius:50%;background:#ff9f0a;color:#fff;font-size:22px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(255,159,10,0.4);z-index:80;display:flex;align-items:center;justify-content:center;">✍️</button>'
+    ? '<button onclick="openDiary()" style="position:fixed;bottom:80px;right:20px;width:52px;height:52px;border-radius:50%;background:#b84830;color:#fff;font-size:22px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(255,159,10,0.4);z-index:80;display:flex;align-items:center;justify-content:center;">✍️</button>'
     : "";
   return html+'</div>'+fab;
 }
@@ -1306,12 +1455,12 @@ function rDiaryModal(){
   var html='<div class="mbg" onclick="if(event.target===this)closeDiary()"><div class="mbox">'
     +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
     +'<div style="font-size:18px;font-weight:700;">'+(isEdit?"일기 수정 ✏️":"오늘의 기록 ✍️")+'</div>'
-    +'<button onclick="closeDiary()" style="background:#f5f5f7;border:none;width:30px;height:30px;border-radius:50%;font-size:18px;cursor:pointer;color:#636366;display:flex;align-items:center;justify-content:center;">×</button>'
+    +'<button onclick="closeDiary()" style="background:#f4ece0;border:none;width:30px;height:30px;border-radius:50%;font-size:18px;cursor:pointer;color:#7a4e2a;display:flex;align-items:center;justify-content:center;">×</button>'
     +'</div>'
-    +'<div style="font-size:13px;color:#8e8e93;margin-bottom:20px;">'+new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'short'})+'</div>'
+    +'<div style="font-size:13px;color:#b89070;margin-bottom:20px;">'+new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'short'})+'</div>'
     +'<label style="'+IL+'">오늘의 기분</label>'
     +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px;">'
-    +moods.map(function(x){var m=x[0],l=x[1],on=f.mood===m;return '<button onclick="diaryInput(\'mood\',\''+m+'\')" style="display:flex;flex-direction:column;align-items:center;padding:10px 12px;border-radius:14px;border:2px solid '+(on?'#ff9f0a':'#e5e5ea')+';background:'+(on?'#fff9f0':'#fff')+';cursor:pointer;font-family:inherit;min-width:52px;"><span style="font-size:22px;">'+m+'</span><span style="font-size:10px;color:'+(on?'#ff9f0a':'#8e8e93')+';margin-top:3px;font-weight:'+(on?'600':'400')+';">'+l+'</span></button>';}).join("")
+    +moods.map(function(x){var m=x[0],l=x[1],on=f.mood===m;return '<button onclick="diaryInput(\'mood\',\''+m+'\')" style="display:flex;flex-direction:column;align-items:center;padding:10px 12px;border-radius:14px;border:2px solid '+(on?'#b84830':'rgba(42,26,12,0.1)')+';background:'+(on?'#fbeee8':'#fff')+';cursor:pointer;font-family:inherit;min-width:52px;"><span style="font-size:22px;">'+m+'</span><span style="font-size:10px;color:'+(on?'#b84830':'#b89070')+';margin-top:3px;font-weight:'+(on?'600':'400')+';">'+l+'</span></button>';}).join("")
     +'</div>';
 
   var avail2=beans.filter(function(b){return b.status==="available"&&(!settings.degasHideDiary||getDegasInfo(b).status!=="degassing");});
@@ -1319,9 +1468,9 @@ function rDiaryModal(){
   if(avail2.length){
     cups.forEach(function(cup,ci){
       var label=ci===0?"첫 번째 잔":"두 번째 잔"+(ci>1?" ("+( ci+1)+"번째)":"");
-      html+='<div style="background:#f9f9f9;border-radius:14px;padding:12px 14px;margin-top:12px;border:1px solid #e5e5ea;">'
+      html+='<div style="background:#f9f9f9;border-radius:14px;padding:12px 14px;margin-top:12px;border:1px solid rgba(42,26,12,0.1);">'
         +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
-        +'<label style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#8e8e93;">'+label+'</label>'
+        +'<label style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#b89070;">'+label+'</label>'
         +(ci>0?'<button onclick="removeCup('+ci+')" style="background:none;border:none;color:#ff3b30;font-size:12px;cursor:pointer;font-family:inherit;padding:0;">✕ 제거</button>':"")
         +'</div>'
         +'<select onchange="cupInput('+ci+',\'beanId\',this.value)" style="'+IS+'appearance:none;margin-bottom:8px;">'
@@ -1329,20 +1478,20 @@ function rDiaryModal(){
         +avail2.map(function(b){return '<option value="'+b.id+'"'+(cup.beanId===b.id?" selected":"")+'>'+esc(b.name)+'</option>';}).join("")
         +'</select>'
         +'<div style="display:flex;gap:8px;">'
-        +'<button onclick="cupInput('+ci+',\'brewType\',\'hot\')" style="flex:1;padding:8px;border-radius:10px;border:2px solid '+(cup.brewType==="hot"?"#ff9f0a":"#e5e5ea")+';background:'+(cup.brewType==="hot"?"#fff9f0":"#fafafa")+';cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;color:'+(cup.brewType==="hot"?"#c05e00":"#c7c7cc")+';">☀️ Hot</button>'
-        +'<button onclick="cupInput('+ci+',\'brewType\',\'iced\')" style="flex:1;padding:8px;border-radius:10px;border:2px solid '+(cup.brewType==="iced"?"#1d4ed8":"#e5e5ea")+';background:'+(cup.brewType==="iced"?"#eff6ff":"#fafafa")+';cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;color:'+(cup.brewType==="iced"?"#1d4ed8":"#c7c7cc")+';">🧊 Iced</button>'
+        +'<button onclick="cupInput('+ci+',\'brewType\',\'hot\')" style="flex:1;padding:8px;border-radius:10px;border:2px solid '+(cup.brewType==="hot"?"#b84830":"rgba(42,26,12,0.1)")+';background:'+(cup.brewType==="hot"?"#fbeee8":"#fafafa")+';cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;color:'+(cup.brewType==="hot"?"#c05e00":"rgba(42,26,12,0.18)")+';">☀️ Hot</button>'
+        +'<button onclick="cupInput('+ci+',\'brewType\',\'iced\')" style="flex:1;padding:8px;border-radius:10px;border:2px solid '+(cup.brewType==="iced"?"#1d4ed8":"rgba(42,26,12,0.1)")+';background:'+(cup.brewType==="iced"?"#eff6ff":"#fafafa")+';cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;color:'+(cup.brewType==="iced"?"#1d4ed8":"rgba(42,26,12,0.18)")+';">🧊 Iced</button>'
         +'</div>'
         +'</div>';
     });
-    html+='<button onclick="addCup()" style="width:100%;margin-top:10px;background:#f5f5f7;color:#636366;border:1.5px dashed #d1d1d6;border-radius:12px;padding:10px;font-size:13px;font-family:inherit;cursor:pointer;">+ 한 잔 더 추가</button>';
+    html+='<button onclick="addCup()" style="width:100%;margin-top:10px;background:#f4ece0;color:#7a4e2a;border:1.5px dashed rgba(42,26,12,0.15);border-radius:12px;padding:10px;font-size:13px;font-family:inherit;cursor:pointer;">+ 한 잔 더 추가</button>';
   }
   html+=mkLbl("오늘의 한 마디")
     +'<textarea id="diary-note" oninput="diaryInput(\'note\',this.value)" placeholder="오늘 커피는 어땠나요? ☕" style="'+IS+'resize:none;min-height:100px;">'+esc(f.note)+'</textarea>'
     +'<label style="'+IL+';margin-top:14px;">오늘의 커피 점수</label>'
     +'<div style="display:flex;gap:4px;margin-top:4px;">'
-    +[1,2,3,4,5].map(function(s){return '<span onclick="setStar(\'diary\','+s+')" style="font-size:28px;cursor:pointer;color:'+(s<=f.rating?'#ff9f0a':'#d1d1d6')+';transition:color .1s;">★</span>';}).join("")
+    +[1,2,3,4,5].map(function(s){return '<span onclick="setStar(\'diary\','+s+')" style="font-size:28px;cursor:pointer;color:'+(s<=f.rating?'#b84830':'rgba(42,26,12,0.15)')+';transition:color .1s;">★</span>';}).join("")
     +'</div>'
-    +'<button onclick="saveDiary()" style="width:100%;background:#2c2c2e;color:#fff;border:none;border-radius:14px;padding:15px;font-size:15px;font-family:inherit;font-weight:700;cursor:pointer;margin-top:20px;">'+(isEdit?"수정 완료 ✅":"기록하기 ☕")+'</button>'
+    +'<button onclick="saveDiary()" style="width:100%;background:#2a1a0c;color:#fff;border:none;border-radius:14px;padding:15px;font-size:15px;font-family:inherit;font-weight:700;cursor:pointer;margin-top:20px;">'+(isEdit?"수정 완료 ✅":"기록하기 ☕")+'</button>'
     +'</div></div>';
   return html;
 }
@@ -1353,26 +1502,26 @@ function rDegasModal(){
   return '<div class="mbg" style="align-items:center;justify-content:center;" onclick="if(event.target===this)closeDegasEdit()">'
     +'<div style="background:#fff;border-radius:22px;width:calc(100% - 48px);max-width:340px;padding:28px 24px;box-shadow:0 20px 60px rgba(0,0,0,0.2);">'
     +'<div style="font-size:18px;font-weight:700;margin-bottom:4px;">🫧 디개싱 조정</div>'
-    +'<div style="font-size:13px;color:#8e8e93;margin-bottom:20px;">'+esc(b.name)+'</div>'
+    +'<div style="font-size:13px;color:#b89070;margin-bottom:20px;">'+esc(b.name)+'</div>'
     +'<label style="'+IL+'">디개싱 시작일 (기본: 로스팅일)</label>'
     +'<input type="date" style="'+IS+'" value="'+esc(e.degasDate)+'" onchange="degasInput(\'degasDate\',this.value)">'
     +'<label style="'+IL+'">디개싱 기간 (일)</label>'
     +'<div style="display:flex;align-items:center;gap:10px;margin-top:6px;">'
     +'<input type="number" min="1" max="30" style="'+IS+'width:80px;" value="'+e.degasDays+'" oninput="degasInput(\'degasDays\',this.value)">'
-    +'<div style="font-size:12px;color:#8e8e93;">일간 디개싱</div>'
+    +'<div style="font-size:12px;color:#b89070;">일간 디개싱</div>'
     +'</div>'
     +'<div style="background:#ebf8ff;border-radius:12px;padding:10px 14px;margin-top:14px;font-size:12px;color:#2b6cb0;">'
     +'음용 추천일: <b>'+(e.degasDate?(new Date(new Date(e.degasDate).getTime()+parseInt(e.degasDays||8)*86400000).toISOString().slice(0,10)):"날짜 입력 필요")+'</b>'
     +'</div>'
     +'<div style="display:flex;gap:8px;margin-top:18px;">'
-    +'<button onclick="resetDegasEdit()" style="flex:1;background:#f5f5f7;color:#8e8e93;border:none;border-radius:12px;padding:12px;font-size:13px;font-family:inherit;cursor:pointer;">초기화</button>'
-    +'<button onclick="closeDegasEdit()" style="flex:1;background:#f5f5f7;color:#636366;border:none;border-radius:12px;padding:12px;font-size:13px;font-family:inherit;cursor:pointer;">취소</button>'
+    +'<button onclick="resetDegasEdit()" style="flex:1;background:#f4ece0;color:#b89070;border:none;border-radius:12px;padding:12px;font-size:13px;font-family:inherit;cursor:pointer;">초기화</button>'
+    +'<button onclick="closeDegasEdit()" style="flex:1;background:#f4ece0;color:#7a4e2a;border:none;border-radius:12px;padding:12px;font-size:13px;font-family:inherit;cursor:pointer;">취소</button>'
     +'<button onclick="saveDegasEdit()" style="flex:2;background:#2b6cb0;color:#fff;border:none;border-radius:12px;padding:12px;font-size:13px;font-family:inherit;font-weight:700;cursor:pointer;">저장</button>'
     +'</div></div></div>';
 }
 
 function mkToggle(val, fn){
-  return '<div onclick="'+fn+'" style="width:42px;height:24px;border-radius:12px;background:'+(val?'#34c759':'#d1d1d6')+';position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;">'
+  return '<div onclick="'+fn+'" style="width:42px;height:24px;border-radius:12px;background:'+(val?'#34c759':'rgba(42,26,12,0.15)')+';position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;">'
     +'<div style="position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;'+(val?'right:3px':'left:3px')+';transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div>'
     +'</div>';
 }
@@ -1382,19 +1531,19 @@ function rAdmin(){
   var tabs=[["degas","🫧 디개싱"],["behavior","⚙️ 동작"],["data","💾 데이터"]];
   var roastLevels=["라이트","미디엄라이트","미디엄","미디엄다크","다크"];
 
-  var RS='width:100%;border:1px solid #d1d1d6;border-radius:10px;padding:9px 12px;font-size:13px;font-family:inherit;background:#f5f5f7;color:#1c1c1e;outline:none;box-sizing:border-box;';
+  var RS='width:100%;border:1px solid rgba(42,26,12,0.15);border-radius:10px;padding:9px 12px;font-size:13px;font-family:inherit;background:#f4ece0;color:#28160a;outline:none;box-sizing:border-box;';
   var ROW='display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:0.5px solid rgba(0,0,0,0.06);';
   var ROWLAST='display:flex;align-items:center;justify-content:space-between;padding:13px 16px;';
   var CARD='background:#fff;border-radius:16px;border:0.5px solid rgba(0,0,0,0.08);margin-bottom:16px;overflow:hidden;';
-  var SEC_LBL='font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#8e8e93;margin-bottom:8px;margin-top:0;';
+  var SEC_LBL='font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#b89070;margin-bottom:8px;margin-top:0;';
 
   var body='<div class="mbg" style="align-items:flex-end;" onclick="if(event.target===this)closeAdmin()">'
-    +'<div style="background:#f5f5f7;border-radius:24px 24px 0 0;width:100%;max-width:480px;margin:0 auto;max-height:92vh;overflow-y:auto;">'
+    +'<div style="background:#f4ece0;border-radius:24px 24px 0 0;width:100%;max-width:480px;margin:0 auto;max-height:92vh;overflow-y:auto;">'
 
     // 헤더
-    +'<div style="background:linear-gradient(160deg,#2c2c2e,#3a3a3c);padding:24px 22px 20px;border-radius:24px 24px 0 0;position:relative;">'
+    +'<div style="background:linear-gradient(160deg,#2a1a0c,#3d2510);padding:24px 22px 20px;border-radius:24px 24px 0 0;position:relative;">'
     +'<button onclick="closeAdmin()" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.12);border:none;border-radius:50%;width:32px;height:32px;color:#fff;font-size:18px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;">✕</button>'
-    +'<div class="bebas" style="font-size:28px;color:#ff9f0a;letter-spacing:2px;line-height:1;">OZY HOUSE</div>'
+    +'<div class="bebas" style="font-size:28px;color:#b84830;letter-spacing:2px;line-height:1;">OZY HOUSE</div>'
     +'<div style="font-size:16px;font-weight:700;color:#fff;margin-top:4px;">관리 설정</div>'
     +'<div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">앱 전체에 적용되는 기본값</div>'
     +'</div>'
@@ -1403,7 +1552,7 @@ function rAdmin(){
     +'<div style="display:flex;gap:8px;padding:16px 16px 0;">'
     +tabs.map(function(t){
       var on=at===t[0];
-      return '<button onclick="adminTab(\''+t[0]+'\')" style="flex:1;padding:9px 4px;border-radius:12px;border:'+(on?'none':'1px solid #d1d1d6')+';background:'+(on?'#2c2c2e':'#fff')+';color:'+(on?'#fff':'#636366')+';font-size:11px;font-family:inherit;font-weight:'+(on?'700':'400')+';cursor:pointer;">'+t[1]+'</button>';
+      return '<button onclick="adminTab(\''+t[0]+'\')" style="flex:1;padding:9px 4px;border-radius:12px;border:'+(on?'none':'1px solid rgba(42,26,12,0.15)')+';background:'+(on?'#2a1a0c':'#fff')+';color:'+(on?'#fff':'#7a4e2a')+';font-size:11px;font-family:inherit;font-weight:'+(on?'700':'400')+';cursor:pointer;">'+t[1]+'</button>';
     }).join("")
     +'</div>'
 
@@ -1418,18 +1567,18 @@ function rAdmin(){
       var isLast=(i===roastLevels.length-1);
       body+='<div style="'+(isLast?ROWLAST:ROW)+'">'
         +'<div>'
-        +'<div style="font-size:14px;color:#1c1c1e;font-weight:500;">'+rl+'</div>'
+        +'<div style="font-size:14px;color:#28160a;font-weight:500;">'+rl+'</div>'
         +'</div>'
         +'<div style="display:flex;align-items:center;gap:10px;">'
-        +'<button onclick="adminDegasDec(\''+rl+'\')" style="width:30px;height:30px;border-radius:8px;border:1px solid #d1d1d6;background:#f5f5f7;font-size:16px;cursor:pointer;font-family:inherit;color:#1c1c1e;display:flex;align-items:center;justify-content:center;">−</button>'
-        +'<span style="font-size:16px;font-weight:700;color:#1c1c1e;min-width:28px;text-align:center;" id="dd-'+rl+'">'+days+'</span>'
-        +'<button onclick="adminDegasInc(\''+rl+'\')" style="width:30px;height:30px;border-radius:8px;border:1px solid #d1d1d6;background:#f5f5f7;font-size:16px;cursor:pointer;font-family:inherit;color:#1c1c1e;display:flex;align-items:center;justify-content:center;">+</button>'
-        +'<span style="font-size:12px;color:#8e8e93;min-width:14px;">일</span>'
+        +'<button onclick="adminDegasDec(\''+rl+'\')" style="width:30px;height:30px;border-radius:8px;border:1px solid rgba(42,26,12,0.15);background:#f4ece0;font-size:16px;cursor:pointer;font-family:inherit;color:#28160a;display:flex;align-items:center;justify-content:center;">−</button>'
+        +'<span style="font-size:16px;font-weight:700;color:#28160a;min-width:28px;text-align:center;" id="dd-'+rl+'">'+days+'</span>'
+        +'<button onclick="adminDegasInc(\''+rl+'\')" style="width:30px;height:30px;border-radius:8px;border:1px solid rgba(42,26,12,0.15);background:#f4ece0;font-size:16px;cursor:pointer;font-family:inherit;color:#28160a;display:flex;align-items:center;justify-content:center;">+</button>'
+        +'<span style="font-size:12px;color:#b89070;min-width:14px;">일</span>'
         +'</div>'
         +'</div>';
     });
     body+='</div>'
-      +'<button onclick="saveAdminDegas()" style="width:100%;background:#2c2c2e;color:#fff;border:none;border-radius:14px;padding:14px;font-size:14px;font-family:inherit;font-weight:700;cursor:pointer;">저장하기</button>';
+      +'<button onclick="saveAdminDegas()" style="width:100%;background:#2a1a0c;color:#fff;border:none;border-radius:14px;padding:14px;font-size:14px;font-family:inherit;font-weight:700;cursor:pointer;">저장하기</button>';
   }
 
   // ── 동작 탭
@@ -1438,20 +1587,20 @@ function rAdmin(){
       +'<div style="'+CARD+'">'
       +'<div style="'+ROW+'">'
       +'<div>'
-      +'<div style="font-size:14px;color:#1c1c1e;font-weight:500;">메뉴판에서 숨기기</div>'
-      +'<div style="font-size:12px;color:#8e8e93;margin-top:2px;">BEAN LINEUP에 디개싱 원두 미표시</div>'
+      +'<div style="font-size:14px;color:#28160a;font-weight:500;">메뉴판에서 숨기기</div>'
+      +'<div style="font-size:12px;color:#b89070;margin-top:2px;">BEAN LINEUP에 디개싱 원두 미표시</div>'
       +'</div>'
       +mkToggle(settings.degasHideMenu,"adminToggle(\'degasHideMenu\')")
       +'</div>'
       +'<div style="'+ROWLAST+'">'
       +'<div>'
-      +'<div style="font-size:14px;color:#1c1c1e;font-weight:500;">일기 원두 선택 제외</div>'
-      +'<div style="font-size:12px;color:#8e8e93;margin-top:2px;">커피 일기 작성 시 디개싱 원두 선택 불가</div>'
+      +'<div style="font-size:14px;color:#28160a;font-weight:500;">일기 원두 선택 제외</div>'
+      +'<div style="font-size:12px;color:#b89070;margin-top:2px;">커피 일기 작성 시 디개싱 원두 선택 불가</div>'
       +'</div>'
       +mkToggle(settings.degasHideDiary,"adminToggle(\'degasHideDiary\')")
       +'</div>'
       +'</div>'
-      +'<button onclick="saveAdminBehavior()" style="width:100%;background:#2c2c2e;color:#fff;border:none;border-radius:14px;padding:14px;font-size:14px;font-family:inherit;font-weight:700;cursor:pointer;">저장하기</button>';
+      +'<button onclick="saveAdminBehavior()" style="width:100%;background:#2a1a0c;color:#fff;border:none;border-radius:14px;padding:14px;font-size:14px;font-family:inherit;font-weight:700;cursor:pointer;">저장하기</button>';
   }
 
   // ── 데이터 탭
@@ -1462,11 +1611,11 @@ function rAdmin(){
       +'<div style="'+CARD+'">'
       +'<div style="'+ROW+'">'
       +'<div>'
-      +'<div style="font-size:14px;color:#1c1c1e;font-weight:500;">배전도 + 레시피 일괄 정규화</div>'
-      +'<div style="font-size:12px;color:#8e8e93;margin-top:2px;">중약배전→미디엄라이트, 구버전 recipe→신규 구조 변환</div>'
+      +'<div style="font-size:14px;color:#28160a;font-weight:500;">배전도 + 레시피 일괄 정규화</div>'
+      +'<div style="font-size:12px;color:#b89070;margin-top:2px;">중약배전→미디엄라이트, 구버전 recipe→신규 구조 변환</div>'
       +'</div>'
       +(migState==="running"
-        ? '<div style="font-size:12px;color:#8e8e93;">처리 중...</div>'
+        ? '<div style="font-size:12px;color:#b89070;">처리 중...</div>'
         : migState==="done"
           ? '<div style="font-size:12px;color:#166534;font-weight:600;">✅ 완료</div>'
           : migState==="error"
@@ -1474,27 +1623,27 @@ function rAdmin(){
             : '<button onclick="migrateAllBeans()" style="background:#f0fdf4;color:#166534;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-family:inherit;font-weight:600;cursor:pointer;">정규화 실행</button>'
       )
       +'</div>'
-      +(S.migrateLog?'<div style="padding:10px 16px 12px;font-size:11px;color:#8e8e93;border-top:0.5px solid rgba(0,0,0,0.06);line-height:1.8;">'+esc(S.migrateLog)+'</div>':"")
+      +(S.migrateLog?'<div style="padding:10px 16px 12px;font-size:11px;color:#b89070;border-top:0.5px solid rgba(0,0,0,0.06);line-height:1.8;">'+esc(S.migrateLog)+'</div>':"")
       +'</div>'
       +'<p style="'+SEC_LBL+'margin-top:16px;">설정 관리</p>'
       +'<div style="'+CARD+'">'
       +'<div style="'+ROW+'">'
       +'<div>'
-      +'<div style="font-size:14px;color:#1c1c1e;font-weight:500;">현재 설정 내보내기</div>'
-      +'<div style="font-size:12px;color:#8e8e93;margin-top:2px;">JSON 파일로 백업</div>'
+      +'<div style="font-size:14px;color:#28160a;font-weight:500;">현재 설정 내보내기</div>'
+      +'<div style="font-size:12px;color:#b89070;margin-top:2px;">JSON 파일로 백업</div>'
       +'</div>'
       +'<button onclick="exportAdminSettings()" style="background:#eff6ff;color:#1d4ed8;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-family:inherit;font-weight:600;cursor:pointer;">내보내기</button>'
       +'</div>'
       +'<div style="'+ROWLAST+'">'
       +'<div>'
-      +'<div style="font-size:14px;color:#1c1c1e;font-weight:500;">설정 초기화</div>'
-      +'<div style="font-size:12px;color:#8e8e93;margin-top:2px;">모든 설정을 기본값으로 되돌리기</div>'
+      +'<div style="font-size:14px;color:#28160a;font-weight:500;">설정 초기화</div>'
+      +'<div style="font-size:12px;color:#b89070;margin-top:2px;">모든 설정을 기본값으로 되돌리기</div>'
       +'</div>'
       +'<button onclick="resetAdminSettings()" style="background:#fff0f0;color:#ff3b30;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-family:inherit;font-weight:600;cursor:pointer;">초기화</button>'
       +'</div>'
       +'</div>'
       +'<p style="'+SEC_LBL+'margin-top:8px;">현재 설정값</p>'
-      +'<div style="background:#1c1c1e;border-radius:14px;padding:14px 16px;overflow-x:auto;">'
+      +'<div style="background:#28160a;border-radius:14px;padding:14px 16px;overflow-x:auto;">'
       +'<pre style="font-family:monospace;font-size:11px;color:#a8ff78;line-height:1.7;margin:0;white-space:pre-wrap;">'+esc(settingsJson)+'</pre>'
       +'</div>';
   }
@@ -1593,18 +1742,18 @@ function rPw(){
   return '<div class="mbg" style="align-items:center;justify-content:center;" onclick="if(event.target===this)closePw()">'
     +'<div style="background:#fff;border-radius:22px;width:calc(100% - 48px);max-width:320px;padding:28px 24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.2);">'
     +'<div style="font-size:32px;margin-bottom:12px;">🔐</div>'
-    +'<div style="font-size:17px;font-weight:700;color:#1c1c1e;margin-bottom:6px;">관리자 확인</div>'
-    +'<div style="font-size:13px;color:#8e8e93;margin-bottom:20px;">비밀번호를 입력해주세요</div>'
-    +'<input id="pw-inp" type="password" placeholder="비밀번호" style="width:100%;border:'+(S.pwErr?"2px solid #ff3b30":"1px solid #d1d1d6")+';border-radius:12px;padding:12px 14px;font-size:16px;font-family:inherit;background:#f5f5f7;color:#1c1c1e;outline:none;text-align:center;letter-spacing:4px;box-sizing:border-box;" onkeydown="if(event.key===\'Enter\')submitPw()">'
+    +'<div style="font-size:17px;font-weight:700;color:#28160a;margin-bottom:6px;">관리자 확인</div>'
+    +'<div style="font-size:13px;color:#b89070;margin-bottom:20px;">비밀번호를 입력해주세요</div>'
+    +'<input id="pw-inp" type="password" placeholder="비밀번호" style="width:100%;border:'+(S.pwErr?"2px solid #ff3b30":"1px solid rgba(42,26,12,0.15)")+';border-radius:12px;padding:12px 14px;font-size:16px;font-family:inherit;background:#f4ece0;color:#28160a;outline:none;text-align:center;letter-spacing:4px;box-sizing:border-box;" onkeydown="if(event.key===\'Enter\')submitPw()">'
     +(S.pwErr?'<div style="font-size:12px;color:#ff3b30;margin-top:8px;">비밀번호가 맞지 않아요</div>':"")
     +'<div style="display:flex;gap:10px;margin-top:18px;">'
-    +'<button onclick="closePw()" style="flex:1;background:#f5f5f7;color:#636366;border:none;border-radius:12px;padding:13px;font-size:14px;font-family:inherit;cursor:pointer;">취소</button>'
-    +'<button onclick="submitPw()" style="flex:1;background:#2c2c2e;color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-family:inherit;font-weight:700;cursor:pointer;">확인</button>'
+    +'<button onclick="closePw()" style="flex:1;background:#f4ece0;color:#7a4e2a;border:none;border-radius:12px;padding:13px;font-size:14px;font-family:inherit;cursor:pointer;">취소</button>'
+    +'<button onclick="submitPw()" style="flex:1;background:#2a1a0c;color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-family:inherit;font-weight:700;cursor:pointer;">확인</button>'
     +'</div></div></div>';
 }
 
 function rNav(){
-  return '<div class="bnav">'+[["menu","BEAN LINEUP","☕"],["archive","BEAN ARCHIVE","📚"],["diary","COFFEE DIARY","📝"]].map(function(x){
+  return '<div class="bnav">'+[["menu","Lineup",""],["archive","Archive",""],["diary","Diary",""]].map(function(x){
     return '<button class="nbtn'+(S.tab===x[0]?" on":"")+'" onclick="setTab(\''+x[0]+'\')" oncontextmenu="event.preventDefault();openAdmin()" ontouchstart="navLongStart(event)" ontouchend="navLongEnd()" ontouchcancel="navLongEnd()"><div style="font-size:20px;margin-bottom:2px;">'+x[2]+'</div>'+x[1]+'</button>';
   }).join("")+'</div>';
 }
