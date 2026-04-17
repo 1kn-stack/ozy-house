@@ -1019,7 +1019,7 @@ window.editScanImg = async function(input){
   S.editScanState="scanning"; render();
   try{
     var b64=await new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(r.result.split(",")[1]);};r.onerror=rej;r.readAsDataURL(file);});
-    var resp=await fetch(WK,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:2000,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:file.type||"image/jpeg",data:b64}},{type:"text",text:PARSE_PROMPT}]}]})});
+    var resp=await fetch(WK,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-haiku-4-5",max_tokens:2000,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:file.type||"image/jpeg",data:b64}},{type:"text",text:PARSE_PROMPT}]}]})});
     var data=await resp.json();
     if(!resp.ok) throw new Error("API "+resp.status);
     var txt=data.content.map(function(c){return c.text||"";}).join("");
@@ -1345,7 +1345,7 @@ async function parseImg(file){
   S.addStep="parsing";S.addPreview=URL.createObjectURL(file);render();
   try{
     var b64=await new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(r.result.split(",")[1]);};r.onerror=rej;r.readAsDataURL(file);});
-    var resp=await fetch(WK,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:2000,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:file.type||"image/jpeg",data:b64}},{type:"text",text:PARSE_PROMPT}]}]})})
+    var resp=await fetch(WK,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-haiku-4-5",max_tokens:2000,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:file.type||"image/jpeg",data:b64}},{type:"text",text:PARSE_PROMPT}]}]})})
     var data=await resp.json();
     if(!resp.ok)throw new Error("API "+resp.status);
     var txt=data.content.map(function(c){return c.text||"";}).join("");
