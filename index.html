@@ -213,7 +213,7 @@ body.light .diary-mc-hdr{filter:saturate(1.4) brightness(0.96);}
 <div id="app"></div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, doc, getDoc, addDoc, updateDoc, deleteDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const WK = "https://ozy-house-proxy.okgo-levelup.workers.dev";
@@ -843,7 +843,8 @@ let S = {
   toast:"", toastT:null,
   titleTap:0, titleTapT:null,
   tzDraft:null,
-  cafeNameDraft:"", cafeDescDraft:""
+  cafeNameDraft:"", cafeDescDraft:"",
+  route:{type:"landing"}, routeLoading:false
 };
 
 // ── [수정] streak 계산을 렌더 외부에서 캐싱
@@ -2618,14 +2619,97 @@ function rNav(){
   }).join('')+'</div>';
 }
 
+// ── Router ──────────────────────────────────────────
+function parseRoute(){
+  var seg=location.pathname.replace(/^\/+|\/+$/g,"");
+  if(seg==="") return {type:"landing"};
+  if(seg==="login") return {type:"login"};
+  if(seg.indexOf("/")===-1 && /^[a-z0-9-]{1,40}$/i.test(seg)){
+    return {type:"cafe", slug:seg.toLowerCase()};
+  }
+  return {type:"notfound"};
+}
+
+async function resolveRoute(){
+  var r=parseRoute();
+  if(r.type!=="cafe"){
+    S.route=r; S.routeLoading=false; render(); return;
+  }
+  S.routeLoading=true; render();
+  try {
+    var reservedSnap=await getDoc(doc(db,"reservedSlugs",r.slug));
+    if(reservedSnap.exists()){
+      S.route={type:"notfound"};
+    } else {
+      var slugSnap=await getDoc(doc(db,"slugs",r.slug));
+      S.route=slugSnap.exists()?r:{type:"notfound"};
+    }
+  } catch(err){
+    console.error("[route] resolve error:",err);
+    S.route={type:"notfound"};
+  }
+  S.routeLoading=false; render();
+}
+
+// ── Page renderers (landing/login/404) ─────────────
+var PAGE_BG='position:fixed;inset:0;background:#0a0a0a;background-image:radial-gradient(ellipse at 50% 30%, rgba(184,72,48,0.18), transparent 60%),radial-gradient(ellipse at 80% 80%, rgba(184,72,48,0.08), transparent 55%);overflow-y:auto;';
+var PAGE_WRAP='min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;box-sizing:border-box;';
+var PAGE_LOGO='font-family:\'Bebas Neue\',sans-serif;letter-spacing:4px;font-size:44px;color:#b84830;line-height:1;';
+var PAGE_ITALIC='font-family:\'Instrument Serif\',serif;font-style:italic;font-size:28px;color:#f5f1ec;line-height:1.35;margin-top:12px;text-align:center;';
+var PAGE_SUB='font-size:14px;color:rgba(245,241,236,0.55);margin-top:14px;text-align:center;line-height:1.6;';
+var PAGE_CTA='background:#ffffff;color:#0a0a0a;border:none;border-radius:14px;padding:14px 22px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;min-width:220px;';
+var PAGE_LINK='color:rgba(245,241,236,0.55);font-size:12px;text-decoration:none;margin-top:18px;font-family:inherit;cursor:pointer;background:none;border:none;';
+
+function rLanding(){
+  var name=(settings.cafeName||"OZY HOUSE");
+  return '<div style="'+PAGE_BG+'"><div style="'+PAGE_WRAP+'">'
+    +'<div style="'+PAGE_LOGO+'">'+esc(name)+'</div>'
+    +'<div style="'+PAGE_ITALIC+'">홈카페의 순간들<br>한 잔에 담아보세요</div>'
+    +'<div style="'+PAGE_SUB+'">로그인하고 나만의 카페를 시작하세요.</div>'
+    +'<button onclick="signInGoogle()" style="'+PAGE_CTA+'margin-top:32px;">Google로 시작하기</button>'
+    +'</div></div>';
+}
+
+function rLoginPage(){
+  var name=(settings.cafeName||"OZY HOUSE");
+  return '<div style="'+PAGE_BG+'"><div style="'+PAGE_WRAP+'">'
+    +'<div style="'+PAGE_LOGO+'">'+esc(name)+'</div>'
+    +'<div style="'+PAGE_ITALIC+'">다시 만나서 반가워요</div>'
+    +'<div style="'+PAGE_SUB+'">계속하려면 로그인해주세요.</div>'
+    +'<button onclick="signInGoogle()" style="'+PAGE_CTA+'margin-top:32px;">Google로 로그인</button>'
+    +'<a href="/" style="'+PAGE_LINK+'">← 처음으로</a>'
+    +'</div></div>';
+}
+
+function rNotFound(){
+  return '<div style="'+PAGE_BG+'"><div style="'+PAGE_WRAP+'">'
+    +'<div style="font-family:\'Bebas Neue\',sans-serif;letter-spacing:6px;font-size:80px;color:#b84830;line-height:1;">404</div>'
+    +'<div style="'+PAGE_ITALIC+'">이 원두는 어디갔지...</div>'
+    +'<div style="'+PAGE_SUB+'">페이지를 찾을 수 없어요.<br>주소를 다시 확인해 주세요.</div>'
+    +'<a href="/" style="'+PAGE_CTA+'margin-top:32px;display:inline-block;text-decoration:none;text-align:center;">홈으로 돌아가기</a>'
+    +'</div></div>';
+}
+
 function render(){
   document.title=(settings.cafeName||"OZY HOUSE");
+  var appEl=document.getElementById("app");
+
+  if(S.routeLoading){
+    appEl.innerHTML='<div style="'+PAGE_BG+'"><div style="'+PAGE_WRAP+'"><div style="color:rgba(245,241,236,0.4);font-size:13px;">불러오는 중...</div></div></div>';
+    return;
+  }
+  var rt=S.route||{type:"landing"};
+  if(rt.type==="landing"){ appEl.innerHTML=rLanding(); return; }
+  if(rt.type==="login"){ appEl.innerHTML=rLoginPage(); return; }
+  if(rt.type==="notfound"){ appEl.innerHTML=rNotFound(); return; }
+
+  // rt.type === "cafe" → 기존 카페 메뉴판 렌더
   var body="";
   if(S.detail) body=rDetail(S.detail);
   else if(S.tab==="menu") body=rMenu();
   else if(S.tab==="diary") body=rDiary();
   else body=rArchive();
-  document.getElementById("app").innerHTML=
+  appEl.innerHTML=
     body+rNav()
     +(S.showAdd?rAdd():"")
     +(S.guestId?rGuest():"")
@@ -2636,7 +2720,7 @@ function render(){
     +(S.showFilterSheet?rFilterSheet():"")
     +(S.toast?'<div class="toast">'+S.toast+'</div>':"");
 }
-render();
+resolveRoute();
 
 // ── History API — SPA 뒤로가기 처리
 function getHistoryState(){
