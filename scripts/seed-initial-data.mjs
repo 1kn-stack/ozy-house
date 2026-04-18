@@ -94,7 +94,7 @@ async function main() {
   console.log('\n🔗 slug 예약...');
   await upsertDoc(
     db.collection('slugs').doc(TARGET_SLUG),
-    { ownerId: uid, createdAt: FV.serverTimestamp() },
+    { ownerUid: uid, createdAt: FV.serverTimestamp() },
     `slugs/${TARGET_SLUG}`
   );
 

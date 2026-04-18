@@ -253,14 +253,25 @@ const googleProvider = new GoogleAuthProvider();
 // 로그인 유저 정보 (전역)
 let currentUser = null;  // {uid, email, displayName, photoURL} or null
 
+// 카페 오너 여부 (전역) — Phase 2-A
+// flash 방지: 계산 완료 전까진 false 유지 (편집 UI 숨김)
+let isOwner = false;
+let ownerCheckCache = { slug: null, ownerUid: null };
+
 // Auth 상태 변화 감지 → 자동 리렌더링
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
   currentUser = user ? {
     uid: user.uid,
     email: user.email,
     displayName: user.displayName || "",
     photoURL: user.photoURL || ""
   } : null;
+  // 카페 라우트면 isOwner 재계산, 아니면 false
+  if (typeof S !== "undefined" && S.route && S.route.type === "cafe" && typeof setOwnerFlag === "function") {
+    await setOwnerFlag(S.route.slug, null);
+  } else {
+    isOwner = false;
+  }
   // 로그인 상태 바뀌면 화면 다시 그리기
   if (typeof render === "function") render();
 });
@@ -988,6 +999,7 @@ window.submitPw = async function(){
 };
 
 window.openEdit = function(id){
+  if(!isOwner){showToast("권한이 없습니다");return;}
   requirePw(function(){
     S.detail=id;S.editMode=true;
     var b=beans.find(function(x){return x.id===id;});
@@ -1044,6 +1056,7 @@ window.editScanImg = async function(input){
 };
 window.editInput = function(k,v){if(S.editData)S.editData[k]=v;};
 window.saveEdit = async function(){
+  if(!isOwner){showToast("권한이 없습니다");return;}
   var e=S.editData;if(!e)return;
   var u=Object.assign({},e,{
     roastLevel:normRL(e.roastLevel)||e.roastLevel,
@@ -1060,6 +1073,7 @@ window.saveEdit = async function(){
 };
 
 window.toggleStatus = function(id){
+  if(!isOwner){showToast("권한이 없습니다");return;}
   requirePw(async function(){
     var b=beans.find(function(x){return x.id===id;});if(!b)return;
     var next=b.status==="available"?"empty":"available";
@@ -1070,10 +1084,12 @@ window.toggleStatus = function(id){
   });
 };
 window.deleteBean = function(id){
+  if(!isOwner){showToast("권한이 없습니다");return;}
   requirePw(async function(){await fdB(id);S.detail=null;showToast("삭제했어요");});
 };
 
 window.openManual = function(){
+  if(!isOwner){showToast("권한이 없습니다");return;}
   S.addManual=true;
   S.addEdit={name:"",roaster:"",origin:"",region:"",producer:"",variety:"",altitude:"",
     process:"내추럴",roastLevel:"라이트",flavor:"",tagline:"",myNote:"",rating:4,
@@ -1104,6 +1120,7 @@ window.brewingInput = function(k,v){if(S.diaryForm.brewing)S.diaryForm.brewing[k
 window.brewingMethod = function(m){S.diaryForm.brewing.method=S.diaryForm.brewing.method===m?"":m;render();};
 // 카페명
 window.saveCafe = async function(){
+  if(!isOwner){showToast("권한이 없습니다");return;}
   var name=(S.cafeNameDraft||"").trim()||settings.cafeName;
   var desc=(S.cafeDescDraft!==undefined?S.cafeDescDraft:settings.cafeDesc)||"";
   settings.cafeName=name; settings.cafeDesc=desc;
@@ -1112,12 +1129,14 @@ window.saveCafe = async function(){
 };
 
 window.openAdd = function(){
+  if(!isOwner){showToast("권한이 없습니다");return;}
   requirePw(function(){S.showAdd=true;S.addStep="upload";S.addEdit=null;S.addPreview="";render();setTimeout(function(){var dz=document.getElementById("dz-main");if(dz)dz.focus();},100);});
 };
 window.closeAdd = function(){S.showAdd=false;render();};
 window.resetScan = function(){S.addStep="upload";S.addEdit=null;S.addPreview="";render();};
 window.addInput = function(k,v){if(S.addEdit)S.addEdit[k]=v;};
 window.saveBean = async function(){
+  if(!isOwner){showToast("권한이 없습니다");return;}
   var e=S.addEdit;if(!e||!e.name.trim())return;
   var nb=Object.assign({},e,{
     roastLevel:normRL(e.roastLevel)||e.roastLevel,
@@ -1160,6 +1179,7 @@ window.submitGuest = async function(){
   S.guestId=null;S.guestForm={name:"",note:"",emoji:""};showToast("소감이 기록됐어요 ✨");
 };
 window.deleteGuest = function(beanId, idx){
+  if(!isOwner){showToast("권한이 없습니다");return;}
   requirePw(async function(){
     var b=beans.find(function(x){return x.id===beanId;});if(!b)return;
     var updated=(b.guestNotes||[]).filter(function(_,i){return i!==idx;});
@@ -1169,6 +1189,7 @@ window.deleteGuest = function(beanId, idx){
 };
 
 window.openDiary = function(){
+  if(!isOwner){showToast("권한이 없습니다");return;}
   requirePw(function(){
     S.showDiary=true;S.diaryEditId=null;
     var avail=beans.find(function(b){return b.status==="available"&&(!settings.degasHideDiary||getDegasInfo(b).status!=="degassing");});
@@ -1178,6 +1199,7 @@ window.openDiary = function(){
   });
 };
 window.openDiaryEdit = function(id){
+  if(!isOwner){showToast("권한이 없습니다");return;}
   requirePw(function(){
     var d=diaries.find(function(x){return x.id===id;});if(!d)return;
     S.diaryEditId=id;
@@ -1196,6 +1218,7 @@ window.cupInput = function(idx,k,v){if(S.diaryForm.cups[idx])S.diaryForm.cups[id
 window.addCup = function(){S.diaryForm.cups.push({beanId:"",brewType:"hot"});render();};
 window.removeCup = function(idx){if(S.diaryForm.cups.length>1)S.diaryForm.cups.splice(idx,1);render();};
 window.saveDiary = async function(){
+  if(!isOwner){showToast("권한이 없습니다");return;}
   var f=S.diaryForm;
   // 한마디 OR 브루잉 중 하나는 있어야 저장
   var hasBrewing=f.brewing&&f.brewing.active&&(f.brewing.method||f.brewing.grindNote);
@@ -1222,10 +1245,14 @@ window.saveDiary = async function(){
   }
   S.showDiary=false;render();
 };
-window.deleteDiary = function(id){requirePw(async function(){await fdD(id);showToast("삭제했어요");});};
+window.deleteDiary = function(id){
+  if(!isOwner){showToast("권한이 없습니다");return;}
+  requirePw(async function(){await fdD(id);showToast("삭제했어요");});
+};
 
 // ── 디개싱 수동 조정
 window.openNow = function(id){
+  if(!isOwner){showToast("권한이 없습니다");return;}
   requirePw(async function(){
     var today=localDateStr();
     await fuB(id,{startDate:today});
@@ -1233,6 +1260,7 @@ window.openNow = function(id){
   });
 };
 window.openDegasEdit = function(id){
+  if(!isOwner){showToast("권한이 없습니다");return;}
   requirePw(function(){
     var b=beans.find(function(x){return x.id===id;});if(!b)return;
     var dg=getDegasInfo(b);
@@ -1248,6 +1276,7 @@ window.openDegasEdit = function(id){
 window.closeDegasEdit = function(){S.showDegasEdit=false;S.degasEdit=null;render();};
 window.degasInput = function(k,v){if(S.degasEdit)S.degasEdit[k]=v;};
 window.saveDegasEdit = async function(){
+  if(!isOwner){showToast("권한이 없습니다");return;}
   var e=S.degasEdit;if(!e)return;
   var upd={};
   if(e.degasDate) upd.degasDate=e.degasDate;
@@ -1257,6 +1286,7 @@ window.saveDegasEdit = async function(){
   showToast("디개싱 설정이 저장됐어요 🫧");
 };
 window.resetDegasEdit = async function(){
+  if(!isOwner){showToast("권한이 없습니다");return;}
   var e=S.degasEdit;if(!e)return;
   await fuB(e.id,{degasDate:null,degasDays:null});
   S.showDegasEdit=false;S.degasEdit=null;
@@ -1638,7 +1668,7 @@ function rArchive(){
       +'<div style="font-size:10px;color:var(--t3);margin-top:4px;">'+(b.roastDate||"")+'</div>'
       +'</div></div></div>';
   });
-  return html+'</div><button onclick="openAdd()" style="position:fixed;bottom:80px;right:20px;width:52px;height:52px;border-radius:50%;background:var(--ac);color:#fff;font-size:26px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(255,159,10,0.4);z-index:80;display:flex;align-items:center;justify-content:center;">+</button>';
+  return html+'</div>'+(isOwner?'<button onclick="openAdd()" style="position:fixed;bottom:80px;right:20px;width:52px;height:52px;border-radius:50%;background:var(--ac);color:#fff;font-size:26px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(255,159,10,0.4);z-index:80;display:flex;align-items:center;justify-content:center;">+</button>':'');
 }
 
 function rDetail(id){
@@ -1835,10 +1865,10 @@ function rDetail(id){
       // 상단 버튼 행
       +'<div style="position:absolute;top:0;left:0;right:0;padding:52px 18px 0;display:flex;justify-content:space-between;z-index:1;">'
         +'<button onclick="closeDetail()" style="width:32px;height:32px;background:rgba(0,0,0,0.28);backdrop-filter:blur(10px);border:0.5px solid rgba(255,255,255,0.20);border-radius:50%;color:#fff;font-size:14px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;">←</button>'
-        +'<div style="display:flex;gap:7px;">'
+        +(isOwner?'<div style="display:flex;gap:7px;">'
           +'<button onclick="openEdit(\''+b.id+'\')" style="width:32px;height:32px;background:rgba(0,0,0,0.28);backdrop-filter:blur(10px);border:0.5px solid rgba(255,255,255,0.20);border-radius:50%;color:var(--t1);font-size:13px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;">✏️</button>'
           +'<button onclick="toggleStatus(\''+b.id+'\')" style="width:32px;height:32px;background:rgba(0,0,0,0.28);backdrop-filter:blur(10px);border:0.5px solid rgba(255,255,255,0.20);border-radius:50%;color:var(--t1);font-size:13px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;">'+(b.status==="available"?"📦":"✅")+'</button>'
-        +'</div>'
+        +'</div>':'<div></div>')
       +'</div>'
       // 하단 원두 정보
       +'<div style="position:absolute;bottom:0;left:0;right:0;padding:0 20px 20px;z-index:1;">'
@@ -1888,9 +1918,9 @@ function rDetail(id){
         +rGuestNotes(b.guestNotes||[], b.id)
       +'</div>'
       // 하단 버튼
-      +'<div style="display:flex;gap:8px;">'
+      +(isOwner?'<div style="display:flex;gap:8px;">'
         +'<button class="btns" onclick="deleteBean(\''+b.id+'\')" style="flex:1;color:#ff3b30;border-color:rgba(255,59,48,0.25);">삭제</button>'
-      +'</div>'
+      +'</div>':'')
     +'</div>'
   +'</div>';
 }
@@ -2062,7 +2092,7 @@ function rDiary(){
       +'<div style="font-size:32px;margin-bottom:8px;">✍️</div>'
       +'<div style="font-weight:700;font-size:15px;color:var(--t1);margin-bottom:4px;">오늘의 커피 기록</div>'
       +'<div style="font-size:13px;color:var(--t3);margin-bottom:16px;">오늘 마신 커피를 기록해보세요</div>'
-      +'<button onclick="openDiary()" style="background:var(--h1);color:var(--bg);border:none;border-radius:13px;padding:12px 26px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">+ 오늘 기록하기</button>'
+      +(isOwner?'<button onclick="openDiary()" style="background:var(--h1);color:var(--bg);border:none;border-radius:13px;padding:12px 26px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">+ 오늘 기록하기</button>':'')
       +'</div>';
   } else {
     var mc=MC[te.mood]||"rgba(255,255,255,0.07)";
@@ -2098,10 +2128,10 @@ function rDiary(){
       +'<div style="font-size:14px;color:var(--t1);line-height:1.8;white-space:pre-wrap;">'+esc(te.note)+'</div>'
       +'<div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center;">'
       +'<div style="display:flex;gap:2px;">'+stHtml(te.rating||0,"",14)+'</div>'
-      +'<div style="display:flex;gap:12px;">'
+      +(isOwner?'<div style="display:flex;gap:12px;">'
       +'<button onclick="openDiaryEdit(\''+te.id+'\')" style="background:none;border:none;font-size:11px;color:var(--ac);font-weight:600;cursor:pointer;font-family:inherit;">수정</button>'
       +'<button onclick="deleteDiary(\''+te.id+'\')" style="background:none;border:none;font-size:11px;color:var(--t3);cursor:pointer;font-family:inherit;">삭제</button>'
-      +'</div></div></div></div>';
+      +'</div>':'')+'</div></div></div>';
   }
 
   var prev=diaries.filter(function(d){return d.date!==today;});
@@ -2128,14 +2158,14 @@ function rDiary(){
       +'<div style="font-size:13px;color:var(--t1);line-height:1.7;white-space:pre-wrap;">'+esc(d.note)+'</div>'
       +'<div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;">'
       +'<div style="display:flex;gap:2px;">'+stHtml(d.rating||0,"",13)+'</div>'
-      +'<div style="display:flex;gap:12px;">'
+      +(isOwner?'<div style="display:flex;gap:12px;">'
       +'<button onclick="openDiaryEdit(\''+d.id+'\')" style="background:none;border:none;font-size:11px;color:var(--ac);font-weight:600;cursor:pointer;font-family:inherit;">수정</button>'
       +'<button onclick="deleteDiary(\''+d.id+'\')" style="background:none;border:none;font-size:11px;color:var(--t3);cursor:pointer;font-family:inherit;">삭제</button>'
-      +'</div></div></div></div>';
+      +'</div>':'')+'</div></div></div>';
   });
   if(!diaries.length) html+='<div style="text-align:center;padding:40px 0;color:var(--t3);"><div style="font-size:36px;margin-bottom:12px;">📝</div>아직 기록이 없어요</div>';
-  // 오늘 기록이 이미 있으면 FAB 버튼으로 추가 기록 제공
-  var fab = te
+  // 오늘 기록이 이미 있으면 FAB 버튼으로 추가 기록 제공 (오너만)
+  var fab = (te && isOwner)
     ? '<button onclick="openDiary()" style="position:fixed;bottom:80px;right:20px;width:52px;height:52px;border-radius:50%;background:var(--ac);color:#fff;font-size:22px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(255,159,10,0.4);z-index:80;display:flex;align-items:center;justify-content:center;">✍️</button>'
     : "";
   return html+'</div>'+fab;
@@ -2474,6 +2504,7 @@ window.titleTap=function(){
   S.titleTapT=setTimeout(function(){S.titleTap=0;},2000);
 };
 window.openAdmin=function(){
+  if(!isOwner){showToast("권한이 없습니다");return;}
   requirePw(function(){S.showAdmin=true;S.adminTab="degas";render();});
 };
 window.closeAdmin=function(){S.showAdmin=false;render();};
@@ -2492,10 +2523,12 @@ window.adminToggle=function(key){
   settings[key]=!settings[key];render();
 };
 window.saveAdminDegas=async function(){
+  if(!isOwner){showToast("권한이 없습니다");return;}
   await setDoc(SC,{degasDays:Object.assign({},settings.degasDays)},{merge:true});
   showToast("디개싱 기간이 저장됐어요 🫧");
 };
 window.saveAdminBehavior=async function(){
+  if(!isOwner){showToast("권한이 없습니다");return;}
   var tz = S.tzDraft != null ? S.tzDraft : (settings.timezoneOffset != null ? settings.timezoneOffset : 9);
   settings.timezoneOffset = tz;
   S.tzDraft = null;
@@ -2503,6 +2536,7 @@ window.saveAdminBehavior=async function(){
   showToast("동작 설정이 저장됐어요 ✅");
 };
 window.migrateAllBeans=async function(){
+  if(!isOwner){showToast("권한이 없습니다");return;}
   if(!confirm('전체 원두 데이터를 정규화할까요?\n배전도(중약배전→미디엄라이트 등)와 레시피 구조를 일괄 변환합니다.')) return;
   S.migrateState="running"; S.migrateLog=""; render();
   var total=beans.length, done=0, skipped=0, errors=0;
@@ -2539,6 +2573,7 @@ window.exportAdminSettings=function(){
   a.click();showToast("설정 파일을 내보냈어요 📁");
 };
 window.resetAdminSettings=async function(){
+  if(!isOwner){showToast("권한이 없습니다");return;}
   if(!confirm("모든 설정을 기본값으로 초기화할까요?"))return;
   await setDoc(SC,Object.assign({},DEFAULT_SETTINGS,{degasDays:Object.assign({},DEFAULT_SETTINGS.degasDays)}));
   showToast("기본값으로 초기화됐어요");
@@ -2614,8 +2649,9 @@ function rPw(){
 
 function rNav(){
   var tabs=[["menu","Lineup","☕"],["archive","Archive","📦"],["diary","Diary","📓"]];
+  var longPress = isOwner ? ' oncontextmenu="event.preventDefault();openAdmin()" ontouchstart="navLongStart(event)" ontouchend="navLongEnd()" ontouchcancel="navLongEnd()"' : '';
   return '<div class="bnav">'+tabs.map(function(x){
-    return '<button class="nbtn'+(S.tab===x[0]?' on':'')+'" onclick="setTab(\'' + x[0] + '\')" oncontextmenu="event.preventDefault();openAdmin()" ontouchstart="navLongStart(event)" ontouchend="navLongEnd()" ontouchcancel="navLongEnd()"><div style="font-size:18px;margin-bottom:2px;">'+x[2]+'</div>'+x[1]+'</button>';
+    return '<button class="nbtn'+(S.tab===x[0]?' on':'')+'" onclick="setTab(\'' + x[0] + '\')"'+longPress+'><div style="font-size:18px;margin-bottom:2px;">'+x[2]+'</div>'+x[1]+'</button>';
   }).join('')+'</div>';
 }
 
@@ -2630,23 +2666,53 @@ function parseRoute(){
   return {type:"notfound"};
 }
 
+// Phase 2-A: 카페 오너 판별
+// - slugSnap을 재활용하면 Firestore read 0회 추가 없이 처리
+// - 같은 slug 재진입 시 캐시 사용 (route 바뀌면 resolveRoute에서 초기화)
+async function setOwnerFlag(slug, slugSnap){
+  if (ownerCheckCache.slug !== slug) {
+    var ownerUid = null;
+    try {
+      if (!slugSnap) slugSnap = await getDoc(doc(db, "slugs", slug));
+      if (slugSnap && slugSnap.exists()) {
+        var data = slugSnap.data() || {};
+        ownerUid = data.ownerUid || null;
+      }
+    } catch(err) {
+      console.error("[owner] slug fetch error:", err);
+    }
+    ownerCheckCache = { slug: slug, ownerUid: ownerUid };
+  }
+  isOwner = !!(currentUser && currentUser.uid === ownerCheckCache.ownerUid);
+}
+
 async function resolveRoute(){
   var r=parseRoute();
   if(r.type!=="cafe"){
-    S.route=r; S.routeLoading=false; render(); return;
+    S.route=r; S.routeLoading=false;
+    isOwner=false; ownerCheckCache={slug:null,ownerUid:null};
+    render(); return;
   }
   S.routeLoading=true; render();
   try {
     var reservedSnap=await getDoc(doc(db,"reservedSlugs",r.slug));
     if(reservedSnap.exists()){
       S.route={type:"notfound"};
+      isOwner=false;
     } else {
       var slugSnap=await getDoc(doc(db,"slugs",r.slug));
-      S.route=slugSnap.exists()?r:{type:"notfound"};
+      if(slugSnap.exists()){
+        S.route=r;
+        await setOwnerFlag(r.slug, slugSnap); // 추가 read 없이 재활용
+      } else {
+        S.route={type:"notfound"};
+        isOwner=false;
+      }
     }
   } catch(err){
     console.error("[route] resolve error:",err);
     S.route={type:"notfound"};
+    isOwner=false;
   }
   S.routeLoading=false; render();
 }
