@@ -217,8 +217,6 @@ import { getFirestore, collection, doc, getDoc, addDoc, updateDoc, deleteDoc, se
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const WK = "https://ozy-house-proxy.okgo-levelup.workers.dev";
-const AH = "ac2a41af69b8320d2205a77620e8ed776df54a41b707004272f028807f467c17";
-async function hp(pw){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pw));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
 
 // ── 테마 초기화
 (function(){
@@ -279,8 +277,22 @@ onAuthStateChanged(auth, async (user) => {
 // 구글 로그인
 window.signInGoogle = async function() {
   try {
-    await signInWithPopup(auth, googleProvider);
+    var cred = await signInWithPopup(auth, googleProvider);
     if (typeof showToast === "function") showToast("로그인 성공");
+    // 유저 slug 조회 → /{slug}로 이동 (이미 그 경로면 skip)
+    try {
+      var userSnap = await getDoc(doc(db, "users", cred.user.uid));
+      var slug = userSnap.exists() ? ((userSnap.data()||{}).slug||null) : null;
+      if (slug) {
+        var target = "/" + slug;
+        if (location.pathname !== target) {
+          history.pushState(getHistoryState(), "", target);
+          await resolveRoute();
+        }
+      }
+    } catch (e) {
+      console.error("[signIn] slug lookup failed:", e);
+    }
   } catch (err) {
     console.error("로그인 실패:", err);
     if (typeof showToast === "function") showToast("로그인 실패: " + (err.message || err.code));
@@ -843,7 +855,6 @@ let S = {
   showFilterSheet:false,
   // 다이어리 검색/필터
   diarySearchQ:"", diaryFilterMethod:"", diaryFilterMood:"",
-  showPw:false, pwAction:null, pwErr:false,
   showDiary:false,
   diaryForm:{mood:"☀️",cups:[{beanId:"",brewType:"hot"}],note:"",rating:4,
              brewing:{active:false,method:"",dose:15,water:240,temp:92,grindNote:""}},
@@ -989,32 +1000,21 @@ window.setFilter = function(f){S.filter=f;render();};
 window.openDetail = function(id){S.detail=id;S.editMode=false;pushHistory();render();};
 window.closeDetail = function(){S.detail=null;S.editMode=false;render();};
 
-window.requirePw = function(action){S.showPw=true;S.pwAction=action;S.pwErr=false;render();setTimeout(function(){var el=document.getElementById("pw-inp");if(el)el.focus();},100);};
-window.closePw = function(){S.showPw=false;S.pwAction=null;S.pwErr=false;render();};
-window.submitPw = async function(){
-  var val=(document.getElementById("pw-inp")||{}).value||"";
-  var h=await hp(val);
-  if(h===AH){S.showPw=false;S.pwErr=false;var a=S.pwAction;S.pwAction=null;render();if(a)a();}
-  else{S.pwErr=true;render();setTimeout(function(){var el=document.getElementById("pw-inp");if(el){el.value="";el.focus();}},50);}
-};
-
 window.openEdit = function(id){
   if(!isOwner){showToast("권한이 없습니다");return;}
-  requirePw(function(){
-    S.detail=id;S.editMode=true;
-    var b=beans.find(function(x){return x.id===id;});
-    if(b){
-      var nr=normalizeRecipe(b.recipe);
-      S.editData=Object.assign({},b,{
-        roastLevel:normRL(b.roastLevel)||b.roastLevel||"미디엄",
-        flavor:Array.isArray(b.flavor)?b.flavor.join(", "):(b.flavor||""),
-        rDripper:nr.dripper,
-        rHotBeans:nr.hot.beans,rHotGrind:nr.hot.grind,rHotTemp:nr.hot.waterTemp,rHotPour:nr.hot.pour,
-        rIcedBeans:nr.iced.beans,rIcedGrind:nr.iced.grind,rIcedTemp:nr.iced.waterTemp,rIcedPour:nr.iced.pour
-      });
-    }
-    render();
-  });
+  S.detail=id;S.editMode=true;
+  var b=beans.find(function(x){return x.id===id;});
+  if(b){
+    var nr=normalizeRecipe(b.recipe);
+    S.editData=Object.assign({},b,{
+      roastLevel:normRL(b.roastLevel)||b.roastLevel||"미디엄",
+      flavor:Array.isArray(b.flavor)?b.flavor.join(", "):(b.flavor||""),
+      rDripper:nr.dripper,
+      rHotBeans:nr.hot.beans,rHotGrind:nr.hot.grind,rHotTemp:nr.hot.waterTemp,rHotPour:nr.hot.pour,
+      rIcedBeans:nr.iced.beans,rIcedGrind:nr.iced.grind,rIcedTemp:nr.iced.waterTemp,rIcedPour:nr.iced.pour
+    });
+  }
+  render();
 };
 window.closeEdit = function(){S.editMode=false;S.editScanState="idle";render();};
 window.editScanPaste = function(e){
@@ -1072,20 +1072,18 @@ window.saveEdit = async function(){
   await fuB(e.id,u);S.editMode=false;showToast("수정됐어요 ✅");
 };
 
-window.toggleStatus = function(id){
+window.toggleStatus = async function(id){
   if(!isOwner){showToast("권한이 없습니다");return;}
-  requirePw(async function(){
-    var b=beans.find(function(x){return x.id===id;});if(!b)return;
-    var next=b.status==="available"?"empty":"available";
-    var upd={status:next};
-    if(next==="empty")upd.emptyDate=localDateStr();
-    await fuB(id,upd);
-    showToast(next==="available"?"다시 보유로 변경됐어요":"소진 처리됐어요");
-  });
+  var b=beans.find(function(x){return x.id===id;});if(!b)return;
+  var next=b.status==="available"?"empty":"available";
+  var upd={status:next};
+  if(next==="empty")upd.emptyDate=localDateStr();
+  await fuB(id,upd);
+  showToast(next==="available"?"다시 보유로 변경됐어요":"소진 처리됐어요");
 };
-window.deleteBean = function(id){
+window.deleteBean = async function(id){
   if(!isOwner){showToast("권한이 없습니다");return;}
-  requirePw(async function(){await fdB(id);S.detail=null;showToast("삭제했어요");});
+  await fdB(id);S.detail=null;showToast("삭제했어요");
 };
 
 window.openManual = function(){
@@ -1130,7 +1128,8 @@ window.saveCafe = async function(){
 
 window.openAdd = function(){
   if(!isOwner){showToast("권한이 없습니다");return;}
-  requirePw(function(){S.showAdd=true;S.addStep="upload";S.addEdit=null;S.addPreview="";render();setTimeout(function(){var dz=document.getElementById("dz-main");if(dz)dz.focus();},100);});
+  S.showAdd=true;S.addStep="upload";S.addEdit=null;S.addPreview="";render();
+  setTimeout(function(){var dz=document.getElementById("dz-main");if(dz)dz.focus();},100);
 };
 window.closeAdd = function(){S.showAdd=false;render();};
 window.resetScan = function(){S.addStep="upload";S.addEdit=null;S.addPreview="";render();};
@@ -1178,39 +1177,33 @@ window.submitGuest = async function(){
   await fuB(S.guestId,{guestNotes:notes});
   S.guestId=null;S.guestForm={name:"",note:"",emoji:""};showToast("소감이 기록됐어요 ✨");
 };
-window.deleteGuest = function(beanId, idx){
+window.deleteGuest = async function(beanId, idx){
   if(!isOwner){showToast("권한이 없습니다");return;}
-  requirePw(async function(){
-    var b=beans.find(function(x){return x.id===beanId;});if(!b)return;
-    var updated=(b.guestNotes||[]).filter(function(_,i){return i!==idx;});
-    await fuB(beanId,{guestNotes:updated});
-    showToast("소감이 삭제됐어요");
-  });
+  var b=beans.find(function(x){return x.id===beanId;});if(!b)return;
+  var updated=(b.guestNotes||[]).filter(function(_,i){return i!==idx;});
+  await fuB(beanId,{guestNotes:updated});
+  showToast("소감이 삭제됐어요");
 };
 
 window.openDiary = function(){
   if(!isOwner){showToast("권한이 없습니다");return;}
-  requirePw(function(){
-    S.showDiary=true;S.diaryEditId=null;
-    var avail=beans.find(function(b){return b.status==="available"&&(!settings.degasHideDiary||getDegasInfo(b).status!=="degassing");});
-    S.diaryForm={mood:"☀️",cups:[{beanId:avail?avail.id:"",brewType:"hot"}],note:"",rating:4,
-                 brewing:{active:false,method:"",dose:15,water:240,temp:92,grindNote:""}};
-    render();setTimeout(function(){var el=document.getElementById("diary-note");if(el)el.focus();},100);
-  });
+  S.showDiary=true;S.diaryEditId=null;
+  var avail=beans.find(function(b){return b.status==="available"&&(!settings.degasHideDiary||getDegasInfo(b).status!=="degassing");});
+  S.diaryForm={mood:"☀️",cups:[{beanId:avail?avail.id:"",brewType:"hot"}],note:"",rating:4,
+               brewing:{active:false,method:"",dose:15,water:240,temp:92,grindNote:""}};
+  render();setTimeout(function(){var el=document.getElementById("diary-note");if(el)el.focus();},100);
 };
 window.openDiaryEdit = function(id){
   if(!isOwner){showToast("권한이 없습니다");return;}
-  requirePw(function(){
-    var d=diaries.find(function(x){return x.id===id;});if(!d)return;
-    S.diaryEditId=id;
-    // cups 배열 복원 (기존 beanId/beanId2 호환)
-    var cups=d.cups&&d.cups.length?d.cups:[{beanId:d.beanId||"",brewType:d.brewType||"hot"}];
-    if(!d.cups&&d.beanId2) cups.push({beanId:d.beanId2,brewType:d.brewType2||"hot"});
-    S.diaryForm={mood:d.mood||"☀️",cups:cups,note:d.note||"",rating:d.rating||4,
-                 brewing:d.brewing?Object.assign({active:true},d.brewing):{active:false,method:"",dose:15,water:240,temp:92,grindNote:""}};
-    S.showDiary=true;
-    render();setTimeout(function(){var el=document.getElementById("diary-note");if(el)el.focus();},100);
-  });
+  var d=diaries.find(function(x){return x.id===id;});if(!d)return;
+  S.diaryEditId=id;
+  // cups 배열 복원 (기존 beanId/beanId2 호환)
+  var cups=d.cups&&d.cups.length?d.cups:[{beanId:d.beanId||"",brewType:d.brewType||"hot"}];
+  if(!d.cups&&d.beanId2) cups.push({beanId:d.beanId2,brewType:d.brewType2||"hot"});
+  S.diaryForm={mood:d.mood||"☀️",cups:cups,note:d.note||"",rating:d.rating||4,
+               brewing:d.brewing?Object.assign({active:true},d.brewing):{active:false,method:"",dose:15,water:240,temp:92,grindNote:""}};
+  S.showDiary=true;
+  render();setTimeout(function(){var el=document.getElementById("diary-note");if(el)el.focus();},100);
 };
 window.closeDiary = function(){S.showDiary=false;S.diaryEditId=null;render();};
 window.diaryInput = function(k,v){S.diaryForm[k]=v;if(k!=="note")render();};
@@ -1245,33 +1238,29 @@ window.saveDiary = async function(){
   }
   S.showDiary=false;render();
 };
-window.deleteDiary = function(id){
+window.deleteDiary = async function(id){
   if(!isOwner){showToast("권한이 없습니다");return;}
-  requirePw(async function(){await fdD(id);showToast("삭제했어요");});
+  await fdD(id);showToast("삭제했어요");
 };
 
 // ── 디개싱 수동 조정
-window.openNow = function(id){
+window.openNow = async function(id){
   if(!isOwner){showToast("권한이 없습니다");return;}
-  requirePw(async function(){
-    var today=localDateStr();
-    await fuB(id,{startDate:today});
-    showToast("개봉일이 기록됐어요 ☕");
-  });
+  var today=localDateStr();
+  await fuB(id,{startDate:today});
+  showToast("개봉일이 기록됐어요 ☕");
 };
 window.openDegasEdit = function(id){
   if(!isOwner){showToast("권한이 없습니다");return;}
-  requirePw(function(){
-    var b=beans.find(function(x){return x.id===id;});if(!b)return;
-    var dg=getDegasInfo(b);
-    S.degasEdit={
-      id:id,
-      degasDate:b.degasDate||b.roastDate||"",
-      degasDays:b.degasDays!=null?b.degasDays:getDegasDays(b.roastLevel)
-    };
-    S.showDegasEdit=true;
-    render();
-  });
+  var b=beans.find(function(x){return x.id===id;});if(!b)return;
+  var dg=getDegasInfo(b);
+  S.degasEdit={
+    id:id,
+    degasDate:b.degasDate||b.roastDate||"",
+    degasDays:b.degasDays!=null?b.degasDays:getDegasDays(b.roastLevel)
+  };
+  S.showDegasEdit=true;
+  render();
 };
 window.closeDegasEdit = function(){S.showDegasEdit=false;S.degasEdit=null;render();};
 window.degasInput = function(k,v){if(S.degasEdit)S.degasEdit[k]=v;};
@@ -2505,7 +2494,7 @@ window.titleTap=function(){
 };
 window.openAdmin=function(){
   if(!isOwner){showToast("권한이 없습니다");return;}
-  requirePw(function(){S.showAdmin=true;S.adminTab="degas";render();});
+  S.showAdmin=true;S.adminTab="degas";render();
 };
 window.closeAdmin=function(){S.showAdmin=false;render();};
 window.adminTab=function(t){S.adminTab=t;render();};
@@ -2630,20 +2619,6 @@ function rFilterSheet(){
     +'<button onclick="closeFilterSheet()" style="flex:1;background:var(--ibg);color:var(--t2);border:1px solid var(--ib);border-radius:13px;padding:13px;font-size:14px;font-family:inherit;cursor:pointer;">취소</button>'
     +'<button onclick="closeFilterSheet()" style="flex:2;background:var(--h1);color:var(--bg);border:none;border-radius:13px;padding:13px;font-size:14px;font-family:inherit;font-weight:700;cursor:pointer;">적용하기</button>'
     +'</div>'
-    +'</div></div></div>';
-}
-
-function rPw(){
-  return '<div class="mbg" style="align-items:center;justify-content:center;" onclick="if(event.target===this)closePw()">'
-    +'<div style="background:var(--modal-bg);border-radius:22px;width:calc(100% - 48px);max-width:320px;padding:28px 24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.2);">'
-    +'<div style="font-size:32px;margin-bottom:12px;">🔐</div>'
-    +'<div style="font-size:17px;font-weight:700;color:var(--t1);margin-bottom:6px;">관리자 확인</div>'
-    +'<div style="font-size:13px;color:var(--t3);margin-bottom:20px;">비밀번호를 입력해주세요</div>'
-    +'<input id="pw-inp" type="password" placeholder="비밀번호" style="width:100%;border:'+(S.pwErr?"2px solid #ff3b30":"1px solid rgba(42,26,12,0.15)")+';border-radius:12px;padding:12px 14px;font-size:16px;font-family:inherit;background:var(--ibg);color:var(--t1);outline:none;text-align:center;letter-spacing:4px;box-sizing:border-box;" onkeydown="if(event.key===\'Enter\')submitPw()">'
-    +(S.pwErr?'<div style="font-size:12px;color:#ff3b30;margin-top:8px;">비밀번호가 맞지 않아요</div>':"")
-    +'<div style="display:flex;gap:10px;margin-top:18px;">'
-    +'<button onclick="closePw()" style="flex:1;background:var(--ibg);color:var(--t2);border:none;border-radius:12px;padding:13px;font-size:14px;font-family:inherit;cursor:pointer;">취소</button>'
-    +'<button onclick="submitPw()" style="flex:1;background:var(--h1);color:var(--bg);border:none;border-radius:12px;padding:13px;font-size:14px;font-family:inherit;font-weight:700;cursor:pointer;">확인</button>'
     +'</div></div></div>';
 }
 
@@ -2780,7 +2755,6 @@ function render(){
     +(S.showAdd?rAdd():"")
     +(S.guestId?rGuest():"")
     +(S.showDiary?rDiaryModal():"")
-    +(S.showPw?rPw():"")
     +(S.showDegasEdit?rDegasModal():"")
     +(S.showAdmin?rAdmin():"")
     +(S.showFilterSheet?rFilterSheet():"")
@@ -2802,9 +2776,8 @@ window.addEventListener('popstate', function(e){
   var state = e.state;
   if(!state) return;
   // 모달 열려있으면 모달만 닫기
-  if(S.showAdd||S.showDiary||S.showPw||S.showDegasEdit||S.guestId||S.showAdmin){
-    S.showAdd=false;S.showDiary=false;S.showPw=false;S.showDegasEdit=false;S.guestId=null;S.showAdmin=false;
-    S.pwAction=null;S.pwErr=false;
+  if(S.showAdd||S.showDiary||S.showDegasEdit||S.guestId||S.showAdmin){
+    S.showAdd=false;S.showDiary=false;S.showDegasEdit=false;S.guestId=null;S.showAdmin=false;
     history.pushState(getHistoryState(),"");
     render();
     return;
