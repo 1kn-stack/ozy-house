@@ -1595,10 +1595,10 @@ function rMenu(){
         +(b.roaster?'<div class="dk-roaster">'+esc(b.roaster)+'</div>':'')
         +'<div class="dk-name" style="font-size:'+(b.name&&b.name.length>18?'17px':b.name&&b.name.length>14?'19px':'21px')+';">'+esc(b.name||'')+'</div>'
         +'<div class="dk-chips">'+flavHtml+'</div>'
-        +((b.tagline||b.myNote)
+        +((b.tagline||(b.myNote&&isFieldVisible('myNote')))
           ?'<div class="dk-notes">'
             +(b.tagline?'<div class="note-row"><span class="note-ico">🔖</span><span class="dk-nt">'+esc(b.tagline)+'</span></div>':'')
-            +(b.myNote?'<div class="note-row"><span class="note-ico">✍️</span><span class="dk-nt mine" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">'+esc(b.myNote)+'</span></div>':'')
+            +(b.myNote&&isFieldVisible('myNote')?'<div class="note-row"><span class="note-ico">✍️</span><span class="dk-nt mine" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">'+esc(b.myNote)+'</span></div>':'')
             +'</div>'
           :'')
         +'<div class="dk-action">'
