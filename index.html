@@ -259,7 +259,7 @@ let ownerCheckCache = { slug: null, ownerUid: null };
 // Phase 2-B: 공개 필드 (방문자에게 보여줄 필드 토글)
 const DEFAULT_PUBLIC_FIELDS = {
   roastDate: true, degasDays: true, rating: true,
-  myNote: false, recipe: false, startDate: false
+  myNote: false, recipe: false, startDate: false, diary: false
 };
 const ALWAYS_PUBLIC_FIELDS = ['name','roaster','origin','region','variety','process','roastLevel','flavor'];
 const TOGGLEABLE_FIELDS = [
@@ -268,13 +268,14 @@ const TOGGLEABLE_FIELDS = [
   ['rating','평점'],
   ['myNote','나의 소감'],
   ['recipe','드립 레시피'],
-  ['startDate','개봉일']
+  ['startDate','개봉일'],
+  ['diary','다이어리']
 ];
 const FIELD_LABELS = {
   name:'원두 이름', roaster:'로스터', origin:'원산지', region:'지역',
   variety:'품종', process:'가공방식', roastLevel:'배전도', flavor:'플레이버',
   roastDate:'로스팅 일자', degasDays:'디개싱 기간', rating:'평점',
-  myNote:'나의 소감', recipe:'드립 레시피', startDate:'개봉일'
+  myNote:'나의 소감', recipe:'드립 레시피', startDate:'개봉일', diary:'다이어리'
 };
 let publicFields = Object.assign({}, DEFAULT_PUBLIC_FIELDS);
 
@@ -2718,7 +2719,9 @@ function rFilterSheet(){
 }
 
 function rNav(){
-  var tabs=[["menu","Lineup","☕"],["archive","Archive","📦"],["diary","Diary","📓"]];
+  var showDiary = isOwner || !!publicFields.diary;
+  var tabs=[["menu","Lineup","☕"],["archive","Archive","📦"]];
+  if(showDiary) tabs.push(["diary","Diary","📓"]);
   var longPress = isOwner ? ' oncontextmenu="event.preventDefault();openAdmin()" ontouchstart="navLongStart(event)" ontouchend="navLongEnd()" ontouchcancel="navLongEnd()"' : '';
   return '<div class="bnav">'+tabs.map(function(x){
     return '<button class="nbtn'+(S.tab===x[0]?' on':'')+'" onclick="setTab(\'' + x[0] + '\')"'+longPress+'><div style="font-size:18px;margin-bottom:2px;">'+x[2]+'</div>'+x[1]+'</button>';
@@ -2846,6 +2849,7 @@ function render(){
   if(rt.type==="notfound"){ appEl.innerHTML=rNotFound(); return; }
 
   // rt.type === "cafe" → 기존 카페 메뉴판 렌더
+  if(S.tab==="diary" && !isOwner && !publicFields.diary) S.tab="menu";
   var body="";
   if(S.detail) body=rDetail(S.detail);
   else if(S.tab==="menu") body=rMenu();
