@@ -256,6 +256,34 @@ let currentUser = null;  // {uid, email, displayName, photoURL} or null
 let isOwner = false;
 let ownerCheckCache = { slug: null, ownerUid: null };
 
+// Phase 2-B: 공개 필드 (방문자에게 보여줄 필드 토글)
+const DEFAULT_PUBLIC_FIELDS = {
+  roastDate: true, degasDays: true, rating: true,
+  myNote: false, recipe: false, startDate: false
+};
+const ALWAYS_PUBLIC_FIELDS = ['name','roaster','origin','region','variety','process','roastLevel','flavor'];
+const TOGGLEABLE_FIELDS = [
+  ['roastDate','로스팅 일자'],
+  ['degasDays','디개싱 기간'],
+  ['rating','평점'],
+  ['myNote','나의 소감'],
+  ['recipe','드립 레시피'],
+  ['startDate','개봉일']
+];
+const FIELD_LABELS = {
+  name:'원두 이름', roaster:'로스터', origin:'원산지', region:'지역',
+  variety:'품종', process:'가공방식', roastLevel:'배전도', flavor:'플레이버',
+  roastDate:'로스팅 일자', degasDays:'디개싱 기간', rating:'평점',
+  myNote:'나의 소감', recipe:'드립 레시피', startDate:'개봉일'
+};
+let publicFields = Object.assign({}, DEFAULT_PUBLIC_FIELDS);
+
+function isFieldVisible(key){
+  if (isOwner) return true;
+  if (ALWAYS_PUBLIC_FIELDS.indexOf(key) >= 0) return true;
+  return !!publicFields[key];
+}
+
 // Auth 상태 변화 감지 → 자동 리렌더링
 onAuthStateChanged(auth, async (user) => {
   currentUser = user ? {
@@ -266,9 +294,12 @@ onAuthStateChanged(auth, async (user) => {
   } : null;
   // 카페 라우트면 isOwner 재계산, 아니면 false
   if (typeof S !== "undefined" && S.route && S.route.type === "cafe" && typeof setOwnerFlag === "function") {
+    // Phase 2-B: 같은 slug라도 로그인 상태가 바뀌면 publicFields 재로드
+    ownerCheckCache = { slug: null, ownerUid: null };
     await setOwnerFlag(S.route.slug, null);
   } else {
     isOwner = false;
+    publicFields = Object.assign({}, DEFAULT_PUBLIC_FIELDS);
   }
   // 로그인 상태 바뀌면 화면 다시 그리기
   if (typeof render === "function") render();
@@ -866,7 +897,8 @@ let S = {
   titleTap:0, titleTapT:null,
   tzDraft:null,
   cafeNameDraft:"", cafeDescDraft:"",
-  route:{type:"landing"}, routeLoading:false
+  route:{type:"landing"}, routeLoading:false,
+  publicFieldsDraft:null
 };
 
 // ── [수정] streak 계산을 렌더 외부에서 캐싱
@@ -1651,11 +1683,14 @@ function rArchive(){
       +((b.flavor&&b.flavor.length)?'<div class="dk-chips" style="margin-top:2px;">'+(b.flavor||[]).slice(0,5).map(function(f){return '<div class="dk-chip">'+fIco(f)+' '+esc(f)+'</div>';}).join('')+'</div>':"")
       +(isDegassing?'<div style="font-size:11px;color:rgba(96,165,250,0.70);margin-top:6px;">'+dg.remaining+'일 후 음용 추천 · '+dg.degasEndDate+'까지</div>':"")
       +'</div>'
-      +'<div style="text-align:right;flex-shrink:0;">'
-      +stHtml(b.rating||0,"",13)
-      +((b.guestNotes&&b.guestNotes.length)?'<div style="font-size:10px;color:var(--ac);margin-top:4px;opacity:0.75;">💬 '+b.guestNotes.length+'</div>':"")
-      +'<div style="font-size:10px;color:var(--t3);margin-top:4px;">'+(b.roastDate||"")+'</div>'
-      +'</div></div></div>';
+      +(function(){
+        var ratingHtml = isFieldVisible('rating') ? stHtml(b.rating||0,"",13) : '';
+        var guestHtml = (b.guestNotes&&b.guestNotes.length)?'<div style="font-size:10px;color:var(--ac);margin-top:4px;opacity:0.75;">💬 '+b.guestNotes.length+'</div>':"";
+        var dateHtml = (isFieldVisible('roastDate') && b.roastDate) ? '<div style="font-size:10px;color:var(--t3);margin-top:4px;">'+b.roastDate+'</div>' : '';
+        if(!ratingHtml && !guestHtml && !dateHtml) return '';
+        return '<div style="text-align:right;flex-shrink:0;">'+ratingHtml+guestHtml+dateHtml+'</div>';
+      })()
+      +'</div></div>';
   });
   return html+'</div>'+(isOwner?'<button onclick="openAdd()" style="position:fixed;bottom:80px;right:20px;width:52px;height:52px;border-radius:50%;background:var(--ac);color:#fff;font-size:26px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(255,159,10,0.4);z-index:80;display:flex;align-items:center;justify-content:center;">+</button>':'');
 }
@@ -1741,10 +1776,10 @@ function rDetail(id){
     ? '<div class="dk-colorbar" style="'+grad.style+';height:5px;"></div>'
     : '<div class="dk-colorbar '+grad.cls+'" style="height:5px;"></div>';
 
-  // 디개싱 배너
+  // 디개싱 배너 (방문자: degasDays 공개 시에만)
   var dg = getDegasInfo(b);
   var degasHtml = "";
-  if(b.status==="available" && dg.status!=="none"){
+  if(b.status==="available" && dg.status!=="none" && isFieldVisible('degasDays')){
     if(dg.status==="degassing"){
       degasHtml = '<div style="background:rgba(59,130,246,0.10);border:0.5px solid rgba(96,165,250,0.25);border-radius:14px;padding:14px 16px;margin-bottom:16px;">'
         +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
@@ -1777,21 +1812,22 @@ function rDetail(id){
     }
   }
 
-  // 날짜 정보
+  // 날짜 정보 (방문자: 공개 토글 따라)
   var dateRows = "";
-  if(b.roastDate) dateRows += '<div style="font-size:11px;color:var(--t3);">🗓 로스팅 <b style="color:var(--t2);">'+b.roastDate+'</b></div>';
-  if(b.startDate) dateRows += '<div style="font-size:11px;color:var(--t3);">☕ 개봉 <b style="color:var(--t2);">'+b.startDate+'</b></div>';
+  if(b.roastDate && isFieldVisible('roastDate')) dateRows += '<div style="font-size:11px;color:var(--t3);">🗓 로스팅 <b style="color:var(--t2);">'+b.roastDate+'</b></div>';
+  if(b.startDate && isFieldVisible('startDate')) dateRows += '<div style="font-size:11px;color:var(--t3);">☕ 개봉 <b style="color:var(--t2);">'+b.startDate+'</b></div>';
   if(b.status==="empty"&&b.emptyDate) dateRows += '<div style="font-size:11px;color:var(--t3);">✅ 소진 <b style="color:var(--t2);">'+b.emptyDate+'</b></div>';
 
   var SEC = 'font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--t3);font-weight:600;margin-bottom:12px;';
   var DIVIDER = '<div style="height:0.5px;background:var(--ib);margin:4px 0 24px;"></div>';
   var SECTION_MB = 'margin-bottom:24px;';
 
-  // 원두 정보 그리드
+  // 원두 정보 그리드 (로스팅은 roastDate 토글 따라)
   var infoItems = [
     ['생산국', b.origin],['지역', b.region],['농장', b.producer],
     ['고도', b.altitude],['품종', b.variety],['가공', b.process],
-    ['배전도', b.roastLevel],['로스팅', b.roastDate]
+    ['배전도', b.roastLevel],
+    isFieldVisible('roastDate') ? ['로스팅', b.roastDate] : ['로스팅', '']
   ].filter(function(x){return x[1];});
 
   var infoGrid = infoItems.length
@@ -1805,10 +1841,10 @@ function rDetail(id){
       +'</div>'
     : '';
 
-  // 레시피
+  // 레시피 (방문자: recipe 공개 시에만)
   var nr = normalizeRecipe(b.recipe);
   var recipeHtml = "";
-  if(nr.hot.pour || nr.iced.pour){
+  if((nr.hot.pour || nr.iced.pour) && isFieldVisible('recipe')){
     recipeHtml = '<div style="'+SECTION_MB+'">'
       +'<div style="'+SEC+'">드립 레시피</div>'
       +(nr.hot.pour
@@ -1880,16 +1916,22 @@ function rDetail(id){
         +fchips(b.flavor||[])
         +(b.tagline?'<div style="margin-top:14px;display:flex;gap:7px;align-items:flex-start;"><span style="font-size:13px;flex-shrink:0;">🔖</span><span style="font-size:11px;color:var(--t1);line-height:1.65;">'+esc(b.tagline)+'</span></div>':"")
         +'</div>':"")
-      // 평점 + 나의 메모
-      +'<div style="'+SECTION_MB+'">'
-        +'<div style="'+SEC+'">평점 &amp; 메모</div>'
-        +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">'
-          +stHtml(b.rating||0,"",20)
-          +'<span style="font-family:\'Instrument Serif\',serif;font-size:22px;font-style:italic;color:var(--t1);">'+(b.rating||0)+'.0</span>'
-        +'</div>'
-        +(b.myNote?'<div style="display:flex;gap:7px;align-items:flex-start;"><span style="font-size:13px;flex-shrink:0;">✍️</span><span style="font-size:11px;color:var(--t2);font-style:italic;line-height:1.65;">'+esc(b.myNote)+'</span></div>':'<div style="font-size:12px;color:var(--t3);">아직 메모가 없어요</div>')
-      +'</div>'
-      +DIVIDER
+      // 평점 + 나의 메모 (방문자: 둘 다 비공개면 섹션 자체 숨김)
+      +((isFieldVisible('rating') || isFieldVisible('myNote'))
+        ? ('<div style="'+SECTION_MB+'">'
+          +'<div style="'+SEC+'">평점 &amp; 메모</div>'
+          +(isFieldVisible('rating')
+            ? '<div style="display:flex;align-items:center;gap:10px;margin-bottom:'+(isFieldVisible('myNote')?'10px':'0')+';">'
+              +stHtml(b.rating||0,"",20)
+              +'<span style="font-family:\'Instrument Serif\',serif;font-size:22px;font-style:italic;color:var(--t1);">'+(b.rating||0)+'.0</span>'
+              +'</div>'
+            : '')
+          +(isFieldVisible('myNote')
+            ? (b.myNote?'<div style="display:flex;gap:7px;align-items:flex-start;"><span style="font-size:13px;flex-shrink:0;">✍️</span><span style="font-size:11px;color:var(--t2);font-style:italic;line-height:1.65;">'+esc(b.myNote)+'</span></div>':(isOwner?'<div style="font-size:12px;color:var(--t3);">아직 메모가 없어요</div>':''))
+            : '')
+          +'</div>'
+          +DIVIDER)
+        : '')
       // 원두 정보
       +(infoGrid?'<div style="'+SECTION_MB+'">'
         +'<div style="'+SEC+'">원두 정보</div>'
@@ -2314,7 +2356,7 @@ function rAuthSection() {
 
 function rAdmin(){
   var at=S.adminTab;
-  var tabs=[["cafe","🏠 내 카페"],["degas","🫧 디개싱"],["behavior","⚙️ 동작"],["data","💾 데이터"]];
+  var tabs=[["cafe","🏠 내 카페"],["public","🌐 공개"],["degas","🫧 디개싱"],["behavior","⚙️ 동작"],["data","💾 데이터"]];
   var roastLevels=["라이트","미디엄라이트","미디엄","미디엄다크","다크"];
 
   var RS='width:100%;border:1px solid var(--ib);border-radius:10px;padding:9px 12px;font-size:13px;font-family:inherit;background:var(--ibg);color:var(--t1);outline:none;box-sizing:border-box;';
@@ -2362,6 +2404,36 @@ function rAdmin(){
       +(cd?'<div style="font-size:10px;color:var(--t3);">'+esc(cd)+'</div>':'')
       +'</div>'
       +'<button onclick="saveCafe()" style="width:100%;background:var(--h1);color:var(--bg);border:none;border-radius:14px;padding:14px;font-size:14px;font-family:inherit;font-weight:700;cursor:pointer;">저장하기</button>';
+  }
+
+  // ── 공개 탭 (Phase 2-B)
+  if(at==="public"){
+    var draft = S.publicFieldsDraft || publicFields;
+    var dirty = !!S.publicFieldsDraft;
+    body+='<p style="'+SEC_LBL+'">항상 공개 (변경 불가)</p>'
+      +'<div style="background:var(--card);border-radius:16px;border:0.5px solid var(--ib);margin-bottom:16px;padding:14px 16px;">'
+      +'<div style="display:flex;flex-wrap:wrap;gap:6px;">'
+      + ALWAYS_PUBLIC_FIELDS.map(function(k){
+          return '<span style="background:var(--ibg);border:0.5px solid var(--ib);color:var(--t2);border-radius:20px;padding:4px 10px;font-size:11px;">'+(FIELD_LABELS[k]||k)+'</span>';
+        }).join("")
+      +'</div>'
+      +'<div style="font-size:11px;color:var(--t3);margin-top:10px;line-height:1.6;">원두 식별과 메뉴판 표시에 필수인 정보입니다.</div>'
+      +'</div>'
+      +'<p style="'+SEC_LBL+'">공개 / 비공개 선택</p>'
+      +'<div style="'+CARD+'">';
+    TOGGLEABLE_FIELDS.forEach(function(pair, i){
+      var key=pair[0], label=pair[1];
+      var isLast=(i===TOGGLEABLE_FIELDS.length-1);
+      body+='<div style="'+(isLast?ROWLAST:ROW)+'">'
+        +'<div>'
+        +'<div style="font-size:14px;color:var(--t1);font-weight:500;">'+label+'</div>'
+        +'<div style="font-size:11px;color:var(--t3);margin-top:2px;">'+(draft[key]?'방문자에게 표시됨':'오너만 볼 수 있음')+'</div>'
+        +'</div>'
+        +mkToggle(!!draft[key],"adminPublicToggle('"+key+"')")
+        +'</div>';
+    });
+    body+='</div>'
+      +'<button onclick="saveAdminPublic()" style="width:100%;background:'+(dirty?'var(--h1)':'rgba(42,26,12,0.30)')+';color:var(--bg);border:none;border-radius:14px;padding:14px;font-size:14px;font-family:inherit;font-weight:700;cursor:'+(dirty?'pointer':'default')+';margin-top:14px;">저장하기'+(dirty?' *':'')+'</button>';
   }
 
   // ── 디개싱 탭
@@ -2496,7 +2568,7 @@ window.openAdmin=function(){
   if(!isOwner){showToast("권한이 없습니다");return;}
   S.showAdmin=true;S.adminTab="degas";render();
 };
-window.closeAdmin=function(){S.showAdmin=false;render();};
+window.closeAdmin=function(){S.showAdmin=false;S.publicFieldsDraft=null;render();};
 window.adminTab=function(t){S.adminTab=t;render();};
 window.adminDegasDec=function(rl){
   var cur=settings.degasDays[rl]||DEFAULT_SETTINGS.degasDays[rl]||8;
@@ -2510,6 +2582,29 @@ window.adminDegasInc=function(rl){
 };
 window.adminToggle=function(key){
   settings[key]=!settings[key];render();
+};
+// Phase 2-B: 공개 필드 토글
+window.adminPublicToggle=function(key){
+  if(!S.publicFieldsDraft) S.publicFieldsDraft=Object.assign({},publicFields);
+  S.publicFieldsDraft[key]=!S.publicFieldsDraft[key];
+  render();
+};
+window.saveAdminPublic=async function(){
+  if(!isOwner){showToast("권한이 없습니다");return;}
+  var slug=S.route&&S.route.slug;
+  if(!slug){showToast("슬러그를 찾을 수 없어요");return;}
+  if(!S.publicFieldsDraft){showToast("변경사항이 없어요");return;}
+  var draft=Object.assign({},S.publicFieldsDraft);
+  try{
+    await updateDoc(doc(db,"slugs",slug),{publicFields:draft});
+    publicFields=Object.assign({},draft);
+    S.publicFieldsDraft=null;
+    showToast("공개 설정 저장됨 ✅");
+    render();
+  }catch(err){
+    console.error("[publicFields] save error:",err);
+    showToast("저장 실패: "+(err.message||err));
+  }
 };
 window.saveAdminDegas=async function(){
   if(!isOwner){showToast("권한이 없습니다");return;}
@@ -2647,16 +2742,21 @@ function parseRoute(){
 async function setOwnerFlag(slug, slugSnap){
   if (ownerCheckCache.slug !== slug) {
     var ownerUid = null;
+    var pf = Object.assign({}, DEFAULT_PUBLIC_FIELDS);
     try {
       if (!slugSnap) slugSnap = await getDoc(doc(db, "slugs", slug));
       if (slugSnap && slugSnap.exists()) {
         var data = slugSnap.data() || {};
         ownerUid = data.ownerUid || null;
+        if (data.publicFields && typeof data.publicFields === 'object') {
+          pf = Object.assign({}, DEFAULT_PUBLIC_FIELDS, data.publicFields);
+        }
       }
     } catch(err) {
       console.error("[owner] slug fetch error:", err);
     }
     ownerCheckCache = { slug: slug, ownerUid: ownerUid };
+    publicFields = pf;
   }
   isOwner = !!(currentUser && currentUser.uid === ownerCheckCache.ownerUid);
 }
@@ -2666,6 +2766,7 @@ async function resolveRoute(){
   if(r.type!=="cafe"){
     S.route=r; S.routeLoading=false;
     isOwner=false; ownerCheckCache={slug:null,ownerUid:null};
+    publicFields=Object.assign({},DEFAULT_PUBLIC_FIELDS);
     render(); return;
   }
   S.routeLoading=true; render();
