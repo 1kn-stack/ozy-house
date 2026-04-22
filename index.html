@@ -317,9 +317,8 @@ window.signInGoogle = async function() {
       var slug = userSnap.exists() ? ((userSnap.data()||{}).slug||null) : null;
       if (slug) {
         var target = "/" + slug;
-        if (location.pathname !== target) {
-          history.pushState(getHistoryState(), "", target);
-          await resolveRoute();
+        if (location.pathname !== target || location.search) {
+          await navigateTo(target);
         }
       }
     } catch (e) {
@@ -1031,7 +1030,7 @@ window.toggleRec = function(id){
 window.setTab = function(t){S.tab=t;S.detail=null;S.editMode=false;pushHistory();render();};
 window.setFilter = function(f){S.filter=f;render();};
 window.openDetail = function(id){S.detail=id;S.editMode=false;pushHistory();render();};
-window.closeDetail = function(){S.detail=null;S.editMode=false;render();};
+window.closeDetail = function(){S.detail=null;S.editMode=false;pushHistory();render();};
 
 window.openEdit = function(id){
   if(!isOwner){showToast("권한이 없습니다");return;}
@@ -2729,12 +2728,21 @@ function rNav(){
 }
 
 // ── Router ──────────────────────────────────────────
+var VALID_TABS = ['menu','archive','diary'];
 function parseRoute(){
   var seg=location.pathname.replace(/^\/+|\/+$/g,"");
   if(seg==="") return {type:"landing"};
   if(seg==="login") return {type:"login"};
   if(seg.indexOf("/")===-1 && /^[a-z0-9-]{1,40}$/i.test(seg)){
-    return {type:"cafe", slug:seg.toLowerCase()};
+    var params = new URLSearchParams(location.search);
+    var tab = params.get('tab');
+    var detail = params.get('bean');
+    return {
+      type:"cafe",
+      slug:seg.toLowerCase(),
+      tab: VALID_TABS.indexOf(tab) >= 0 ? tab : null,
+      detail: detail || null
+    };
   }
   return {type:"notfound"};
 }
@@ -2783,6 +2791,10 @@ async function resolveRoute(){
       if(slugSnap.exists()){
         S.route=r;
         await setOwnerFlag(r.slug, slugSnap); // 추가 read 없이 재활용
+        // Phase 3: URL 쿼리 기반 초기 탭/상세 반영
+        S.tab = r.tab || 'menu';
+        S.detail = r.detail || null;
+        S.editMode = false;
       } else {
         S.route={type:"notfound"};
         isOwner=false;
@@ -2871,31 +2883,66 @@ resolveRoute();
 function getHistoryState(){
   return {tab:S.tab, detail:S.detail};
 }
+// Phase 3: cafe 라우트일 때 현재 상태를 /{slug}?tab=..&bean=.. 형태로 직렬화
+function buildURL(route, tab, detail){
+  if(!route || route.type !== 'cafe'){
+    return location.pathname + location.search;
+  }
+  var qs = [];
+  if(tab && tab !== 'menu') qs.push('tab=' + encodeURIComponent(tab));
+  if(detail) qs.push('bean=' + encodeURIComponent(detail));
+  return '/' + route.slug + (qs.length ? '?' + qs.join('&') : '');
+}
 function pushHistory(){
-  history.pushState(getHistoryState(), "");
+  var url = buildURL(S.route, S.tab, S.detail);
+  history.pushState(getHistoryState(), "", url);
+}
+// 내부 경로로 클라이언트 네비게이션 (URL 변경 + 라우트 재평가)
+async function navigateTo(path){
+  history.pushState({}, "", path);
+  await resolveRoute();
 }
 // 초기 상태 replace (첫 진입 시 스택 기준점)
 history.replaceState(getHistoryState(), "");
 
-window.addEventListener('popstate', function(e){
-  var state = e.state;
-  if(!state) return;
-  // 모달 열려있으면 모달만 닫기
-  if(S.showAdd||S.showDiary||S.showDegasEdit||S.guestId||S.showAdmin){
-    S.showAdd=false;S.showDiary=false;S.showDegasEdit=false;S.guestId=null;S.showAdmin=false;
-    history.pushState(getHistoryState(),"");
+window.addEventListener('popstate', async function(e){
+  // 모달 열려있으면 모달만 닫기 (모달은 URL을 바꾸지 않으므로 현재 상태 URL로 복원)
+  if(S.showAdd||S.showDiary||S.showDegasEdit||S.guestId||S.showAdmin||S.showFilterSheet){
+    S.showAdd=false;S.showDiary=false;S.showDegasEdit=false;S.guestId=null;S.showAdmin=false;S.showFilterSheet=false;
+    history.pushState(getHistoryState(), "", buildURL(S.route, S.tab, S.detail));
     render();
     return;
   }
-  // 상세 페이지 → 목록으로
-  if(S.detail && !state.detail){
-    S.detail=null;S.editMode=false;render();return;
+  // Phase 3: URL이 진실. slug/type이 바뀌면 route 재평가 (Firestore 재조회)
+  var next = parseRoute();
+  var cur = S.route || {};
+  if(next.type !== cur.type || next.slug !== cur.slug){
+    await resolveRoute();
+    return;
   }
-  // 탭 전환
-  S.tab=state.tab||"menu";
-  S.detail=state.detail||null;
-  S.editMode=false;
+  // 같은 카페 내 탭/상세 이동
+  if(next.type === 'cafe'){
+    S.tab = next.tab || 'menu';
+    S.detail = next.detail || null;
+    S.editMode = false;
+  }
   render();
+});
+
+// Phase 3: 내부 링크 클릭 가로채기 → 풀 리로드 없이 navigateTo
+document.addEventListener('click', function(e){
+  if(e.defaultPrevented) return;
+  if(e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  var a = e.target && e.target.closest ? e.target.closest('a') : null;
+  if(!a) return;
+  var href = a.getAttribute('href');
+  if(!href) return;
+  if(a.target && a.target !== '_self') return;
+  if(a.hasAttribute('download')) return;
+  // 내부 경로(/로 시작, //나 프로토콜 아님)만 처리
+  if(href.charAt(0) !== '/' || href.charAt(1) === '/') return;
+  e.preventDefault();
+  navigateTo(href);
 });
 
 // [수정] paste 이벤트 단일 등록 (window.handlePaste 제거 후 여기서만 처리)
