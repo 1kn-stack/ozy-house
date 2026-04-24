@@ -4,19 +4,54 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>OZY HOUSE</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&family=Noto+Sans+KR:wght@200;300;400&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&family=Noto+Sans+KR:wght@200;300;400&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&family=Noto+Sans+KR:wght@200;300;400&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&family=Noto+Sans+KR:wght@200;300;400&display=swap" rel="stylesheet"></noscript>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
+  /* Surface */
   --bg:#000;--card:#111;--card2:#1a1612;
+  --nav:#000;--modal-bg:#3a2e24;--card-bg:#1a1612;--overlay-hdr:#000;
+  /* Text */
   --h1:#fff;--h2:rgba(255,255,255,0.75);
-  --ac:#b84830;--acs:rgba(184,72,0,0.15);
   --t1:rgba(255,255,255,0.88);--t2:rgba(255,255,255,0.55);--t3:rgba(255,255,255,0.30);
+  /* Accent */
+  --ac:#b84830;--acs:rgba(184,72,0,0.15);
+  /* Inner borders / inner backgrounds */
   --ib:rgba(255,255,255,0.14);--ibg:rgba(255,255,255,0.07);
-  --nav:#000;
-  --modal-bg:#3a2e24;
-  --card-bg:#1a1612;
-  --overlay-hdr:#000;
+  /* Semantic colors */
+  --blue:rgba(96,165,250,0.85);--blue-soft:rgba(59,130,246,0.12);--blue-br:rgba(96,165,250,0.25);
+  --gold:#fbbf24;
+  /* Process chips */
+  --proc-natural:#b06020;--proc-washed:#1a5090;--proc-honey:#807020;
+  --proc-anaerobic:#5010a0;--proc-carbonic:#5010a0;--proc-wethulled:#306060;
+  /* Roast level */
+  --roast-light:#f59e0b;--roast-mediumlight:#d97706;--roast-medium:#ea580c;
+  --roast-mediumdark:#c2410c;--roast-dark:#431407;
+  /* Radii */
+  --r-chip:16px;--r-pill:20px;--r-card:14px;--r-btn:14px;--r-btn-sm:10px;
+  --r-input:12px;--r-modal:24px;--r-outer:24px;--r-full:9999px;
+  /* Spacing rhythm */
+  --gutter-outer:22px;--gutter-inner:14px;--pad-card:14px;--gap-card:8px;
+  /* Shadows */
+  --shadow-card-light:0 1px 3px rgba(0,0,0,0.07),0 0 0 0.5px rgba(0,0,0,0.06);
+  --shadow-fab:0 4px 20px rgba(255,159,10,0.4);
+  --shadow-toast:0 4px 20px rgba(0,0,0,0.4);
+  --shadow-frame:0 24px 80px rgba(0,0,0,0.7);
+  /* Motion */
+  --ease:cubic-bezier(.4,0,.2,1);--dur-fast:.15s;--dur-base:.18s;--dur-slow:.28s;
+  /* Fonts */
+  --font-display:'Bebas Neue',sans-serif;
+  --font-serif:'Instrument Serif',serif;
+  --font-body:'DM Sans','Noto Sans KR',sans-serif;
+  --font-ko:'Noto Sans KR',sans-serif;
+  /* Semantic type */
+  --h1-size:36px;--h1-weight:400;--h2-size:28px;--h2-weight:400;
+  --bean-name:22px;--body-size:14px;--small-size:12px;
+  --micro-size:9px;--micro-ls:2px;--chip-size:10px;--chip-ls:0.5px;--caps-ls:1.5px;
 }
 /* ── 다크 카드 클래스 ── */
 .dk-card{position:relative;overflow:hidden;margin-bottom:3px;}
@@ -42,15 +77,16 @@
 
 /* ── 라이트 모드 변수 ── */
 body.light{
+  /* Surface */
   --bg:#f0ebe0;--card:#fff;--card2:#f8f5ef;
+  --nav:#f0ebe0;--modal-bg:#fff;--card-bg:#fff;--overlay-hdr:#f0ebe0;
+  /* Text */
   --h1:#1a0e08;--h2:rgba(26,14,8,0.75);
-  --ac:#b84830;--acs:rgba(184,72,0,0.10);
   --t1:rgba(26,14,8,0.88);--t2:rgba(26,14,8,0.55);--t3:rgba(26,14,8,0.35);
+  /* Accent */
+  --ac:#b84830;--acs:rgba(184,72,0,0.10);
+  /* Inner borders / inner backgrounds */
   --ib:rgba(26,14,8,0.12);--ibg:#f4efe6;
-  --nav:#f0ebe0;
-  --modal-bg:#fff;
-  --card-bg:#fff;
-  --overlay-hdr:#f0ebe0;
 }
 /* 라이트 네비/공용 */
 body.light .bnav{background:rgba(240,235,224,0.95);border-top-color:rgba(26,14,8,0.08);}
@@ -108,6 +144,9 @@ body.light .dk-memo-btn{
 body.light .dk-colorbar{display:block;}
 body.light .dk-divider{display:none;}
 
+/* ── 베이스 레이아웃 ── */
+body{font-family:var(--font-body);background:var(--bg);min-height:100vh;color:var(--t1);}
+#app{max-width:480px;margin:0 auto;min-height:100vh;background:var(--bg);}
 @media(min-width:768px){
   body{background:#0a0a0a;}
   body.light{background:#d8d3c8;}
@@ -130,17 +169,17 @@ body.light .theme-toggle{
   background:rgba(26,14,8,0.07);
   border-color:rgba(26,14,8,0.12);
 }
-
-body{font-family:'DM Sans','Noto Sans KR',sans-serif;background:var(--bg);min-height:100vh;color:var(--t1);}
-#app{max-width:480px;margin:0 auto;min-height:100vh;background:var(--bg);}
-@media(min-width:768px){
-  body{background:#0a0a0a;}
-  #app{margin:32px auto;border-radius:24px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,0.7);min-height:auto;}
-  .bnav{border-radius:0 0 24px 24px;}
-}
-/* 폰트 별칭 */
+/* 폰트 별칭 (레거시) */
 .bebas{font-family:'Bebas Neue',sans-serif;}
 .serif{font-family:'Instrument Serif',serif;font-style:italic;}
+/* ── OZY 타이포 유틸리티 (Version 2) ── */
+.ozy-display{font-family:var(--font-display);font-size:var(--h1-size);color:var(--t1);letter-spacing:0.01em;text-transform:uppercase;}
+.ozy-serif{font-family:var(--font-serif);font-style:italic;font-weight:400;font-size:var(--bean-name);color:var(--t1);line-height:1.2;word-break:keep-all;}
+.ozy-body{font-family:var(--font-body);font-size:var(--body-size);color:var(--t1);}
+.ozy-micro{font-family:var(--font-body);font-size:var(--micro-size);letter-spacing:var(--micro-ls);text-transform:uppercase;color:var(--t3);}
+.ozy-chip{font-family:var(--font-body);font-size:var(--chip-size);letter-spacing:var(--chip-ls);}
+.ozy-glass{background:rgba(0,0,0,0.28);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:0.5px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.90);}
+body.light .ozy-glass{background:rgba(0,0,0,0.05);backdrop-filter:none;-webkit-backdrop-filter:none;border:none;color:rgba(26,14,8,0.55);}
 /* 그라데이션 */
 .g-yega{background:radial-gradient(ellipse at 15% 15%,#ff6eb4 0%,transparent 55%),radial-gradient(ellipse at 80% 10%,#c77dff 0%,transparent 50%),radial-gradient(ellipse at 60% 78%,#ff9a3c 0%,transparent 55%),radial-gradient(ellipse at 10% 82%,#ff6b6b 0%,transparent 45%),#d0506a;}
 .g-santa{background:radial-gradient(ellipse at 15% 15%,#ff1744 0%,transparent 50%),radial-gradient(ellipse at 75% 20%,#7c4dff 0%,transparent 55%),radial-gradient(ellipse at 40% 78%,#e040fb 0%,transparent 50%),radial-gradient(ellipse at 85% 82%,#ff6d00 0%,transparent 45%),#8c1c48;}
