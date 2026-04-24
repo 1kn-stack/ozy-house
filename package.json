@@ -6,7 +6,10 @@
   "description": "OZY HOUSE 관리용 Node.js 스크립트 모음",
   "scripts": {
     "seed:reserved-slugs": "node scripts/seed-reserved-slugs.mjs",
-    "seed:initial-data": "node scripts/seed-initial-data.mjs"
+    "seed:initial-data": "node scripts/seed-initial-data.mjs",
+    "migrate:public-fields": "node scripts/migrate-public-fields.mjs",
+    "audit:tenant-integrity": "node scripts/audit-tenant-integrity.mjs",
+    "cleanup:settings-legacy": "node scripts/cleanup-settings-legacy.mjs"
   },
   "dependencies": {
     "firebase-admin": "^12.7.0"

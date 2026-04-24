@@ -1,0 +1,75 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── 헬퍼 ────────────────────────────────────────────
+    function isAuthed() {
+      return request.auth != null;
+    }
+    // 카페 오너: cafes/{uid} 문서 존재로 판별 (seed로만 생성됨)
+    function isCafeOwner() {
+      return isAuthed() &&
+             exists(/databases/$(database)/documents/cafes/$(request.auth.uid));
+    }
+    // 특정 slug의 오너인지
+    function isSlugOwner(slug) {
+      return isAuthed() &&
+             get(/databases/$(database)/documents/slugs/$(slug)).data.ownerUid == request.auth.uid;
+    }
+    // update 시 특정 필드 불변 검증 (요청에 해당 필드가 있으면 기존 값과 같아야 함)
+    function fieldUnchanged(field) {
+      return !(field in request.resource.data.keys()) ||
+             request.resource.data[field] == resource.data[field];
+    }
+
+    // ── 공개 메뉴판 데이터 (현재 최상위 공용 컬렉션) ─
+    match /beans/{id} {
+      allow read: if true;
+      allow write: if isCafeOwner();
+    }
+    match /diary/{id} {
+      allow read: if true;
+      allow write: if isCafeOwner();
+    }
+
+    // ── 카페 설정 ──────────────────────────────────────
+    match /settings/{doc} {
+      allow read: if true;
+      allow write: if isCafeOwner();
+    }
+
+    // ── 라우터/공개 필드 관련 ─────────────────────────
+    match /slugs/{slug} {
+      allow read: if true;
+      // 오너만 update. ownerUid/createdAt 변경 금지
+      allow update: if isSlugOwner(slug)
+                    && fieldUnchanged('ownerUid')
+                    && fieldUnchanged('createdAt');
+      allow create, delete: if false;  // seed 전용 (Admin SDK가 규칙 우회)
+    }
+
+    match /reservedSlugs/{slug} {
+      allow read: if true;
+      allow write: if false;  // seed 전용
+    }
+
+    // ── 유저/카페 메타 ─────────────────────────────────
+    match /users/{uid} {
+      allow read: if isAuthed() && request.auth.uid == uid;
+      allow update: if isAuthed() && request.auth.uid == uid
+                    && fieldUnchanged('slug');
+      allow create, delete: if false;  // seed 전용
+    }
+
+    match /cafes/{uid} {
+      allow read: if true;
+      allow update: if isAuthed() && request.auth.uid == uid;
+      allow create, delete: if false;  // seed 전용
+    }
+
+    // ── 그 외 모든 경로 기본 차단 ─────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
