@@ -533,7 +533,7 @@ const BUCKETS = [
   ['vanilla',     ['바닐라','바닐라빈','크렘브륄레','바닐라향','vanilla','vanilla bean','creme brulee']],
   ['candy',       ['젤리','캔디','사탕','과일사탕','과일젤리','하드캔디','보리사탕','jelly','candy','sour candy','gummy','bubblegum','hard candy','fruit candy']],
   // floral
-  ['jasmine',     ['자스민','재스민','쟈스민','제스민','제즈민','자스민향','재스민향','자스민차','자스민티','플로럴','벚꽃','오렌지블라썸','jasmine','jasmin','jasminum','blossom','floral','flower','orange blossom']],
+  ['jasmine',     ['자스민','재스민','쟈스민','제스민','제즈민','자스민향','재스민향','자스민차','자스민티','플로럴','벚꽃','오렌지블라썸','꽃다발','꽃향','꽃향기','jasmine','jasmin','jasminum','blossom','floral','flower','orange blossom','bouquet']],
   ['rose',        ['장미','로즈','로즈힙','rose','rosehip','damask rose']],
   ['lavender',    ['라벤더','라일락','백합','튤립','제라늄','lavender','lilac','lily','tulip','geranium']],
   ['chamomile',   ['캐모마일','화이트 플로럴','엘더플라워','아카시아','국화','국화차','캐모마일차','linden','white floral','chamomile','elderflower','chrysanthemum','acacia']],
