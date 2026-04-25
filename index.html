@@ -87,8 +87,8 @@ body.light .fch-i{background:rgba(26,14,8,0.06);}
 .bn-card:active{transform:scale(0.985);}
 .bn-card.bn-empty{opacity:0.55;}
 .bn-card.bn-degas{border-color:rgba(99,179,237,0.28);}
-/* 썸네일 */
-.bn-thumb{position:relative;width:100px;height:130px;flex-shrink:0;border-radius:12px;overflow:hidden;box-shadow:inset 0 0 0 0.5px rgba(255,255,255,0.08);background-size:cover !important;background-position:center !important;}
+/* 썸네일 — 가로폭 축소로 정보 영역 더 확보 */
+.bn-thumb{position:relative;width:84px;height:118px;flex-shrink:0;border-radius:12px;overflow:hidden;box-shadow:inset 0 0 0 0.5px rgba(255,255,255,0.08);background-size:cover !important;background-position:center !important;}
 .bn-thumb-ov{position:absolute;inset:0;background:linear-gradient(155deg,rgba(255,255,255,0.18) 0%,transparent 45%);pointer-events:none;}
 /* 작은 썸네일에서도 메쉬가 잘 보이도록 saturation 살짝 강화 */
 .bn-thumb{filter:saturate(1.08);}
@@ -107,11 +107,12 @@ body.light .bn-thumb{filter:saturate(1.15) brightness(0.97);}
 .bn-card.bn-compact .bn-roast .seg{width:4px;height:9px;}
 /* 원두명 */
 .bn-name{font-family:var(--font-serif);font-style:italic;font-weight:400;color:var(--t1);line-height:1.2;word-break:keep-all;margin:0;}
-/* 한 줄 설명 (tagline / myNote / origin) */
-.bn-desc{font-size:13px;color:var(--t2);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0;display:flex;align-items:baseline;gap:6px;min-width:0;}
-.bn-desc.italic{font-style:italic;color:var(--t3);}
-.bn-desc + .bn-desc{margin-top:-2px;}
-.bn-desc-ico{font-size:11px;flex-shrink:0;font-style:normal !important;line-height:1;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',var(--font-body);}
+/* 설명 줄 (tagline / myNote / origin) — 최대 2줄 + ellipsis */
+.bn-desc{font-size:12px;color:var(--t2);line-height:1.45;margin:0;display:flex;align-items:flex-start;gap:6px;min-width:0;}
+.bn-desc-text{flex:1;min-width:0;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:keep-all;overflow-wrap:break-word;}
+.bn-desc.italic .bn-desc-text{font-style:italic;color:var(--t3);}
+.bn-desc + .bn-desc{margin-top:1px;}
+.bn-desc-ico{font-size:11px;flex-shrink:0;font-style:normal !important;line-height:1.45;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',var(--font-body);margin-top:1px;}
 /* 산지 라인 — 원두명 위 */
 .bn-origin{font-size:12px;color:var(--t2);line-height:1.3;display:flex;align-items:center;gap:5px;margin:-2px 0 -2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',var(--font-body);}
 .bn-origin span{overflow:hidden;text-overflow:ellipsis;font-family:var(--font-body);}
@@ -132,7 +133,7 @@ body.light .bn-thumb{filter:saturate(1.15) brightness(0.97);}
 .bn-card.bn-compact .bn-comments{font-size:10.5px;}
 /* Compact 변형 (아카이브 탭) */
 .bn-card.bn-compact{padding:12px;gap:12px;margin-bottom:8px;}
-.bn-card.bn-compact .bn-thumb{width:80px;height:104px;}
+.bn-card.bn-compact .bn-thumb{width:68px;height:92px;}
 .bn-card.bn-compact .bn-info{gap:4px;}
 .bn-card.bn-compact .bn-name{font-size:18px !important;}
 .bn-card.bn-compact .bn-desc{display:none;}
@@ -1796,7 +1797,7 @@ function rMenu(){
     var descEl = descLines
       ? descLines.map(function(d){
           var ico = d.italic ? '✍️' : '🔖';
-          return '<div class="bn-desc'+(d.italic?' italic':'')+'"><span class="bn-desc-ico">'+ico+'</span>'+esc(d.text)+'</div>';
+          return '<div class="bn-desc'+(d.italic?' italic':'')+'"><span class="bn-desc-ico">'+ico+'</span><span class="bn-desc-text">'+esc(d.text)+'</span></div>';
         }).join('')
       : '';
 
