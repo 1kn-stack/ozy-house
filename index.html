@@ -101,9 +101,9 @@ body.light .bn-thumb{filter:saturate(1.15) brightness(0.97);}
 .bn-status.on-empty{color:var(--t3);}
 /* 로스트 게이지 (5단 그라데이션 바) */
 .bn-roast{display:flex;gap:2px;flex-shrink:0;align-items:center;}
-.bn-roast .seg{width:5px;height:9px;border-radius:1.5px;background:var(--ib);transition:background var(--dur-fast);}
-.bn-roast .seg.on{background:var(--seg-c,var(--ac));}
-.bn-card.bn-compact .bn-roast .seg{width:4px;height:7px;}
+.bn-roast .seg{width:5px;height:11px;border-radius:1.5px;background:var(--ib);transition:background var(--dur-fast);}
+.bn-roast .seg.on{background:var(--ac);} /* JS가 inline으로 단계별 hex 색상 주입 */
+.bn-card.bn-compact .bn-roast .seg{width:4px;height:9px;}
 /* 원두명 */
 .bn-name{font-family:var(--font-serif);font-style:italic;font-weight:400;color:var(--t1);line-height:1.2;word-break:keep-all;margin:0;}
 /* 한 줄 설명 (tagline / myNote / origin) */
@@ -142,8 +142,8 @@ body.light .bn-card{background:var(--card);box-shadow:var(--shadow-card-light);b
 body.light .bn-card.bn-degas{border-color:rgba(37,99,235,0.30);}
 body.light .bn-thumb{box-shadow:inset 0 0 0 0.5px rgba(0,0,0,0.06);}
 body.light .bn-thumb-ov{background:linear-gradient(155deg,rgba(255,255,255,0.32) 0%,transparent 45%);}
-body.light .bn-roast .seg{background:rgba(26,14,8,0.12);}
-body.light .bn-roast .seg.on{filter:saturate(1.1) brightness(0.92);}
+body.light .bn-roast .seg{background:rgba(26,14,8,0.12);box-shadow:none;}
+body.light .bn-roast .seg.on{box-shadow:0 0 0 0.5px rgba(0,0,0,0.20);filter:saturate(1.2) brightness(0.88) contrast(1.05);}
 body.light .bn-status.on-degas{color:#2563eb;}
 body.light .bn-comments.has{opacity:1;}
 body.light .bn-origin{color:rgba(26,14,8,0.62);}
@@ -1028,14 +1028,15 @@ function roastLevelIndex(rl){
 }
 
 // 5단 그라데이션 바 HTML (라이트→다크 순으로 색상 변화)
+// 인라인 hex 색상 사용 — CSS 변수 중첩 회피 (라이트 모드에서 var() 안 풀리는 이슈 방지)
+var ROAST_PALETTE=['#f59e0b','#d97706','#ea580c','#c2410c','#7c2d12'];
 function roastBars(rl){
   var lvl=roastLevelIndex(rl);
   if(!lvl) return '';
-  var palette=['var(--roast-light)','var(--roast-mediumlight)','var(--roast-medium)','var(--roast-mediumdark)','var(--roast-dark)'];
-  var html='<div class="bn-roast" title="배전도: '+esc(normRL(rl))+'">';
+  var html='<div class="bn-roast" title="배전도: '+esc(normRL(rl)||rl)+'">';
   for(var i=1;i<=5;i++){
     var on=i<=lvl;
-    html+='<span class="seg'+(on?' on':'')+'" style="--seg-c:'+palette[i-1]+';"></span>';
+    html+='<span class="seg'+(on?' on':'')+'"'+(on?' style="background:'+ROAST_PALETTE[i-1]+';"':'')+'></span>';
   }
   return html+'</div>';
 }
