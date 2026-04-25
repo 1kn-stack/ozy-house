@@ -87,8 +87,8 @@ body.light .fch-i{background:rgba(26,14,8,0.06);}
 .bn-card:active{transform:scale(0.985);}
 .bn-card.bn-empty{opacity:0.55;}
 .bn-card.bn-degas{border-color:rgba(99,179,237,0.28);}
-/* 썸네일 — 가로폭 축소로 정보 영역 더 확보 */
-.bn-thumb{position:relative;width:84px;height:118px;flex-shrink:0;border-radius:12px;overflow:hidden;box-shadow:inset 0 0 0 0.5px rgba(255,255,255,0.08);background-size:cover !important;background-position:center !important;}
+/* 썸네일 — 가로 84, 세로는 카드 높이에 맞춰 stretch (min-height로 짧은 카드도 확보) */
+.bn-thumb{position:relative;width:84px;flex-shrink:0;align-self:stretch;min-height:118px;border-radius:12px;overflow:hidden;box-shadow:inset 0 0 0 0.5px rgba(255,255,255,0.08);background-size:cover !important;background-position:center !important;}
 .bn-thumb-ov{position:absolute;inset:0;background:linear-gradient(155deg,rgba(255,255,255,0.18) 0%,transparent 45%);pointer-events:none;}
 /* 작은 썸네일에서도 메쉬가 잘 보이도록 saturation 살짝 강화 */
 .bn-thumb{filter:saturate(1.08);}
@@ -133,7 +133,7 @@ body.light .bn-thumb{filter:saturate(1.15) brightness(0.97);}
 .bn-card.bn-compact .bn-comments{font-size:10.5px;}
 /* Compact 변형 (아카이브 탭) */
 .bn-card.bn-compact{padding:12px;gap:12px;margin-bottom:8px;}
-.bn-card.bn-compact .bn-thumb{width:68px;height:92px;}
+.bn-card.bn-compact .bn-thumb{width:68px;min-height:92px;height:auto;}
 .bn-card.bn-compact .bn-info{gap:4px;}
 .bn-card.bn-compact .bn-name{font-size:18px !important;}
 .bn-card.bn-compact .bn-desc{display:none;}
