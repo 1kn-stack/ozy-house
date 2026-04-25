@@ -68,7 +68,8 @@
 /* 플레이버 칩 — 목업 .fch 스펙 기반 */
 .dk-chip{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-family:var(--font-serif);font-style:italic;background:rgba(0,0,0,0.28);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:0.5px solid rgba(255,255,255,0.16);color:rgba(255,255,255,0.90);border-radius:8px;padding:3px 8px 3px 3px;}
 /* 칩 내부 아이콘 박스 (v4/v5 SVG 컨테이너) */
-.fch-i{width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);border-radius:5px;flex-shrink:0;}
+.fch-i{width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);border-radius:5px;flex-shrink:0;line-height:1;font-size:12px;}
+.fch-i-emoji{font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;font-style:normal;}
 body.light .fch-i{background:rgba(26,14,8,0.06);}
 .dk-notes{border-top:0.5px solid rgba(255,255,255,0.16);padding-top:9px;margin-bottom:10px;display:flex;flex-direction:column;gap:5px;}
 .note-row{display:flex;align-items:flex-start;gap:7px;}
@@ -137,8 +138,8 @@ body.light .bn-thumb{filter:saturate(1.15) brightness(0.97);}
 .bn-card.bn-compact .bn-desc{display:none;}
 .bn-card.bn-compact .bn-flavors{display:none;}
 .bn-card.bn-compact .bn-foot{padding-top:2px;}
-/* 라이트 모드 */
-body.light .bn-card{background:var(--card);box-shadow:var(--shadow-card-light);border-color:rgba(26,14,8,0.10);}
+/* 라이트 모드 — paper card 톤: 그림자 약하게, hairline 명확하게 */
+body.light .bn-card{background:var(--card);box-shadow:0 1px 2px rgba(0,0,0,0.04);border-color:rgba(26,14,8,0.12);}
 body.light .bn-card.bn-degas{border-color:rgba(37,99,235,0.30);}
 body.light .bn-thumb{box-shadow:inset 0 0 0 0.5px rgba(0,0,0,0.06);}
 body.light .bn-thumb-ov{background:linear-gradient(155deg,rgba(255,255,255,0.32) 0%,transparent 45%);}
@@ -289,11 +290,7 @@ body.light .ozy-glass{background:rgba(0,0,0,0.05);backdrop-filter:none;-webkit-b
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 textarea.inp{resize:none;min-height:80px;}
 
-/* 라이트 카드 목록 wrapping 패딩 */
-body.light #app > div > div[style*="padding:0 14px"] {
-  padding: 0 0 88px !important;
-}
-body.light .lineup-cards-wrap{padding:0 0 88px;}
+/* (v1 잔재 제거) — v2 .bn-card는 컨테이너 좌우 padding을 사용하므로 0 강제 override 삭제 */
 
 /* ── 라이트 헤더 특수처리 ── */
 body.light .lineup-wrap{background:var(--bg);}
@@ -314,8 +311,7 @@ body.light .streak-banner{
   border-color:rgba(180,120,0,0.20) !important;
 }
 
-/* ── 라이트 카드 리스트 패딩 ── */
-body.light .card-list-wrap{padding:4px 0 88px !important;}
+/* ── 라이트 헤더 통계박스 (잔재 정리, padding override 제거됨) ── */
 body.light .hdr-stat-box{background:rgba(26,14,8,0.06)!important;border-color:rgba(26,14,8,0.10)!important;}
 body.light .hdr-count{color:#1a0e08!important;}
 
@@ -1203,10 +1199,11 @@ SVG_ICONS['jasmine']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 36 36" xm
 SVG_ICONS['nuts']='<svg width="__SZ__" height="__SZ__" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg"><ellipse cx="13" cy="20" rx="7" ry="8" fill="#8d6748"/><path d="M7 14 Q8 10 13 10 Q18 10 19 14" fill="#5d4037"/><ellipse cx="11" cy="17" rx="2.5" ry="2" fill="rgba(255,255,255,0.12)"/><ellipse cx="24" cy="18" rx="5" ry="9" fill="#d4a76a" transform="rotate(15,24,18)"/><ellipse cx="23" cy="15" rx="1.8" ry="2.5" fill="rgba(255,255,255,0.15)" transform="rotate(15,23,15)"/></svg>';
 function getSvgIcon(k,sz){var t=SVG_ICONS[k];return t?t.replace(/__SZ__/g,sz):null;}
 // 작은 칩 내부용 아이콘 (14px 컨테이너). flavorIconResolve 공통 헬퍼 경유.
+// SVG/이모지 모두 .fch-i 박스에 감싸서 시각적 통일성 유지.
 function fIco(f){
   var res = flavorIconResolve(f, 14);
   if(res.type==='svg') return '<span class="fch-i">'+res.content+'</span>';
-  return res.content; // emoji는 래퍼 없이 직접 렌더 (기존 동작 유지)
+  return '<span class="fch-i fch-i-emoji">'+res.content+'</span>';
 }
 // Star 사이즈 티어: sm(리스트) / lg(상세) / xl(편집 인터랙션)
 var STAR_SIZES={sm:13, lg:20, xl:24};
