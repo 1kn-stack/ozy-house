@@ -934,4 +934,32 @@
       ['wetwood','젖은나무','wet wood'],['leather','가죽','leather']
     ]},
   ];
+
+  // ─── BANANA — yellow crescent, brown stem & tip, soft highlight
+  add('banana', [
+    // body — crescent shape from upper-left to lower-right
+    {d:'M5 7 Q 12 4 18 9 Q 21 13 18 17 Q 14 14 8 11 Q 5 9 5 7 Z',
+      fill:'#f5c518', stroke:'#a8700a', sw:1.3},
+    // inner shadow on lower curve (gives volume)
+    {d:'M7 8 Q 11 7 16 10 Q 19 13 17 15',
+      fill:'none', stroke:'#d49810', sw:1.1},
+    // top highlight
+    {d:'M7 7 Q 12 6 16 8',
+      fill:'none', stroke:'#fbe87a', sw:1.2},
+    // stem (upper-left)
+    {d:'M5 7 L 4 5 L 5.5 4',
+      fill:'none', stroke:'#6a3a08', sw:1.6},
+    // tip (lower-right)
+    {d:'M18 17 L 19 19',
+      fill:'none', stroke:'#6a3a08', sw:1.4},
+  ]);
+
+  // route banana keyword to itself (priority over catch-alls)
+  BUCKETS.unshift(['banana', ['바나나','banana','plantain']]);
+
+  // expose in V5 NEW group for the icon library UI
+  if (window.ICON_V5_GROUPS && window.ICON_V5_GROUPS[0] && window.ICON_V5_GROUPS[0].n === '00') {
+    window.ICON_V5_GROUPS[0].icons.push(['banana','바나나','banana']);
+  }
+
 })();
