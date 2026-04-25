@@ -631,7 +631,7 @@
     ['cherrySyrup',   ['체리시럽','체리 시럽','체리콕','체리 콕','cherry syrup','cherry cola']],
     // tropical
     ['mangosteen',    ['망고스틴','mangosteen']],
-    ['dragonfruit',   ['용과','드래곤후르츠','드래곤 후르츠','dragonfruit','dragon fruit','pitaya']],
+    ['dragonfruit',   ['용과','드래곤프루츠','드래곤 프루츠','dragonfruit','dragon fruit','pitaya']],
     ['rambutan',      ['람부탄','rambutan']],
     ['papaya',        ['파파야','papaya']],
     ['coconutWater',  ['코코넛워터','코코넛 워터','coconut water']],
@@ -660,7 +660,7 @@
     ['jellybean',     ['젤리빈','jelly bean','jellybean']],
     ['scotchcandy',   ['스카치캔디','스카치 캔디','scotch candy','butterscotch candy']],
     ['cola',          ['콜라','cola','pepsi','coke','닥터페퍼','dr pepper']],
-    ['soda',          ['사이다','밀키스','cider','sprite','lemon-lime']],
+    ['soda',          ['사이다','바키스','cider','sprite','lemon-lime']],
     ['heuktang',      ['흑당버블티','흑당 버블티','흑당라떼','brown sugar bubble tea','black sugar latte']],
     ['croissant',     ['크루아상','croissant']],
     ['macaron',       ['마카롱','macaron']],
@@ -711,7 +711,7 @@
     ['pinkpepper',    ['핑크페퍼','핑크 페퍼','pink pepper','pink peppercorn']],
     ['coriander',     ['고수씨앗','고수 씨앗','coriander','coriander seed']],
     ['curry',         ['커리','카레','curry']],
-    ['saffron',       ['샤프란','사프란','saffron']],
+    ['saffron',       ['사프란','샤프란','saffron']],
     ['licorice',      ['감초','licorice','liquorice']],
     ['vanillabean',   ['바닐라빈','바닐라 빈','vanilla bean']],
     ['dill',          ['딜','dill']],
@@ -761,8 +761,93 @@
   // unshift so new buckets take priority over older catch-all buckets
   for (let i = NEW.length - 1; i >= 0; i--) BUCKETS.unshift(NEW[i]);
 
+  // ─── ADDITIONAL ICONS — papaya · raspberry · maple · pomegranate
+  // Tone-matched to v4/v5: filled monoline w/ darker stroke + interior detail.
+
+  // RASPBERRY — tight drupelet cluster inside teardrop silhouette + sepal cap
+  add('raspberry', [
+    // outer teardrop body (raspberry silhouette)
+    {d:'M12 21c-3.5 0-6-2.5-6-6.5C6 11 8 8 12 7c4 1 6 4 6 7.5 0 4-2.5 6.5-6 6.5z',
+      fill:'#d22850', stroke:'#7a0820', sw:1.3},
+    // tight drupelet cluster — overlapping circles, blackberry-style spacing
+    {d:'M9.6 11.5a1.25 1.25 0 1 0 2.5 0 1.25 1.25 0 0 0-2.5 0z M12.4 11.5a1.25 1.25 0 1 0 2.5 0 1.25 1.25 0 0 0-2.5 0z M8.4 13.8a1.25 1.25 0 1 0 2.5 0 1.25 1.25 0 0 0-2.5 0z M11 13.8a1.25 1.25 0 1 0 2.5 0 1.25 1.25 0 0 0-2.5 0z M13.6 13.8a1.25 1.25 0 1 0 2.5 0 1.25 1.25 0 0 0-2.5 0z M9.6 16.1a1.25 1.25 0 1 0 2.5 0 1.25 1.25 0 0 0-2.5 0z M12.4 16.1a1.25 1.25 0 1 0 2.5 0 1.25 1.25 0 0 0-2.5 0z M11 18.3a1.2 1.2 0 1 0 2.4 0 1.2 1.2 0 0 0-2.4 0z',
+      fill:'#e85070', stroke:'#7a0820', sw:0.9},
+    // tiny highlight dots
+    {d:'M10.6 11a0.4 0.4 0 1 0 0 0.01 M13.4 11a0.4 0.4 0 1 0 0 0.01 M12.2 13.3a0.4 0.4 0 1 0 0 0.01 M9.6 15.6a0.4 0.4 0 1 0 0 0.01 M14.4 15.6a0.4 0.4 0 1 0 0 0.01',
+      fill:'#fbc4d0', stroke:'none'},
+    // 3-prong sepal cap (classic raspberry)
+    {d:'M9 7.5c-1-1-2-2-2-3.5 1.5 0 2.5 1 3 2 0.5-1.5 1.2-2.5 2-3 0.8 0.5 1.5 1.5 2 3 0.5-1 1.5-2 3-2 0 1.5-1 2.5-2 3.5',
+      fill:'#5a8a3a', stroke:'#2a4a18', sw:1.1},
+    {d:'M12 6.5v-3', stroke:'#2a4a18', sw:1.1, fill:'none'},
+  ]);
+
+  // MAPLE — sugar-maple: 5 lobes with deep V-sinuses + serrated tips, stem
+  add('maple', [
+    // body — sharper, deeper sinuses than oak, tips slightly serrated
+    {d:'M12 3 \
+        L13.4 6 L15.5 5 \
+        L14.6 7.6 \
+        Q 16 7.5 17.2 6.8 \
+        L16.2 9.4 L17.8 9.8 \
+        L15.4 11.2 \
+        Q 16.4 12 16.8 13.2 \
+        L13.8 12.4 L14 14.4 L12.5 13.4 \
+        L12 16 L11.5 13.4 L10 14.4 L10.2 12.4 \
+        L7.2 13.2 \
+        Q 7.6 12 8.6 11.2 \
+        L6.2 9.8 L7.8 9.4 \
+        L6.8 6.8 \
+        Q 8 7.5 9.4 7.6 \
+        L8.5 5 L10.6 6 Z',
+      fill:'#d8842a', stroke:'#7a3a08', sw:1.3},
+    // stem
+    {d:'M12 16 L12 21',
+      stroke:'#7a3a08', sw:1.6, fill:'none'},
+    // central vein + branches
+    {d:'M12 15 L12 6 \
+        M12 10 L9.4 7.6 \
+        M12 10 L14.6 7.6 \
+        M12 12.5 L8.6 11.2 \
+        M12 12.5 L15.4 11.2',
+      stroke:'#5a2808', sw:0.7, fill:'none'},
+  ]);
+
+  // PAPAYA v2 — half-cut papaya: orange flesh + black seeds in oval cavity
+  ICON.papaya = { layers: [
+    {d:'M5 13c0-5 3-9 7-9 4 0 7 4 7 9 0 4-3 7-7 7-4 0-7-3-7-7z',
+      fill:'#f58a3a', stroke:'#a84a0a', sw:1.3},
+    {d:'M9 13c0-3 1-5 3-5s3 2 3 5-1 5-3 5-3-2-3-5z',
+      fill:'#3a1810', stroke:'#1a0a08', sw:1.1},
+    {d:'M11 11a0.55 0.55 0 1 0 0 0.01 M12.8 12a0.55 0.55 0 1 0 0 0.01 M11.2 13.5a0.55 0.55 0 1 0 0 0.01 M12.8 14.7a0.55 0.55 0 1 0 0 0.01 M11.4 16a0.55 0.55 0 1 0 0 0.01',
+      fill:'#0a0604', stroke:'none'},
+    {d:'M19 6c1-1 2-1 3 0', stroke:'#4d7a2e', sw:1.4, fill:'none'},
+  ]};
+
+  // POMEGRANATE v2 — split fruit: red rind + ruby arils visible through opening
+  ICON.pomegranate = { layers: [
+    {d:'M12 21c-4 0-7-3-7-7 0-5 3-9 7-10 4 1 7 5 7 10 0 4-3 7-7 7z',
+      fill:'#c01830', stroke:'#5a0810', sw:1.3},
+    {d:'M12 4c-1-1-1-3 0-4 1 1 1 3 0 4 M11 1l1-1 1 1 M9 3c1 0 2 1 3 1 1 0 2-1 3-1',
+      fill:'#6a3a10', stroke:'#3a1808', sw:1.1},
+    {d:'M9 13a1.2 1.2 0 1 0 0 0.01 M12 12a1.2 1.2 0 1 0 0 0.01 M15 13a1.2 1.2 0 1 0 0 0.01 M10.5 16a1.2 1.2 0 1 0 0 0.01 M13.5 16a1.2 1.2 0 1 0 0 0.01 M12 18a1 1 0 1 0 0 0.01',
+      fill:'#f8285a', stroke:'#7a0818', sw:0.9},
+    {d:'M9 13a0.4 0.4 0 1 0 0 0.01 M12 12a0.4 0.4 0 1 0 0 0.01 M15 13a0.4 0.4 0 1 0 0 0.01 M10.5 16a0.4 0.4 0 1 0 0 0.01 M13.5 16a0.4 0.4 0 1 0 0 0.01',
+      fill:'#fff5d8', stroke:'none'},
+  ]};
+
+  // ─── REROUTE keyword lookup so raspberry/maple resolve to themselves
+  // (v4 was sending 라즈베리→strawberry and 메이플→honey)
+  BUCKETS.unshift(['raspberry', ['라즈베리','산딸기','raspberry','red raspberry']]);
+  BUCKETS.unshift(['maple',     ['메이플','메이플시럽','메이플 시럽','maple','maple syrup']]);
+
   // Expose label map for the library UI
   window.ICON_V5_GROUPS = [
+    {n:'00', t:'추가 · NEW', ko:'New additions', icons:[
+      ['raspberry','라즈베리','raspberry'],
+      ['maple','메이플','maple'],
+      ['papaya','파파야','papaya'],
+      ['pomegranate','석류','pomegranate']
+    ]},
     {n:'01', t:'시트러스 확장', ko:'Citrus extended', icons:[
       ['hallabong','한라봉','hallabong'],['kumquat','금귤','kumquat'],['calamansi','깔라만시','calamansi'],
       ['sweetie','스위티','sweetie'],['pinkGrapefruit','핑크자몽','pink grapefruit'],['zest','레몬 제스트','zest']
@@ -773,7 +858,7 @@
       ['whitePeach','백도','white peach'],['yellowPeach','황도','yellow peach'],['prune','프룬','prune'],
       ['cherrySyrup','체리시럽','cherry syrup']
     ]},
-    {n:'03', t:'열대과일 · 그 외', ko:'Tropical · Other', icons:[
+    {n:'03', t:'이국과일 · 그 외', ko:'Tropical · Other', icons:[
       ['mangosteen','망고스틴','mangosteen'],['dragonfruit','용과','dragonfruit'],['rambutan','람부탄','rambutan'],
       ['papaya','파파야','papaya'],['coconutWater','코코넛워터','coconut water'],
       ['bakedApple','구운사과','baked apple'],['appleJam','사과잼','apple jam'],
@@ -822,7 +907,7 @@
     ]},
     {n:'10', t:'향신료 · 허브 · 채소', ko:'Spice · Herb · Vegetal', icons:[
       ['pinkpepper','핑크페퍼','pink pepper'],['coriander','고수 씨앗','coriander seed'],
-      ['curry','커리','curry'],['saffron','샤프란','saffron'],['licorice','감초','licorice'],
+      ['curry','커리','curry'],['saffron','사프란','saffron'],['licorice','감초','licorice'],
       ['vanillabean','바닐라빈','vanilla bean'],['dill','딜','dill'],
       ['eucalyptus','유칼립투스','eucalyptus'],['pine','솔잎','pine'],['sancho','산초','sancho'],
       ['cucumber','오이','cucumber'],['zucchini','애호박','zucchini'],

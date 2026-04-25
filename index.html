@@ -81,6 +81,65 @@ body.light .fch-i{background:rgba(26,14,8,0.06);}
 .dk-divider{height:2px;background:rgba(255,255,255,0.04);}
 .dk-colorbar{display:none;}
 
+/* ── V2 라인업 카드 (.bn-*) ── */
+.bn-card{display:flex;gap:14px;padding:16px;background:var(--card);border:0.5px solid var(--ib);border-radius:var(--r-card);margin-bottom:12px;cursor:pointer;align-items:stretch;position:relative;overflow:hidden;transition:transform var(--dur-base) var(--ease),border-color var(--dur-base) var(--ease);}
+.bn-card:active{transform:scale(0.985);}
+.bn-card.bn-empty{opacity:0.55;}
+.bn-card.bn-degas{border-color:rgba(99,179,237,0.28);}
+/* 썸네일 */
+.bn-thumb{position:relative;width:100px;height:130px;flex-shrink:0;border-radius:12px;overflow:hidden;box-shadow:inset 0 0 0 0.5px rgba(255,255,255,0.08);background-size:cover !important;background-position:center !important;}
+.bn-thumb-ov{position:absolute;inset:0;background:linear-gradient(155deg,rgba(255,255,255,0.18) 0%,transparent 45%);pointer-events:none;}
+/* 작은 썸네일에서도 메쉬가 잘 보이도록 saturation 살짝 강화 */
+.bn-thumb{filter:saturate(1.08);}
+body.light .bn-thumb{filter:saturate(1.15) brightness(0.97);}
+/* 정보 */
+.bn-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;}
+.bn-info-top{display:flex;align-items:center;gap:8px;min-width:0;}
+.bn-label{flex:1;min-width:0;font-family:var(--font-body);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bn-status{flex-shrink:0;font-size:9px;letter-spacing:0.8px;text-transform:uppercase;color:var(--t3);}
+.bn-status.on-degas{color:var(--blue);font-weight:600;letter-spacing:0.5px;}
+.bn-status.on-empty{color:var(--t3);}
+/* 로스트 게이지 (5단 그라데이션 바) */
+.bn-roast{display:flex;gap:2px;flex-shrink:0;align-items:center;}
+.bn-roast .seg{width:5px;height:9px;border-radius:1.5px;background:var(--ib);transition:background var(--dur-fast);}
+.bn-roast .seg.on{background:var(--seg-c,var(--ac));}
+.bn-card.bn-compact .bn-roast .seg{width:4px;height:7px;}
+/* 원두명 */
+.bn-name{font-family:var(--font-serif);font-style:italic;font-weight:400;color:var(--t1);line-height:1.2;word-break:keep-all;margin:0;}
+/* 한 줄 설명 (tagline / myNote / origin) */
+.bn-desc{font-size:13px;color:var(--t2);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0;}
+.bn-desc.italic{font-style:italic;color:var(--t3);}
+.bn-desc + .bn-desc{margin-top:-2px;}
+/* 플레이버 칩 행 */
+.bn-flavors{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;padding-bottom:2px;}
+.bn-flavors::-webkit-scrollbar{display:none;}
+.bn-flavors .dk-chip{flex-shrink:0;}
+.bn-flavors .more{flex-shrink:0;display:inline-flex;align-items:center;font-size:10.5px;color:var(--t3);font-family:var(--font-body);letter-spacing:0.3px;padding:3px 6px;}
+/* 푸터 — 별점 + 댓글 */
+.bn-foot{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:4px;gap:8px;}
+.bn-rating{display:flex;align-items:center;gap:6px;}
+.bn-rating-num{font-family:var(--font-serif);font-style:italic;font-size:14px;color:var(--t2);}
+.bn-comments{font-size:11px;color:var(--t3);}
+.bn-comments.has{color:var(--ac);opacity:0.85;}
+/* compact는 footer 별점 살짝 더 작게 */
+.bn-card.bn-compact .bn-rating-num{font-size:13px;}
+.bn-card.bn-compact .bn-comments{font-size:10.5px;}
+/* Compact 변형 (아카이브 탭) */
+.bn-card.bn-compact{padding:12px;gap:12px;margin-bottom:8px;}
+.bn-card.bn-compact .bn-thumb{width:80px;height:104px;}
+.bn-card.bn-compact .bn-info{gap:4px;}
+.bn-card.bn-compact .bn-name{font-size:18px !important;}
+.bn-card.bn-compact .bn-desc{display:none;}
+.bn-card.bn-compact .bn-flavors{display:none;}
+.bn-card.bn-compact .bn-foot{padding-top:2px;}
+/* 라이트 모드 */
+body.light .bn-card{background:var(--card);box-shadow:var(--shadow-card-light);border-color:rgba(26,14,8,0.06);}
+body.light .bn-thumb{box-shadow:inset 0 0 0 0.5px rgba(0,0,0,0.06);}
+body.light .bn-thumb-ov{background:linear-gradient(155deg,rgba(255,255,255,0.32) 0%,transparent 45%);}
+body.light .bn-roast .seg{background:rgba(26,14,8,0.10);}
+body.light .bn-status.on-degas{color:#2563eb;}
+body.light .bn-comments.has{opacity:1;}
+
 /* ── 라이트 모드 변수 ── */
 body.light{
   /* Surface */
@@ -917,6 +976,64 @@ function beanGradClass(b){
   return {inline:false,cls:'g-yega'};
 }
 
+// ── V2 카드 헬퍼 ──
+// 산지 → 그라디언트 클래스 (컵노트 메쉬 fallback 용)
+function getOriginGradientClass(origin){
+  if(!origin) return 'g-yega';
+  var o=String(origin).toLowerCase();
+  if(o.indexOf('에티오피아')!==-1||o.indexOf('ethiopia')!==-1||o.indexOf('yirga')!==-1||o.indexOf('예가')!==-1) return 'g-yega';
+  if(o.indexOf('콜롬비아')!==-1||o.indexOf('colombia')!==-1) return 'g-santa';
+  if(o.indexOf('케냐')!==-1||o.indexOf('kenya')!==-1) return 'g-kenya';
+  if(o.indexOf('과테말라')!==-1||o.indexOf('guatemala')!==-1||o.indexOf('브라질')!==-1||o.indexOf('brazil')!==-1||o.indexOf('온두라스')!==-1||o.indexOf('honduras')!==-1) return 'g-guate';
+  if(o.indexOf('파나마')!==-1||o.indexOf('panama')!==-1||o.indexOf('코스타리카')!==-1||o.indexOf('costa rica')!==-1) return 'g-yega';
+  if(o.indexOf('인도네시아')!==-1||o.indexOf('indonesia')!==-1||o.indexOf('수마트라')!==-1||o.indexOf('sumatra')!==-1) return 'g-mango';
+  return 'g-yega';
+}
+
+// 카드 썸네일 배경 — 컵노트 메쉬 우선, 없으면 산지 클래스
+function getThumbBg(b){
+  var mesh=flavorMeshGradient(b.flavor||[]);
+  if(mesh) return {inline:true, style:'background:'+mesh+';'};
+  return {inline:false, cls:getOriginGradientClass(b.origin)};
+}
+
+// 로스트 레벨 → 1-5 인덱스 (정규화)
+var ROAST_INDEX={"라이트":1,"미디엄라이트":2,"미디엄":3,"미디엄다크":4,"다크":5};
+function roastLevelIndex(rl){
+  if(!rl) return 0;
+  return ROAST_INDEX[normRL(rl)]||0;
+}
+
+// 5단 그라데이션 바 HTML (라이트→다크 순으로 색상 변화)
+function roastBars(rl){
+  var lvl=roastLevelIndex(rl);
+  if(!lvl) return '';
+  var palette=['var(--roast-light)','var(--roast-mediumlight)','var(--roast-medium)','var(--roast-mediumdark)','var(--roast-dark)'];
+  var html='<div class="bn-roast" title="배전도: '+esc(normRL(rl))+'">';
+  for(var i=1;i<=5;i++){
+    var on=i<=lvl;
+    html+='<span class="seg'+(on?' on':'')+'" style="--seg-c:'+palette[i-1]+';"></span>';
+  }
+  return html+'</div>';
+}
+
+// 카드 설명 — 조건부 분기:
+//  · tagline 있고 myNote 있음 → 2줄 (tagline 위, myNote italic 아래)
+//  · tagline만 → 1줄
+//  · myNote만 (공개) → 1줄 italic
+//  · 둘 다 없음 → origin/region 1줄
+//  · 모두 없음 → null
+function bnDescLines(b){
+  var hasTag=!!b.tagline;
+  var hasNote=!!b.myNote && isFieldVisible('myNote');
+  if(hasTag && hasNote) return [{text:b.tagline, italic:false}, {text:b.myNote, italic:true}];
+  if(hasTag) return [{text:b.tagline, italic:false}];
+  if(hasNote) return [{text:b.myNote, italic:true}];
+  var loc=(b.origin||'')+(b.region?' · '+b.region:'');
+  if(loc.trim()) return [{text:loc, italic:false}];
+  return null;
+}
+
 let beans=[], diaries=[], cachedStreak=0;
 let S = {
   tab:"menu", detail:null, editMode:false, editData:null, editScanState:"idle",
@@ -1622,55 +1739,82 @@ function rMenu(){
   html+='<div class="card-list-wrap" style="padding:0 14px 88px;">';
   if(!filtered.length&&!hasFilter) html+='<div style="text-align:center;padding:80px 0;color:var(--t3);">☕<br><br>오늘은 원두가 없어요</div>';
   filtered.forEach(function(b,i){
-    // 그라데이션 — 컵노트 기반 메시 그라데이션 (없으면 산지 fallback)
-    var grad=beanGradClass(b);
-    // 다크: absolute 배경 div / 라이트: CSS로 display:none됨
-    var gradBgEl = grad.inline
-      ? '<div class="dk-bg" style="'+grad.style+';position:absolute;inset:0;pointer-events:none;"></div>'
-      : '<div class="dk-bg '+grad.cls+'" style="position:absolute;inset:0;pointer-events:none;"></div>';
-    // 라이트 모드 하단 컬러바
-    var colorBarEl = grad.inline
-      ? '<div class="dk-colorbar" style="'+grad.style+';height:5px;"></div>'
-      : '<div class="dk-colorbar '+grad.cls+'" style="height:5px;"></div>';
+    // 썸네일 배경 — 컵노트 메쉬 우선, 산지 fallback
+    var thumb = getThumbBg(b);
+    var thumbAttr = thumb.inline
+      ? 'class="bn-thumb" style="'+thumb.style+'"'
+      : 'class="bn-thumb '+thumb.cls+'"';
 
     var dg = getDegasInfo(b);
-    var statusLabel = dg.status==='degassing'
-      ? '🫧 D+'+(dg.daysSince||0)
-      : (b.status==='empty' ? '소진' : '보유중');
+    var isDegas = b.status==='available' && dg.status==='degassing';
+    var isEmpty = b.status==='empty';
 
-    var originPill = (b.origin?gFL(b.origin)+' ':'')+esc(b.origin||'')+(b.process?' · '+esc(b.process):'');
+    // 라벨: 로스터 · 프로세스
+    var labelParts = [];
+    if(b.roaster) labelParts.push(esc(b.roaster));
+    if(b.process) labelParts.push(esc(b.process));
+    var labelTxt = labelParts.join(' · ') || (b.origin?gFL(b.origin)+' '+esc(b.origin):'');
 
-    var flavHtml = (b.flavor||[]).slice(0,5).map(function(f){
-      return '<div class="dk-chip">'+fIco(f)+' '+esc(f)+'</div>';
-    }).join('');
+    // 상태 + 로스트 게이지 (정보 우상단 한 줄)
+    var statusEl = '';
+    if(isDegas) statusEl = '<span class="bn-status on-degas">🫧 D+'+(dg.daysSince||0)+'</span>';
+    else if(isEmpty) statusEl = '<span class="bn-status on-empty">소진</span>';
+    var roastEl = roastBars(b.roastLevel);
 
+    // 원두명 — 글자 수 적응 (28/22/18)
+    var nameLen = (b.name||'').length;
+    var nameSize = nameLen>18 ? '18px' : nameLen>14 ? '22px' : '24px';
+
+    // 설명 (1~2줄 조건부)
+    var descLines = bnDescLines(b);
+    var descEl = descLines
+      ? descLines.map(function(d){
+          return '<div class="bn-desc'+(d.italic?' italic':'')+'">'+esc(d.text)+'</div>';
+        }).join('')
+      : '';
+
+    // 플레이버 칩 (4개 + 잔여 표시)
+    var flavors = b.flavor||[];
+    var flavShown = flavors.slice(0,4);
+    var flavMore = flavors.length>4 ? flavors.length-4 : 0;
+    var flavHtml = flavors.length
+      ? '<div class="bn-flavors">'
+        + flavShown.map(function(f){ return '<div class="dk-chip">'+fIco(f)+' '+esc(f)+'</div>'; }).join('')
+        + (flavMore?'<span class="more">+'+flavMore+'</span>':'')
+        + '</div>'
+      : '';
+
+    // 별점 + 댓글 (공개 가드)
+    var ratingEl = '';
+    if(isFieldVisible('rating') && b.rating){
+      ratingEl = '<div class="bn-rating">'+stHtml(b.rating,"","sm")+'<span class="bn-rating-num">'+(b.rating).toFixed(1)+'</span></div>';
+    }
     var guestN = (b.guestNotes||[]).length;
+    var commentEl = guestN
+      ? '<div class="bn-comments has">💬 '+guestN+'</div>'
+      : '<div class="bn-comments">💬 0</div>';
+    var footEl = (ratingEl||commentEl)
+      ? '<div class="bn-foot">'+ratingEl+commentEl+'</div>'
+      : '';
 
-    html += '<div class="cani dk-card" onclick="openDetail(\''+b.id+'\')" style="cursor:pointer;animation-delay:'+(i*.06)+'s;">'
-      +gradBgEl
-      +'<div class="dk-overlay"></div>'
-      +'<div class="dk-content">'
-        +'<div class="dk-top">'
-          +'<div class="dk-pill">'+originPill+'</div>'
-          +'<div class="dk-pill">'+statusLabel+'</div>'
+    var cardCls = 'cani bn-card'
+      + (isDegas?' bn-degas':'')
+      + (isEmpty?' bn-empty':'');
+
+    html += '<div class="'+cardCls+'" onclick="openDetail(\''+b.id+'\')" style="animation-delay:'+(i*.06)+'s;">'
+      +'<div '+thumbAttr+'><div class="bn-thumb-ov"></div></div>'
+      +'<div class="bn-info">'
+        +'<div class="bn-info-top">'
+          +'<div class="bn-label">'+labelTxt+'</div>'
+          +statusEl
+          +roastEl
         +'</div>'
-        +(b.roaster?'<div class="dk-roaster">'+esc(b.roaster)+'</div>':'')
-        +'<div class="dk-name" style="font-size:'+(b.name&&b.name.length>18?'17px':b.name&&b.name.length>14?'19px':'21px')+';">'+esc(b.name||'')+'</div>'
-        +'<div class="dk-chips">'+flavHtml+'</div>'
-        +((b.tagline||(b.myNote&&isFieldVisible('myNote')))
-          ?'<div class="dk-notes">'
-            +(b.tagline?'<div class="note-row"><span class="note-ico">🔖</span><span class="dk-nt">'+esc(b.tagline)+'</span></div>':'')
-            +(b.myNote&&isFieldVisible('myNote')?'<div class="note-row"><span class="note-ico">✍️</span><span class="dk-nt mine" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">'+esc(b.myNote)+'</span></div>':'')
-            +'</div>'
-          :'')
-        +'<div class="dk-action">'
-          +'<div class="dk-comment-count">💬 '+(guestN?guestN+'개의 소감':'소감 없음')+'</div>'
-          +'<button onclick="event.stopPropagation();openGuest(\''+b.id+'\')" class="dk-memo-btn">✍️ 한마디 남기기</button>'
-        +'</div>'
+        +'<div class="bn-name" style="font-size:'+nameSize+';">'+esc(b.name||'')+'</div>'
+        +descEl
+        +flavHtml
+        +footEl
       +'</div>'
-      +colorBarEl
-    +'</div>'
-    +'<div class="dk-divider"></div>';
+    +'</div>';
   });
   return html+'</div>';
 }
@@ -1720,41 +1864,63 @@ function rArchive(){
     +'</div></div><div style="padding:8px 14px 96px;">';
   if(!fil.length) html+='<div style="text-align:center;padding:60px 0;color:var(--t3);"><div style="font-size:36px;margin-bottom:12px;">📭</div>아직 기록이 없어요</div>';
   fil.forEach(function(b,i){
-    var ps=gPS(b.process);
-    var dg=getDegasInfo(b);
-    var isDegassing=b.status==="available"&&dg.status==="degassing";
-    // 컵노트 기반 그라데이션 (왼쪽 컬러바)
-    var barGrad=beanGradClass(b);
-    var barStyle=barGrad.inline?barGrad.style:('class="'+barGrad.cls+'"');
-    html+='<div class="cani" onclick="openDetail(\''+b.id+'\')" style="background:var(--card);border-radius:14px;margin-bottom:8px;border:0.5px solid '+(isDegassing?'rgba(99,179,237,0.25)':'rgba(255,255,255,0.07)')+';overflow:hidden;display:flex;align-items:stretch;cursor:pointer;opacity:'+(b.status==="empty"?.5:1)+';animation-delay:'+(i*.05)+'s;">' 
-      // 컵노트 컬러바 (왼쪽 6px)
-      +(barGrad.inline
-        ?'<div style="width:6px;flex-shrink:0;'+barGrad.style+';"></div>'
-        :'<div class="'+barGrad.cls+'" style="width:6px;flex-shrink:0;"></div>'
-      )
-      +'<div style="flex:1;padding:12px 14px;display:flex;gap:12px;align-items:flex-start;">'
-      +'<div style="flex:1;">'
-      +'<div style="display:flex;gap:5px;margin-bottom:6px;flex-wrap:wrap;">'
-      +'<span style="background:var(--ibg);border:0.5px solid var(--ib);color:var(--t2);border-radius:20px;padding:2px 9px;font-size:9px;letter-spacing:0.5px;text-transform:uppercase;">'+ps.l+'</span>'
-      +(isDegassing?'<span style="background:rgba(59,130,246,0.15);color:rgba(96,165,250,0.85);border-radius:20px;padding:2px 9px;font-size:9px;font-weight:600;">🫧 D+'+dg.daysSince+'</span>':"")
-      +(b.status==="empty"?'<span style="background:var(--ibg);color:var(--t3);border-radius:20px;padding:2px 9px;font-size:9px;">소진</span>':"")
+    // 썸네일 — 컵노트 메쉬 우선, 산지 fallback
+    var thumb = getThumbBg(b);
+    var thumbAttr = thumb.inline
+      ? 'class="bn-thumb" style="'+thumb.style+'"'
+      : 'class="bn-thumb '+thumb.cls+'"';
+
+    var dg = getDegasInfo(b);
+    var isDegas = b.status==='available' && dg.status==='degassing';
+    var isEmpty = b.status==='empty';
+
+    // 라벨: 로스터 · 프로세스 (or 산지 fallback)
+    var labelParts = [];
+    if(b.roaster) labelParts.push(esc(b.roaster));
+    if(b.process) labelParts.push(esc(b.process));
+    var labelTxt = labelParts.join(' · ') || (b.origin?gFL(b.origin)+' '+esc(b.origin):'');
+
+    // 상태 배지 + 로스트 게이지
+    var statusEl = '';
+    if(isDegas) statusEl = '<span class="bn-status on-degas">🫧 D+'+(dg.daysSince||0)+'</span>';
+    else if(isEmpty) statusEl = '<span class="bn-status on-empty">소진</span>';
+    var roastEl = roastBars(b.roastLevel);
+
+    // 원두명 — compact는 CSS에서 18px 강제, 인라인은 fallback용
+    var nameLen = (b.name||'').length;
+    var nameSize = nameLen>18 ? '16px' : nameLen>14 ? '18px' : '20px';
+
+    // 별점 (공개 가드) + 댓글
+    var ratingEl = '';
+    if(isFieldVisible('rating') && b.rating){
+      ratingEl = '<div class="bn-rating">'+stHtml(b.rating,"","sm")+'<span class="bn-rating-num">'+(b.rating).toFixed(1)+'</span></div>';
+    }
+    var guestN = (b.guestNotes||[]).length;
+    var commentEl = guestN
+      ? '<div class="bn-comments has">💬 '+guestN+'</div>'
+      : '';
+    var footEl = (ratingEl||commentEl)
+      ? '<div class="bn-foot">'+(ratingEl||'<span></span>')+commentEl+'</div>'
+      : '';
+
+    var cardCls = 'cani bn-card bn-compact'
+      + (isDegas?' bn-degas':'')
+      + (isEmpty?' bn-empty':'');
+
+    html += '<div class="'+cardCls+'" onclick="openDetail(\''+b.id+'\')" style="animation-delay:'+(i*.05)+'s;">'
+      +'<div '+thumbAttr+'><div class="bn-thumb-ov"></div></div>'
+      +'<div class="bn-info">'
+        +'<div class="bn-info-top">'
+          +'<div class="bn-label">'+labelTxt+'</div>'
+          +statusEl
+          +roastEl
+        +'</div>'
+        +'<div class="bn-name" style="font-size:'+nameSize+';">'+esc(b.name||'')+'</div>'
+        +footEl
       +'</div>'
-      +(b.roaster?'<div style="font-size:10px;color:var(--t3);font-weight:300;margin-bottom:2px;">'+esc(b.roaster)+'</div>':"")
-      +'<div class="ozy-serif" style="font-size:'+(b.name&&b.name.length>20?'14px':b.name&&b.name.length>14?'16px':'18px')+';margin-bottom:3px;overflow-wrap:break-word;line-height:1.3;">'+esc(b.name||"")+'</div>'
-      +'<div style="font-size:11px;color:var(--t3);margin-bottom:7px;">'+gFL(b.origin)+' '+(b.origin||"")+(b.region?" · "+b.region:"")+'</div>'
-      +((b.flavor&&b.flavor.length)?'<div class="dk-chips" style="margin-top:2px;">'+(b.flavor||[]).slice(0,5).map(function(f){return '<div class="dk-chip">'+fIco(f)+' '+esc(f)+'</div>';}).join('')+'</div>':"")
-      +(isDegassing?'<div style="font-size:11px;color:rgba(96,165,250,0.70);margin-top:6px;">'+dg.remaining+'일 후 음용 추천 · '+dg.degasEndDate+'까지</div>':"")
-      +'</div>'
-      +(function(){
-        var ratingHtml = isFieldVisible('rating') ? stHtml(b.rating||0,"","sm") : '';
-        var guestHtml = (b.guestNotes&&b.guestNotes.length)?'<div style="font-size:10px;color:var(--ac);margin-top:4px;opacity:0.75;">💬 '+b.guestNotes.length+'</div>':"";
-        var dateHtml = (isFieldVisible('roastDate') && b.roastDate) ? '<div style="font-size:10px;color:var(--t3);margin-top:4px;">'+b.roastDate+'</div>' : '';
-        if(!ratingHtml && !guestHtml && !dateHtml) return '';
-        return '<div style="text-align:right;flex-shrink:0;">'+ratingHtml+guestHtml+dateHtml+'</div>';
-      })()
-      +'</div></div>';
+    +'</div>';
   });
-  return html+'</div>'+(isOwner?'<button onclick="openAdd()" style="position:fixed;bottom:80px;right:20px;width:52px;height:52px;border-radius:50%;background:var(--ac);color:#fff;font-size:26px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(255,159,10,0.4);z-index:80;display:flex;align-items:center;justify-content:center;">+</button>':'');
+  return html+'</div>'+(isOwner?'<button onclick="openAdd()" style="position:fixed;bottom:80px;right:20px;width:52px;height:52px;border-radius:50%;background:var(--ac);color:#fff;font-size:26px;border:none;cursor:pointer;box-shadow:var(--shadow-fab);z-index:80;display:flex;align-items:center;justify-content:center;">+</button>':'');
 }
 
 function rDetail(id){
