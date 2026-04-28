@@ -11,6 +11,7 @@
 <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&family=Noto+Sans+KR:wght@200;300;400&display=swap" rel="stylesheet"></noscript>
 <script defer src="/assets/icons-v4.js"></script>
 <script defer src="/assets/icons-v5-ext.js"></script>
+<script defer src="/assets/cup-notes.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -913,6 +914,16 @@ const FLAVOR_COLOR = [
 
 function getFlavorColor(name){
   if(!name) return "#b89070";
+  // (1) CupNotes 우선 — Phase 2-B 다크/라이트 hex
+  if(typeof window!=='undefined' && window.CupNotes){
+    var cat=window.CupNotes.getCategoryForNote(name);
+    if(cat){
+      var isLight=(typeof document!=='undefined' && document.body && document.body.classList.contains('light'));
+      var hex=window.CupNotes.pickColor(cat, isLight?'light':'dark');
+      if(hex) return hex;
+    }
+  }
+  // (2) 레거시 FLAVOR_COLOR 테이블
   var lo=name.toLowerCase();
   for(var i=0;i<FLAVOR_COLOR.length;i++){
     var fc=FLAVOR_COLOR[i];
@@ -937,26 +948,87 @@ function getFlavorBg(flavors){
   return {grad:grad, c1:getFlavorColor(flavors[0]), c2:getFlavorColor(flavors[flavors.length-1])};
 }
 
-// 컵노트 기반 메시 그라데이션 생성 (디자인 목업 스펙 기준)
+// 컵노트 메쉬 그라데이션 (Phase 2-C Section E 알고리즘)
+// 우선순위: CupNotes (다크/라이트 hex + mouthfeel 50% opacity) → 레거시 getFlavorColor fallback
+// document.body.classList.contains('light') 시 라이트 hex 사용
+function _hexToRgb(hex){
+  var m=String(hex).replace('#','').match(/.{2}/g);
+  if(!m) return [136,136,136];
+  return m.map(function(h){return parseInt(h,16);});
+}
+function _rgbToHex(rgb){
+  return '#'+rgb.map(function(x){return Math.round(Math.max(0,Math.min(255,x))).toString(16).padStart(2,'0');}).join('');
+}
+function _lighten(hex,pct){
+  var rgb=_hexToRgb(hex), f=pct/100;
+  return _rgbToHex([rgb[0]+(255-rgb[0])*f, rgb[1]+(255-rgb[1])*f, rgb[2]+(255-rgb[2])*f]);
+}
+function _darken(hex,pct){
+  var rgb=_hexToRgb(hex), f=1-pct/100;
+  return _rgbToHex([rgb[0]*f, rgb[1]*f, rgb[2]*f]);
+}
+function _hexToRgba(hex,a){
+  var rgb=_hexToRgb(hex);
+  return 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+a+')';
+}
+function _avgHex(arr){
+  if(!arr.length) return '#888';
+  var sum=[0,0,0];
+  arr.forEach(function(h){var r=_hexToRgb(h); sum[0]+=r[0]; sum[1]+=r[1]; sum[2]+=r[2];});
+  return _rgbToHex([sum[0]/arr.length, sum[1]/arr.length, sum[2]/arr.length]);
+}
+
 function flavorMeshGradient(flavors){
   if(!flavors||!flavors.length) return null;
-  // 최대 4개 색상 추출 (중복 + 브라운 폴백 제외)
-  var cols=[];
-  for(var i=0;i<flavors.length&&cols.length<4;i++){
-    var c=getFlavorColor(flavors[i]);
-    if(c&&c!=='#b89070'&&cols.indexOf(c)===-1) cols.push(c);
+
+  var isLight = (typeof document!=='undefined' && document.body && document.body.classList.contains('light'));
+  var mode = isLight ? 'light' : 'dark';
+  var hasCN = (typeof window!=='undefined' && window.CupNotes);
+
+  // 색상 + mouthfeel 마스크 추출 (최대 5개)
+  var hexArr=[];
+  var mfMask=[];
+  for(var i=0;i<flavors.length && hexArr.length<5;i++){
+    var f=flavors[i];
+    var hex=null, isMf=false;
+    if(hasCN){
+      var cat=window.CupNotes.getCategoryForNote(f);
+      if(cat){
+        hex=window.CupNotes.pickColor(cat, mode);
+        isMf=(cat==='mouthfeel');
+      }
+    }
+    // CupNotes 매칭 안 되면 레거시 getFlavorColor
+    if(!hex){
+      var legacy=getFlavorColor(f);
+      if(legacy && legacy!=='#b89070') hex=legacy;
+    }
+    if(hex && hexArr.indexOf(hex)===-1){
+      hexArr.push(hex);
+      mfMask.push(isMf);
+    }
   }
-  if(!cols.length) return null;
-  // 1~3개면 보색 계열로 보충
-  while(cols.length<2) cols.push(cols[0]);
-  while(cols.length<3) cols.push(cols[1]);
-  while(cols.length<4) cols.push(cols[0]);
-  // 4개 radial + base (첫 색상 불투명) — 목업 meshFor() 스펙
-  var stops=[['15% 20%','55%'],['80% 15%','50%'],['55% 85%','55%'],['10% 80%','45%']];
-  var parts=cols.slice(0,4).map(function(c,i){
-    return 'radial-gradient(ellipse at '+stops[i][0]+','+c+' 0%,transparent '+stops[i][1]+')';
+  if(!hexArr.length) return null;
+
+  // 1색상이면 lighten/darken으로 깊이감 (Section E 단일 케이스)
+  if(hexArr.length===1){
+    var base=hexArr[0];
+    return 'radial-gradient(circle at 25% 25%,'+_lighten(base,18)+' 0%,transparent 55%),'
+         + 'radial-gradient(circle at 75% 70%,'+_darken(base,15)+' 0%,transparent 60%),'
+         + 'radial-gradient(circle at 50% 100%,'+_lighten(base,8)+' 0%,transparent 50%),'
+         + base;
+  }
+
+  // 다색상: 5포지션 라디얼 + mouthfeel 50% opacity + non-mouthfeel 평균을 베이스
+  var positions=['20% 25%','80% 25%','80% 75%','20% 75%','50% 50%'];
+  var layers=hexArr.map(function(hex,i){
+    var opa = mfMask[i] ? 0.5 : 1.0;
+    var pos = positions[i] || '50% 50%';
+    return 'radial-gradient(circle at '+pos+','+_hexToRgba(hex,opa)+' 0%,transparent 55%)';
   });
-  return parts.join(',')+','+cols[0];
+  var nonMf = hexArr.filter(function(_,i){return !mfMask[i];});
+  var base2 = _avgHex(nonMf.length ? nonMf : hexArr);
+  return layers.join(',')+','+base2;
 }
 
 // 카드 그라데이션 스타일 문자열 반환
@@ -1117,9 +1189,17 @@ const fdD = async id => deleteDoc(doc(db,"diary",id));
 
 function showToast(m){S.toast=m;if(S.toastT)clearTimeout(S.toastT);S.toastT=setTimeout(()=>{S.toast="";render();},2400);render();}
 
-// 플레이버 → 아이콘 resolver (v4/v5 우선, fallback EMO/SVG_ICONS/emoji)
+// 플레이버 → 아이콘 resolver
+// 우선순위: (1) CupNotes Strict (매칭 시에만) → (2) icons-v4/v5 → (3) EMO/SVG_ICONS → ✨ 최종 폴백
+// CupNotes에 매칭 없으면 null 반환 → v4/v5 풍부한 사전(약 600+ 키워드) 활용 가능
 // 반환: {type:'svg'|'emoji', content:string}
 function flavorIconResolve(f, size){
+  // (1) CupNotes Strict — Phase 2-C 디자인 우선, 매칭 실패 시 null
+  if(typeof window!=='undefined' && window.CupNotes && typeof window.CupNotes.resolveIconOrNull==='function'){
+    var cn = window.CupNotes.resolveIconOrNull(f, size);
+    if(cn && cn.content) return cn;
+  }
+  // (2) icons-v4/v5 (자스민/장미/감귤/오렌지블라썸 등 광범위 키워드 커버)
   if(typeof window!=='undefined' && typeof window.lookupIcon==='function' && typeof window.iconV4==='function'){
     var k = window.lookupIcon(f);
     if(k){
@@ -1127,6 +1207,7 @@ function flavorIconResolve(f, size){
       if(svg) return {type:'svg', content:svg};
     }
   }
+  // (3) 레거시 EMO/SVG_ICONS
   var ico = fe(f);
   if(typeof ico==='string' && ico.indexOf('__svg_')===0){
     var svg2 = getSvgIcon(ico.slice(6), String(size));
