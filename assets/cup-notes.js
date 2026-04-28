@@ -314,6 +314,8 @@
     // 한국어 변형
     '자스민': '쟈스민',
     '재스민': '쟈스민',
+    '제스민': '쟈스민',
+    '제즈민': '쟈스민',
     '초콜렛': '초콜릿',
     '밀크초콜릿': '초콜릿',          // canonical은 '초콜릿'
     '밀크 초콜릿': '초콜릿',
@@ -428,18 +430,29 @@
     return '<svg viewBox="0 0 24 24" width="' + sz + '" height="' + sz + '" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' + parts.join('') + '</svg>';
   }
 
-  // 통합 해석: word SVG → word emoji → cat SVG → cat emoji → '✨'
+  // 통합 해석 (Strict): word SVG → word emoji → cat SVG → cat emoji → null
+  // 호출자가 v4/v5 등 다른 사전으로 폴스루할 수 있도록 매칭 실패 시 null 반환.
+  function resolveIconOrNull(note, size) {
+    const norm = normalizeNote(note);
+    if (!norm) return null;
+    // 1. 단어 SVG
+    if (WORD_SVG[norm]) return { type: 'svg', content: renderSvgString(WORD_SVG[norm], size) };
+    // 2. 단어 전용 이모지
+    if (WORD_TO_EMOJI[norm]) return { type: 'emoji', content: WORD_TO_EMOJI[norm] };
+    // 3. 카테고리 SVG
+    const cat = WORD_TO_CAT[norm];
+    if (cat && CATEGORY_SVG[cat]) return { type: 'svg', content: renderSvgString(CATEGORY_SVG[cat], size) };
+    // 4. 카테고리 이모지
+    if (cat && CATEGORY_EMOJI[cat]) return { type: 'emoji', content: CATEGORY_EMOJI[cat] };
+    // 매칭 없음
+    return null;
+  }
+
+  // 통합 해석 (with fallback): 위 체인 + ✨ 최종 fallback
   function resolveIcon(note, size) {
-    const layers = pickSvgLayers(note);
-    if (layers) {
-      // word SVG가 있으면 우선이지만, 단어 emoji가 있는 경우는 거의 없음 (SVG = emoji 대체)
-      const norm = normalizeNote(note);
-      if (WORD_SVG[norm]) return { type: 'svg', content: renderSvgString(layers, size) };
-      // 여기 도달 = 카테고리 SVG. 단어별 이모지가 우선이면 그걸 먼저 반환
-      if (WORD_TO_EMOJI[norm]) return { type: 'emoji', content: WORD_TO_EMOJI[norm] };
-      return { type: 'svg', content: renderSvgString(layers, size) };
-    }
-    return { type: 'emoji', content: pickEmoji(note) };
+    const r = resolveIconOrNull(note, size);
+    if (r) return r;
+    return { type: 'emoji', content: '✨' };
   }
 
   // ============ EXPORT ============
@@ -459,6 +472,7 @@
       pickSvgLayers,
       renderSvgString,
       resolveIcon,
+      resolveIconOrNull,
     };
   }
 })();

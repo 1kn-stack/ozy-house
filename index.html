@@ -1189,15 +1189,16 @@ const fdD = async id => deleteDoc(doc(db,"diary",id));
 function showToast(m){S.toast=m;if(S.toastT)clearTimeout(S.toastT);S.toastT=setTimeout(()=>{S.toast="";render();},2400);render();}
 
 // 플레이버 → 아이콘 resolver
-// 우선순위: (1) CupNotes (Phase 2-C 신규 SVG/이모지) → (2) icons-v4/v5 → (3) EMO/SVG_ICONS/emoji
+// 우선순위: (1) CupNotes Strict (매칭 시에만) → (2) icons-v4/v5 → (3) EMO/SVG_ICONS → ✨ 최종 폴백
+// CupNotes에 매칭 없으면 null 반환 → v4/v5 풍부한 사전(약 600+ 키워드) 활용 가능
 // 반환: {type:'svg'|'emoji', content:string}
 function flavorIconResolve(f, size){
-  // (1) CupNotes — Phase 2-C 디자인 우선
-  if(typeof window!=='undefined' && window.CupNotes && typeof window.CupNotes.resolveIcon==='function'){
-    var cn = window.CupNotes.resolveIcon(f, size);
+  // (1) CupNotes Strict — Phase 2-C 디자인 우선, 매칭 실패 시 null
+  if(typeof window!=='undefined' && window.CupNotes && typeof window.CupNotes.resolveIconOrNull==='function'){
+    var cn = window.CupNotes.resolveIconOrNull(f, size);
     if(cn && cn.content) return cn;
   }
-  // (2) 기존 icons-v4/v5
+  // (2) icons-v4/v5 (자스민/장미/감귤/오렌지블라썸 등 광범위 키워드 커버)
   if(typeof window!=='undefined' && typeof window.lookupIcon==='function' && typeof window.iconV4==='function'){
     var k = window.lookupIcon(f);
     if(k){
