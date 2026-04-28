@@ -120,7 +120,7 @@
     // fruity-grape-green
     '청포도':'fruity-grape-green',
     // floral (canonical 쟈스민, aliases handled by NOTE_ALIASES)
-    '쟈스민':'floral', '꽃다발':'floral', '꽃사탕':'floral', '오렌지 블라썸':'floral',
+    '쟈스민':'floral', '꽃다발':'floral', '꽃사탕':'floral', '오렌지 블라썸':'floral', '목련':'floral',
     // floral-bergamot
     '베르가못':'floral-bergamot',
     // nutty-cocoa-light ('초콜릿' canonical — Phase 1 데이터 입력값. '밀크초콜릿'은 alias)
@@ -307,6 +307,23 @@
       { d:'M17 22c1-7 1-13-2-18', stroke:'#7a9838', sw:1.4, fill:'none' },
       { d:'M9 21c2-1 4-1 6 0', stroke:'#5a4818', sw:1.3, fill:'none' },
     ],
+    // 목련 — 큰 크림빛 페탈 + 핑크 베이스 + 노란 암술
+    '목련': [
+      // 줄기/가지
+      { d:'M12 18v4', stroke:'#5a3818', sw:1.4, fill:'none' },
+      // 잎 (사이드)
+      { d:'M12 19c-3 0-5 1-5 3', stroke:'#4a7028', sw:1.2, fill:'none' },
+      // 뒤쪽 큰 페탈 3장 (크림빛)
+      { d:'M8 12c0-4 2-8 4-8c2 0 4 4 4 8c0 2-1 5-2 6h-4c-1-1-2-4-2-6z', fill:'#fff5ec', stroke:'#c8b098', sw:1.0 },
+      // 페탈 분리선 (3 페탈)
+      { d:'M10 5c-1 4-1 8 0 13 M14 5c1 4 1 8 0 13', stroke:'#c8b098', sw:0.6, fill:'none' },
+      // 앞쪽 페탈 2장 (살짝 핑크)
+      { d:'M9 14c0-2 1-4 3-4c2 0 3 2 3 4c0 1-1 3-2 4h-2c-1-1-2-3-2-4z', fill:'#fce0d8', stroke:'#c89890', sw:0.9 },
+      // 중앙 노란 암술
+      { d:'M10.5 14a1.5 1.5 0 1 0 3 0 1.5 1.5 0 0 0-3 0z', fill:'#e8c850', stroke:'#a87830', sw:0.6 },
+      // 암술 디테일
+      { d:'M12 13v3', stroke:'#a87830', sw:0.4, fill:'none' },
+    ],
   };
 
   // ============ NOTE_ALIASES (variant → canonical Korean) ============
@@ -370,6 +387,9 @@
     'soda': '소다',
     'froot loops': '후르츠링',
     'flower candy': '꽃사탕',
+    'magnolia': '목련',
+    '백목련': '목련',
+    '자목련': '목련',
   };
 
   // ============ HELPERS ============
