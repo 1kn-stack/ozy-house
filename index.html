@@ -1370,10 +1370,10 @@ window.editScanImg = async function(input){
   }
 };
 window.editInput = function(k,v){if(S.editData)S.editData[k]=v;};
-// 5단계 게이지 (바디/산미 등) — 같은 값 재클릭 시 해제
+// 5단계 게이지 (바디/산미 등) — 같은 값 재클릭 시 해제 (0 = 미선택)
 window.editScale = function(k,v){
   if(!S.editData) return;
-  if(v==null||S.editData[k]===v){ delete S.editData[k]; }
+  if(v==null||S.editData[k]===v){ S.editData[k]=0; }
   else { S.editData[k]=v; }
   render();
 };
@@ -1393,8 +1393,11 @@ window.saveEdit = async function(){
       iced:{beans:e.rIcedBeans||"",grind:e.rIcedGrind||"",waterTemp:e.rIcedTemp||"",pour:e.rIcedPour||""}
     }
   });
-  if(rem!=null && !isNaN(rem)) u.remaining=rem; else delete u.remaining;
-  if(tot!=null && !isNaN(tot)) u.totalAmount=tot; else delete u.totalAmount;
+  // null로 명시해야 Firestore patch에서 기존값이 지워짐 (delete는 patch에서 무시됨)
+  u.remaining     = (rem!=null && !isNaN(rem)) ? rem : null;
+  u.totalAmount   = (tot!=null && !isNaN(tot)) ? tot : null;
+  u.body          = (e.body && +e.body)        ? +e.body : null;
+  u.acidity       = (e.acidity && +e.acidity)  ? +e.acidity : null;
   ["rDripper","rHotBeans","rHotGrind","rHotTemp","rHotPour","rIcedBeans","rIcedGrind","rIcedTemp","rIcedPour","id"].forEach(function(k){delete u[k];});
   await fuB(e.id,u);S.editMode=false;showToast("수정됐어요 ✅");
 };
@@ -1725,6 +1728,11 @@ var TASTE_LABELS = {
   body:    ['가벼움','약간 가벼움','보통','약간 풍부','풍부함'],
   acidity: ['단조','은은함','산뜻함','밝음','강렬함']
 };
+// 상세 페이지 푸터에 노출할 영문 라벨 (Bebas Neue용) — 새 항목 추가 시 함께 갱신
+var TASTE_KEYS = {
+  body:    'BODY',
+  acidity: 'ACIDITY'
+};
 function mkScale(key,val){
   var labels=TASTE_LABELS[key]||['','','','',''];
   var v=+val||0;
@@ -1737,6 +1745,43 @@ function mkScale(key,val){
   return '<div style="display:flex;align-items:center;gap:6px;padding:6px 0;">'
     +'<div style="display:flex;gap:2px;">'+dots+'</div>'
     +'<span style="font-size:12px;color:var(--t2);margin-left:10px;flex:1;">'+lbl+'</span>'
+    +'</div>';
+}
+// 상세 페이지: 바디·산미 등 5단계 평가 푸터 (입력값 있는 항목만)
+function tasteFooterHtml(b){
+  var rows = Object.keys(TASTE_LABELS).filter(function(k){return b[k];}).map(function(k){
+    var v=+b[k];
+    var steps=TASTE_LABELS[k];
+    var dots='';
+    for(var i=1;i<=5;i++){
+      var on=v===i;
+      dots+='<span style="display:inline-block;width:14px;text-align:center;font-size:'+(on?'13px':'9px')+';color:'+(on?'var(--ac)':'var(--t3)')+';line-height:1;">'+(on?'●':'·')+'</span>';
+    }
+    return '<div style="display:flex;align-items:center;gap:12px;">'
+      +'<span style="font-family:\'Bebas Neue\',sans-serif;font-size:10px;letter-spacing:2px;color:var(--t3);min-width:64px;">'+(TASTE_KEYS[k]||k.toUpperCase())+'</span>'
+      +'<span style="display:inline-flex;align-items:center;gap:1px;">'+dots+'</span>'
+      +'<span style="font-size:11px;color:var(--t2);">'+esc(steps[v-1]||'')+'</span>'
+      +'</div>';
+  });
+  if(!rows.length) return '';
+  return '<div style="margin-top:14px;padding-top:14px;border-top:0.5px solid var(--ib);display:flex;flex-direction:column;gap:8px;">'+rows.join('')+'</div>';
+}
+// 상세 페이지: 잔량 progress (잔량/총량 둘 다 입력됐을 때만)
+function remainingHtml(b){
+  if(!settings.trackRemaining) return '';
+  if(b.remaining==null||b.totalAmount==null) return '';
+  var rem=+b.remaining, tot=+b.totalAmount;
+  if(isNaN(rem)||isNaN(tot)||tot<=0) return '';
+  var pct=Math.max(0,Math.min(100,Math.round(rem/tot*100)));
+  return '<div style="margin-top:14px;">'
+    +'<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">'
+      +'<span style="font-family:\'Bebas Neue\',sans-serif;font-size:10px;letter-spacing:2px;color:var(--t3);">REMAINING</span>'
+      +'<span class="ozy-serif" style="font-size:15px;color:var(--t1);"><span style="color:var(--ac);">'+rem+'</span> / '+tot+'g</span>'
+    +'</div>'
+    +'<div style="height:4px;background:var(--ibg);border-radius:100px;overflow:hidden;">'
+      +'<div style="height:100%;background:linear-gradient(90deg,var(--ac),#d96b50);width:'+pct+'%;border-radius:100px;transition:width .3s;"></div>'
+    +'</div>'
+    +'<div style="margin-top:6px;font-size:10px;color:var(--t3);font-family:\'Bebas Neue\',sans-serif;letter-spacing:1.2px;text-align:right;">'+pct+'% LEFT</div>'
     +'</div>';
 }
 function mkRL(val,fn){
@@ -2230,7 +2275,7 @@ function rDetail(id){
   var recipeHtml = "";
   if((nr.hot.pour || nr.iced.pour) && isFieldVisible('recipe')){
     recipeHtml = '<div style="'+SECTION_MB+'">'
-      +'<div style="'+SEC+'">드립 레시피</div>'
+      +'<div style="'+SEC+'">RECIPE</div>'
       +(nr.hot.pour
         ? '<div style="background:rgba(184,72,0,0.08);border:0.5px solid rgba(184,72,0,0.18);border-radius:12px;padding:14px 15px;margin-bottom:8px;">'
           +'<div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(184,72,0,0.75);margin-bottom:12px;">☀️ HOT'+(nr.dripper?' · '+esc(nr.dripper):'')+'</div>'
@@ -2262,66 +2307,103 @@ function rDetail(id){
 
   var ps = gPS(b.process);
 
+  // 히어로 stamp 텍스트 (로스터 · 가공) — 둘 다 없으면 stamp 자체 미노출
+  var stampParts = [];
+  if(b.roaster) stampParts.push(esc(b.roaster));
+  if(b.process) stampParts.push(esc(ps.l));
+  var stampText = stampParts.join(' · ');
+  // 히어로 메타 (국기 + origin · region · roastLevel)
+  var metaParts = [];
+  if(b.origin) metaParts.push(gFL(b.origin)+' '+esc(b.origin));
+  if(b.region) metaParts.push(esc(b.region));
+  if(b.roastLevel) metaParts.push(esc(b.roastLevel));
+  // 이름 글자수에 따른 폰트 크기 (B 시안 기반, 길이 따라 단계별)
+  var nameLen=(b.name||'').length;
+  var nameSize = nameLen>16 ? 30 : (nameLen>12 ? 36 : 44);
+
   return '<div style="background:var(--bg);min-height:100vh;">'
-    // ── 히어로 (260px)
+    // ── 히어로 (260px) — A 컨테이너 + B 타이포
     +'<div style="position:relative;height:260px;overflow:hidden;">'
       // 그라데이션 bg
       +(heroGradClass
         ? '<div class="'+heroGradClass+'" style="position:absolute;inset:0;"></div>'
         : '<div style="position:absolute;inset:0;'+heroGradStyle+';"></div>')
-      // 다크 오버레이 (위는 투명, 아래는 배경색으로)
+      // 다크 오버레이 (위 투명 → 아래 배경색)
       +'<div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.12) 0%,transparent 35%,rgba(0,0,0,0.40) 72%,var(--bg) 100%);"></div>'
       // 상단 버튼 행
       +'<div style="position:absolute;top:0;left:0;right:0;padding:52px 18px 0;display:flex;justify-content:space-between;z-index:1;">'
         +'<button onclick="closeDetail()" style="width:32px;height:32px;background:rgba(0,0,0,0.28);backdrop-filter:blur(10px);border:0.5px solid rgba(255,255,255,0.20);border-radius:50%;color:#fff;font-size:14px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;">←</button>'
         +(isOwner?'<div style="display:flex;gap:7px;">'
-          +'<button onclick="openEdit(\''+b.id+'\')" style="width:32px;height:32px;background:rgba(0,0,0,0.28);backdrop-filter:blur(10px);border:0.5px solid rgba(255,255,255,0.20);border-radius:50%;color:var(--t1);font-size:13px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;">✏️</button>'
-          +'<button onclick="toggleStatus(\''+b.id+'\')" style="width:32px;height:32px;background:rgba(0,0,0,0.28);backdrop-filter:blur(10px);border:0.5px solid rgba(255,255,255,0.20);border-radius:50%;color:var(--t1);font-size:13px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;">'+(b.status==="available"?"📦":"✅")+'</button>'
+          +'<button onclick="openEdit(\''+b.id+'\')" style="width:32px;height:32px;background:rgba(0,0,0,0.28);backdrop-filter:blur(10px);border:0.5px solid rgba(255,255,255,0.20);border-radius:50%;color:#fff;font-size:13px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;">✏️</button>'
+          +'<button onclick="toggleStatus(\''+b.id+'\')" style="width:32px;height:32px;background:rgba(0,0,0,0.28);backdrop-filter:blur(10px);border:0.5px solid rgba(255,255,255,0.20);border-radius:50%;color:#fff;font-size:13px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;">'+(b.status==="available"?"📦":"✅")+'</button>'
         +'</div>':'<div></div>')
       +'</div>'
-      // 하단 원두 정보
-      +'<div style="position:absolute;bottom:0;left:0;right:0;padding:0 20px 20px;z-index:1;">'
-        +'<div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--t2);margin-bottom:5px;">'
-          +gFL(b.origin)+' '+(b.origin||'')+(b.region?' · '+b.region:'')+(b.process?' · '+ps.l:'')
-        +'</div>'
-        +'<div class="ozy-serif" style="font-size:'+(b.name&&b.name.length>14?'24px':'28px')+';color:#fff;line-height:1.1;margin-bottom:5px;">'+esc(b.name||'')+'</div>'
-        +(b.roaster?'<div style="font-size:11px;color:var(--t2);">'+esc(b.roaster)+(b.roastLevel?' · '+esc(b.roastLevel):'')+'</div>':'')
+      // 하단 원두 정보 — B 타이포 (stamp line + 큰 italic) + A 별점 알약
+      +'<div style="position:absolute;bottom:0;left:0;right:0;padding:0 22px 22px;z-index:1;">'
+        // B stamp line — 짧은 라인 + Bebas Neue
+        +(stampText?'<div style="display:inline-flex;align-items:center;gap:10px;margin-bottom:12px;">'
+          +'<span style="width:22px;height:1px;background:rgba(255,255,255,0.55);display:inline-block;"></span>'
+          +'<span style="font-family:\'Bebas Neue\',sans-serif;letter-spacing:0.25em;font-size:9px;color:rgba(255,255,255,0.85);text-transform:uppercase;">'+stampText+'</span>'
+          +'</div>':'')
+        // 이름 — 44px italic (B 사이즈)
+        +'<div class="ozy-serif" style="font-size:'+nameSize+'px;color:#fff;line-height:1.02;margin-bottom:10px;letter-spacing:-0.01em;">'+esc(b.name||'')+'</div>'
+        // 메타 행 — 점 구분자 (A 톤)
+        +(metaParts.length
+          ? '<div style="font-size:11px;color:rgba(255,255,255,0.78);display:flex;flex-wrap:wrap;align-items:center;gap:8px;'+(b.rating?'margin-bottom:12px;':'')+'">'
+            +metaParts.map(function(p,i){
+              return (i>0?'<span style="width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,0.4);"></span>':'')+'<span>'+p+'</span>';
+            }).join('')
+          +'</div>'
+          : '')
+        // 별점 알약 (A) — rating > 0 일 때만
+        +(isFieldVisible('rating') && b.rating
+          ? '<div style="display:inline-flex;align-items:center;gap:8px;background:rgba(0,0,0,0.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:0.5px solid rgba(255,255,255,0.15);padding:6px 12px;border-radius:100px;font-size:11px;color:#fff;">'
+            +stHtml(b.rating||0,"","sm")
+            +'<span class="ozy-serif" style="font-size:13px;">'+(b.rating||0)+'.0</span>'
+          +'</div>'
+          : '')
       +'</div>'
     +'</div>'
     // 라이트 모드 컬러바
     +colorBarEl
-    // ── 바디
+    // ── 바디 — FLAVOR → MY NOTE → BEAN INFO → RECIPE
     +'<div style="background:var(--bg);padding:22px 20px 100px;">'
       +degasHtml
       +(dateRows?'<div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px;">'+dateRows+'</div>':"")
-      // 플레이버
+      // FLAVOR
       +(b.flavor&&b.flavor.length?'<div style="'+SECTION_MB+'">'
-        +'<div style="'+SEC+'">플레이버</div>'
+        +'<div style="'+SEC+'">FLAVOR</div>'
         +fchips(b.flavor||[])
         +(b.tagline?'<div style="margin-top:14px;display:flex;gap:7px;align-items:flex-start;"><span style="font-size:13px;flex-shrink:0;">🔖</span><span style="font-size:11px;color:var(--t1);line-height:1.65;">'+esc(b.tagline)+'</span></div>':"")
         +'</div>':"")
-      // 평점 + 나의 메모 (방문자: 둘 다 비공개면 섹션 자체 숨김)
-      +((isFieldVisible('rating') || isFieldVisible('myNote'))
-        ? ('<div style="'+SECTION_MB+'">'
-          +'<div style="'+SEC+'">평점 &amp; 메모</div>'
-          +(isFieldVisible('rating')
-            ? '<div style="display:flex;align-items:center;gap:10px;margin-bottom:'+(isFieldVisible('myNote')?'10px':'0')+';">'
+      // MY NOTE — 평점 + 메모 + 바디·산미 푸터
+      +(function(){
+        var hasRating = isFieldVisible('rating') && b.rating;
+        var hasMyNote = isFieldVisible('myNote');
+        var tasteFoot = tasteFooterHtml(b);
+        if(!hasRating && !hasMyNote && !tasteFoot && !isOwner) return '';
+        return '<div style="'+SECTION_MB+'">'
+          +'<div style="'+SEC+'">MY NOTE</div>'
+          +(hasRating
+            ? '<div style="display:flex;align-items:center;gap:10px;margin-bottom:'+((hasMyNote||tasteFoot)?'12px':'0')+';">'
               +stHtml(b.rating||0,"","lg")
-              +'<span class="ozy-serif">'+(b.rating||0)+'.0</span>'
+              +'<span class="ozy-serif" style="font-size:18px;">'+(b.rating||0)+'.0</span>'
               +'</div>'
             : '')
-          +(isFieldVisible('myNote')
-            ? (b.myNote?'<div style="display:flex;gap:7px;align-items:flex-start;"><span style="font-size:13px;flex-shrink:0;">✍️</span><span style="font-size:11px;color:var(--t2);font-style:italic;line-height:1.65;">'+esc(b.myNote)+'</span></div>':(isOwner?'<div style="font-size:12px;color:var(--t3);">아직 메모가 없어요</div>':''))
+          +(hasMyNote
+            ? (b.myNote?'<div style="display:flex;gap:7px;align-items:flex-start;"><span style="font-size:13px;flex-shrink:0;">✍️</span><span style="font-size:12px;color:var(--t2);font-style:italic;line-height:1.7;">'+esc(b.myNote)+'</span></div>':(isOwner?'<div style="font-size:12px;color:var(--t3);">아직 메모가 없어요</div>':''))
             : '')
+          +tasteFoot
           +'</div>'
-          +DIVIDER)
-        : '')
-      // 원두 정보
-      +(infoGrid?'<div style="'+SECTION_MB+'">'
-        +'<div style="'+SEC+'">원두 정보</div>'
+          +DIVIDER;
+      })()
+      // BEAN INFO — 정보 그리드 + 잔량 progress
+      +((infoGrid||remainingHtml(b))?'<div style="'+SECTION_MB+'">'
+        +'<div style="'+SEC+'">BEAN INFO</div>'
         +infoGrid
+        +remainingHtml(b)
         +'</div>':"")
-      // 레시피
+      // RECIPE — 마지막 섹션
       +recipeHtml
       +DIVIDER
       // 게스트 노트
