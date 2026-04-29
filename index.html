@@ -803,7 +803,8 @@ const DEFAULT_SETTINGS = {
   degasHideDiary:true,
   timezoneOffset:9,  // UTC+9 (KST 기본값), 관리자에서 변경 가능
   cafeName:"OZY HOUSE",
-  cafeDesc:""
+  cafeDesc:"",
+  trackRemaining:false  // 잔량 추적 (g 단위 기록 + 상세에 progress)
 };
 let settings = Object.assign({},DEFAULT_SETTINGS,{degasDays:Object.assign({},DEFAULT_SETTINGS.degasDays)});
 
@@ -1369,9 +1370,19 @@ window.editScanImg = async function(input){
   }
 };
 window.editInput = function(k,v){if(S.editData)S.editData[k]=v;};
+// 5단계 게이지 (바디/산미 등) — 같은 값 재클릭 시 해제
+window.editScale = function(k,v){
+  if(!S.editData) return;
+  if(v==null||S.editData[k]===v){ delete S.editData[k]; }
+  else { S.editData[k]=v; }
+  render();
+};
 window.saveEdit = async function(){
   if(!isOwner){showToast("권한이 없습니다");return;}
   var e=S.editData;if(!e)return;
+  // 잔량/총량은 숫자로, 빈 값이면 필드 자체 제거
+  var rem = e.remaining===''||e.remaining==null ? null : +e.remaining;
+  var tot = e.totalAmount===''||e.totalAmount==null ? null : +e.totalAmount;
   var u=Object.assign({},e,{
     roastLevel:normRL(e.roastLevel)||e.roastLevel,
     process:normProcess(e.process)||e.process,
@@ -1382,6 +1393,8 @@ window.saveEdit = async function(){
       iced:{beans:e.rIcedBeans||"",grind:e.rIcedGrind||"",waterTemp:e.rIcedTemp||"",pour:e.rIcedPour||""}
     }
   });
+  if(rem!=null && !isNaN(rem)) u.remaining=rem; else delete u.remaining;
+  if(tot!=null && !isNaN(tot)) u.totalAmount=tot; else delete u.totalAmount;
   ["rDripper","rHotBeans","rHotGrind","rHotTemp","rHotPour","rIcedBeans","rIcedGrind","rIcedTemp","rIcedPour","id"].forEach(function(k){delete u[k];});
   await fuB(e.id,u);S.editMode=false;showToast("수정됐어요 ✅");
 };
@@ -1707,6 +1720,25 @@ function mkLbl(t){return '<label style="'+IL+'">'+t+'</label>';}
 function mkInp(val,fn){return '<input style="'+IS+'" value="'+esc(val)+'" oninput="'+fn+'">';}
 function mkDate(val,fn){return '<input type="date" style="'+IS+'" value="'+esc(val)+'" onchange="'+fn+'">';}
 function mkTA(val,fn,ph){return '<textarea style="'+IS+'resize:none;min-height:80px;" oninput="'+fn+'" placeholder="'+esc(ph||"")+'">'+esc(val)+'</textarea>';}
+// 5단계 게이지 입력 (바디·산미 등) — 추가 항목은 TASTE_LABELS에 한 줄 추가하면 됨
+var TASTE_LABELS = {
+  body:    ['가벼움','약간 가벼움','보통','약간 풍부','풍부함'],
+  acidity: ['단조','은은함','산뜻함','밝음','강렬함']
+};
+function mkScale(key,val){
+  var labels=TASTE_LABELS[key]||['','','','',''];
+  var v=+val||0;
+  var dots='';
+  for(var i=1;i<=5;i++){
+    var on=v===i;
+    dots+='<span onclick="editScale(\''+key+'\','+i+')" style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:'+(on?'20px':'16px')+';line-height:1;color:'+(on?'var(--ac)':'var(--t3)')+';transition:all .15s;user-select:none;">'+(on?'●':'·')+'</span>';
+  }
+  var lbl=v?labels[v-1]:'<span style="color:var(--t3);">미선택</span>';
+  return '<div style="display:flex;align-items:center;gap:6px;padding:6px 0;">'
+    +'<div style="display:flex;gap:2px;">'+dots+'</div>'
+    +'<span style="font-size:12px;color:var(--t2);margin-left:10px;flex:1;">'+lbl+'</span>'
+    +'</div>';
+}
 function mkRL(val,fn){
   var levels=["라이트","미디엄라이트","미디엄","미디엄다크","다크"];
   var norm=normRL(val)||val;
@@ -2082,6 +2114,14 @@ function rDetail(id){
       +mkLbl("고도")+mkInp(e.altitude,"editInput('altitude',this.value)")
       +mkLbl("플레이버 (쉼표 구분)")+mkInp(e.flavor,"editInput('flavor',this.value)")
       +mkLbl("한줄 설명")+mkInp(e.tagline,"editInput('tagline',this.value)")
+      +(settings.trackRemaining
+        ? '<div class="g2">'
+          +'<div>'+mkLbl("잔량 (g)")+mkInp(e.remaining||"","editInput('remaining',this.value)")+'</div>'
+          +'<div>'+mkLbl("총량 (g)")+mkInp(e.totalAmount||"","editInput('totalAmount',this.value)")+'</div>'
+          +'</div>'
+        : '')
+      +mkLbl("바디")+mkScale('body',e.body)
+      +mkLbl("산미")+mkScale('acidity',e.acidity)
       +'<div class="g2">'
       +'<div>'+mkLbl("드리퍼")+mkDripper(e.rDripper,"editInput('rDripper',this.value)")+'</div>'
       +'</div>'
@@ -2814,12 +2854,19 @@ function rAdmin(){
       +'</div>'
       +mkToggle(settings.degasHideMenu,"adminToggle(\'degasHideMenu\')")
       +'</div>'
-      +'<div style="'+ROWLAST+'">'
+      +'<div style="'+ROW+'">'
       +'<div>'
       +'<div style="font-size:14px;color:var(--t1);font-weight:500;">일기 원두 선택 제외</div>'
       +'<div style="font-size:12px;color:var(--t3);margin-top:2px;">커피 일기 작성 시 디개싱 원두 선택 불가</div>'
       +'</div>'
       +mkToggle(settings.degasHideDiary,"adminToggle(\'degasHideDiary\')")
+      +'</div>'
+      +'<div style="'+ROWLAST+'">'
+      +'<div>'
+      +'<div style="font-size:14px;color:var(--t1);font-weight:500;">잔량 추적</div>'
+      +'<div style="font-size:12px;color:var(--t3);margin-top:2px;">원두마다 잔량/총량 입력 + 상세에 게이지 표시</div>'
+      +'</div>'
+      +mkToggle(settings.trackRemaining,"adminToggle(\'trackRemaining\')")
       +'</div>'
       +'</div>'
       +'<p style="'+SEC_LBL+'margin-top:16px;">시간대 설정</p>'
@@ -2960,7 +3007,7 @@ window.saveAdminBehavior=async function(){
   var tz = S.tzDraft != null ? S.tzDraft : (settings.timezoneOffset != null ? settings.timezoneOffset : 9);
   settings.timezoneOffset = tz;
   S.tzDraft = null;
-  await setDoc(SC,{degasHideMenu:!!settings.degasHideMenu, degasHideDiary:!!settings.degasHideDiary, timezoneOffset:tz},{merge:true});
+  await setDoc(SC,{degasHideMenu:!!settings.degasHideMenu, degasHideDiary:!!settings.degasHideDiary, trackRemaining:!!settings.trackRemaining, timezoneOffset:tz},{merge:true});
   showToast("동작 설정이 저장됐어요 ✅");
 };
 window.migrateAllBeans=async function(){
