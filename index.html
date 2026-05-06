@@ -1772,7 +1772,7 @@ function tasteFooterHtml(b){
     return '<div style="display:flex;align-items:center;gap:12px;">'
       +'<span style="font-family:\'Bebas Neue\',sans-serif;font-size:10px;letter-spacing:2px;color:var(--t3);min-width:64px;">'+(TASTE_KEYS[k]||k.toUpperCase())+'</span>'
       +'<span style="display:inline-flex;align-items:center;gap:1px;">'+dots+'</span>'
-      +'<span style="font-size:11px;color:var(--t2);">'+esc(steps[v-1]||'')+'</span>'
+      +'<span style="font-size:11px;color:var(--t2);word-break:keep-all;">'+esc(steps[v-1]||'')+'</span>'
       +'</div>';
   });
   if(!rows.length) return '';
