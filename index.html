@@ -1396,8 +1396,12 @@ window.saveEdit = async function(){
   // null로 명시해야 Firestore patch에서 기존값이 지워짐 (delete는 patch에서 무시됨)
   u.remaining     = (rem!=null && !isNaN(rem)) ? rem : null;
   u.totalAmount   = (tot!=null && !isNaN(tot)) ? tot : null;
-  u.body          = (e.body && +e.body)        ? +e.body : null;
-  u.acidity       = (e.acidity && +e.acidity)  ? +e.acidity : null;
+  u.body          = (e.body && +e.body)              ? +e.body        : null;
+  u.acidity       = (e.acidity && +e.acidity)        ? +e.acidity     : null;
+  u.sweetness     = (e.sweetness && +e.sweetness)    ? +e.sweetness   : null;
+  u.aftertaste    = (e.aftertaste && +e.aftertaste)  ? +e.aftertaste  : null;
+  u.balance       = (e.balance && +e.balance)        ? +e.balance     : null;
+  u.cleanliness   = (e.cleanliness && +e.cleanliness)? +e.cleanliness : null;
   ["rDripper","rHotBeans","rHotGrind","rHotTemp","rHotPour","rIcedBeans","rIcedGrind","rIcedTemp","rIcedPour","id"].forEach(function(k){delete u[k];});
   await fuB(e.id,u);S.editMode=false;showToast("수정됐어요 ✅");
 };
@@ -1725,13 +1729,21 @@ function mkDate(val,fn){return '<input type="date" style="'+IS+'" value="'+esc(v
 function mkTA(val,fn,ph){return '<textarea style="'+IS+'resize:none;min-height:80px;" oninput="'+fn+'" placeholder="'+esc(ph||"")+'">'+esc(val)+'</textarea>';}
 // 5단계 게이지 입력 (바디·산미 등) — 추가 항목은 TASTE_LABELS에 한 줄 추가하면 됨
 var TASTE_LABELS = {
-  body:    ['가벼움','약간 가벼움','보통','약간 풍부','풍부함'],
-  acidity: ['단조','은은함','산뜻함','밝음','강렬함']
+  body:        ['가벼움','약간 가벼움','보통','약간 풍부','풍부함'],
+  acidity:     ['단조','은은함','산뜻함','밝음','강렬함'],
+  sweetness:   ['약함','은은함','보통','진함','강함'],
+  aftertaste:  ['짧음','약간 짧음','보통','긴 편','매우 긺'],
+  balance:     ['불균형','약간 불균형','보통','조화로움','매우 조화'],
+  cleanliness: ['탁함','약간 탁함','보통','깔끔함','매우 깔끔']
 };
 // 상세 페이지 푸터에 노출할 영문 라벨 (Bebas Neue용) — 새 항목 추가 시 함께 갱신
 var TASTE_KEYS = {
-  body:    'BODY',
-  acidity: 'ACIDITY'
+  body:        'BODY',
+  acidity:     'ACIDITY',
+  sweetness:   'SWEETNESS',
+  aftertaste:  'AFTERTASTE',
+  balance:     'BALANCE',
+  cleanliness: 'CLEANLINESS'
 };
 function mkScale(key,val){
   var labels=TASTE_LABELS[key]||['','','','',''];
@@ -1764,7 +1776,7 @@ function tasteFooterHtml(b){
       +'</div>';
   });
   if(!rows.length) return '';
-  return '<div style="margin-top:14px;padding-top:14px;border-top:0.5px solid var(--ib);display:flex;flex-direction:column;gap:8px;">'+rows.join('')+'</div>';
+  return '<div style="margin-top:14px;padding-top:14px;border-top:0.5px solid var(--ib);display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;">'+rows.join('')+'</div>';
 }
 // 상세 페이지: 잔량 progress (잔량/총량 둘 다 입력됐을 때만)
 function remainingHtml(b){
@@ -2165,8 +2177,14 @@ function rDetail(id){
           +'<div>'+mkLbl("총량 (g)")+mkInp(e.totalAmount||"","editInput('totalAmount',this.value)")+'</div>'
           +'</div>'
         : '')
-      +mkLbl("바디")+mkScale('body',e.body)
-      +mkLbl("산미")+mkScale('acidity',e.acidity)
+      +'<div class="g2" style="margin-top:6px;">'
+      + '<div>'+mkLbl("바디")  +mkScale('body',       e.body)+'</div>'
+      + '<div>'+mkLbl("산미")  +mkScale('acidity',    e.acidity)+'</div>'
+      + '<div>'+mkLbl("단맛")  +mkScale('sweetness',  e.sweetness)+'</div>'
+      + '<div>'+mkLbl("여운")  +mkScale('aftertaste', e.aftertaste)+'</div>'
+      + '<div>'+mkLbl("밸런스")+mkScale('balance',    e.balance)+'</div>'
+      + '<div>'+mkLbl("깔끔함")+mkScale('cleanliness',e.cleanliness)+'</div>'
+      +'</div>'
       +'<div class="g2">'
       +'<div>'+mkLbl("드리퍼")+mkDripper(e.rDripper,"editInput('rDripper',this.value)")+'</div>'
       +'</div>'
