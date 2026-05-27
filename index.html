@@ -11,7 +11,7 @@
 <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&family=Noto+Sans+KR:wght@200;300;400&display=swap" rel="stylesheet"></noscript>
 <script defer src="/assets/icons-v4.js"></script>
 <script defer src="/assets/icons-v5-ext.js"></script>
-<script defer src="/assets/cup-notes.js"></script>
+<script type="module" src="/assets/cupNoteDictionary.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -84,16 +84,13 @@ body.light .fch-i{background:rgba(26,14,8,0.06);}
 .dk-colorbar{display:none;}
 
 /* ── V2 라인업 카드 (.bn-*) ── */
-.bn-card{display:flex;gap:14px;padding:16px;background:var(--card);border:0.5px solid var(--ib);border-radius:var(--r-card);margin-bottom:12px;cursor:pointer;align-items:stretch;position:relative;overflow:hidden;transition:transform var(--dur-base) var(--ease),border-color var(--dur-base) var(--ease);}
+.bn-card{display:flex;gap:12px;padding:16px 16px 16px 12px;background:var(--card);border:0.5px solid var(--ib);border-radius:var(--r-card);margin-bottom:12px;cursor:pointer;align-items:stretch;position:relative;overflow:hidden;transition:transform var(--dur-base) var(--ease),border-color var(--dur-base) var(--ease);}
 .bn-card:active{transform:scale(0.985);}
 .bn-card.bn-empty{opacity:0.55;}
 .bn-card.bn-degas{border-color:rgba(99,179,237,0.28);}
-/* 썸네일 — 가로 84, 세로는 카드 높이에 맞춰 stretch (min-height로 짧은 카드도 확보) */
-.bn-thumb{position:relative;width:84px;flex-shrink:0;align-self:stretch;min-height:118px;border-radius:12px;overflow:hidden;box-shadow:inset 0 0 0 0.5px rgba(255,255,255,0.08);background-size:cover !important;background-position:center !important;}
-.bn-thumb-ov{position:absolute;inset:0;background:linear-gradient(155deg,rgba(255,255,255,0.18) 0%,transparent 45%);pointer-events:none;}
-/* 작은 썸네일에서도 메쉬가 잘 보이도록 saturation 살짝 강화 */
-.bn-thumb{filter:saturate(1.08);}
-body.light .bn-thumb{filter:saturate(1.15) brightness(0.97);}
+/* Phase 4: 12px 캡슐 마커 — 컵노트 사전 색상 (단색/linear-gradient) */
+.marker{position:relative;width:12px;flex-shrink:0;align-self:stretch;min-height:84px;border-radius:100px;overflow:hidden;filter:saturate(1.08);}
+body.light .marker{filter:saturate(1.15) brightness(0.97);}
 /* 정보 */
 .bn-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;}
 .bn-info-top{display:flex;align-items:center;gap:8px;min-width:0;}
@@ -133,8 +130,8 @@ body.light .bn-thumb{filter:saturate(1.15) brightness(0.97);}
 .bn-card.bn-compact .bn-rating-num{font-size:13px;}
 .bn-card.bn-compact .bn-comments{font-size:10.5px;}
 /* Compact 변형 (아카이브 탭) */
-.bn-card.bn-compact{padding:12px;gap:12px;margin-bottom:8px;}
-.bn-card.bn-compact .bn-thumb{width:68px;min-height:92px;height:auto;}
+.bn-card.bn-compact{padding:12px 12px 12px 10px;gap:10px;margin-bottom:8px;}
+.bn-card.bn-compact .marker{width:8px;min-height:64px;height:auto;}
 .bn-card.bn-compact .bn-info{gap:4px;}
 .bn-card.bn-compact .bn-name{font-size:18px !important;}
 .bn-card.bn-compact .bn-desc{display:none;}
@@ -143,8 +140,7 @@ body.light .bn-thumb{filter:saturate(1.15) brightness(0.97);}
 /* 라이트 모드 — paper card 톤: 그림자 약하게, hairline 명확하게 */
 body.light .bn-card{background:var(--card);box-shadow:0 1px 2px rgba(0,0,0,0.04);border-color:rgba(26,14,8,0.12);}
 body.light .bn-card.bn-degas{border-color:rgba(37,99,235,0.30);}
-body.light .bn-thumb{box-shadow:inset 0 0 0 0.5px rgba(0,0,0,0.06);}
-body.light .bn-thumb-ov{background:linear-gradient(155deg,rgba(255,255,255,0.32) 0%,transparent 45%);}
+body.light .marker{box-shadow:inset 0 0 0 0.5px rgba(0,0,0,0.06);}
 body.light .bn-roast .seg{background:rgba(26,14,8,0.12);box-shadow:none;}
 body.light .bn-roast .seg.on{box-shadow:0 0 0 0.5px rgba(0,0,0,0.20);filter:saturate(1.2) brightness(0.88) contrast(1.05);}
 body.light .bn-status.on-degas{color:#2563eb;}
@@ -915,12 +911,12 @@ const FLAVOR_COLOR = [
 
 function getFlavorColor(name){
   if(!name) return "#b89070";
-  // (1) CupNotes 우선 — Phase 2-B 다크/라이트 hex
-  if(typeof window!=='undefined' && window.CupNotes){
-    var cat=window.CupNotes.getCategoryForNote(name);
+  // (1) CupNoteDict 우선 — Phase 3 25개 카테고리 다크/라이트 hex
+  if(typeof window!=='undefined' && window.CupNoteDict){
+    var cat=window.CupNoteDict.getNoteCategoryOrNull(name);
     if(cat){
       var isLight=(typeof document!=='undefined' && document.body && document.body.classList.contains('light'));
-      var hex=window.CupNotes.pickColor(cat, isLight?'light':'dark');
+      var hex=window.CupNoteDict.getCategoryColor(cat, isLight?'light':'dark');
       if(hex) return hex;
     }
   }
@@ -950,7 +946,7 @@ function getFlavorBg(flavors){
 }
 
 // 컵노트 메쉬 그라데이션 (Phase 2-C Section E 알고리즘)
-// 우선순위: CupNotes (다크/라이트 hex + mouthfeel 50% opacity) → 레거시 getFlavorColor fallback
+// 우선순위: CupNoteDict (다크/라이트 hex + mouthfeel 50% opacity) → 레거시 getFlavorColor fallback
 // document.body.classList.contains('light') 시 라이트 hex 사용
 function _hexToRgb(hex){
   var m=String(hex).replace('#','').match(/.{2}/g);
@@ -984,7 +980,7 @@ function flavorMeshGradient(flavors){
 
   var isLight = (typeof document!=='undefined' && document.body && document.body.classList.contains('light'));
   var mode = isLight ? 'light' : 'dark';
-  var hasCN = (typeof window!=='undefined' && window.CupNotes);
+  var hasCN = (typeof window!=='undefined' && window.CupNoteDict);
 
   // 색상 + mouthfeel 마스크 추출 (최대 5개)
   var hexArr=[];
@@ -993,13 +989,13 @@ function flavorMeshGradient(flavors){
     var f=flavors[i];
     var hex=null, isMf=false;
     if(hasCN){
-      var cat=window.CupNotes.getCategoryForNote(f);
+      var cat=window.CupNoteDict.getNoteCategoryOrNull(f);
       if(cat){
-        hex=window.CupNotes.pickColor(cat, mode);
+        hex=window.CupNoteDict.getCategoryColor(cat, mode);
         isMf=(cat==='mouthfeel');
       }
     }
-    // CupNotes 매칭 안 되면 레거시 getFlavorColor
+    // CupNoteDict 매칭 안 되면 레거시 getFlavorColor
     if(!hex){
       var legacy=getFlavorColor(f);
       if(legacy && legacy!=='#b89070') hex=legacy;
@@ -1068,11 +1064,65 @@ function getOriginGradientClass(origin){
   return 'g-yega';
 }
 
-// 카드 썸네일 배경 — 컵노트 메쉬 우선, 없으면 산지 클래스
+// 카드 썸네일 배경 — 컵노트 메쉬 우선, 없으면 산지 클래스 (Phase 4 이전, deprecated)
 function getThumbBg(b){
   var mesh=flavorMeshGradient(b.flavor||[]);
   if(mesh) return {inline:true, style:'background:'+mesh+';'};
   return {inline:false, cls:getOriginGradientClass(b.origin)};
+}
+
+// Phase 4: 12px 캡슐 마커 배경
+// - 0개 노트 → other 카테고리 색
+// - 1개 노트 → 단색
+// - 여러 노트 → 세로 linear-gradient (mouthfeel 가중치 0.5)
+// 반환: {inline:true, style:'background:...'}
+function getMarkerBg(b){
+  var flavors=b.flavor||[];
+  var isLight=(typeof document!=='undefined' && document.body && document.body.classList.contains('light'));
+  var mode=isLight?'light':'dark';
+  var hasCN=(typeof window!=='undefined' && window.CupNoteDict && typeof window.CupNoteDict.getNoteColorInfo==='function');
+
+  if(!flavors.length){
+    var fallback=hasCN ? window.CupNoteDict.getCategoryColor('other', mode) : '#7a6e5e';
+    return {inline:true, style:'background:'+fallback+';'};
+  }
+
+  // 컵노트 사전 매칭 결과
+  var info=hasCN ? window.CupNoteDict.getNoteColorInfo(flavors, mode) : [];
+
+  // 사전 매칭 실패한 노트는 레거시 getFlavorColor로 보강
+  if(!info.length || info.every(function(x){ return x.category==='other'; })){
+    var legacyColors=flavors.map(function(f){ return getFlavorColor(f); }).filter(function(c){ return c && c!=='#b89070'; });
+    if(legacyColors.length===0){
+      var f2=hasCN ? window.CupNoteDict.getCategoryColor('other', mode) : '#7a6e5e';
+      return {inline:true, style:'background:'+f2+';'};
+    }
+    if(legacyColors.length===1){
+      return {inline:true, style:'background:'+legacyColors[0]+';'};
+    }
+    var pct=legacyColors.map(function(c,i){ return c+' '+Math.round(i/(legacyColors.length-1)*100)+'%'; });
+    return {inline:true, style:'background:linear-gradient(180deg,'+pct.join(',')+');'};
+  }
+
+  // 중복 색 제거 (인접 동일 색)
+  var dedup=[];
+  info.forEach(function(x){
+    if(!dedup.length || dedup[dedup.length-1].color!==x.color) dedup.push(x);
+  });
+
+  if(dedup.length===1){
+    return {inline:true, style:'background:'+dedup[0].color+';'};
+  }
+
+  // 세로 linear-gradient + mouthfeel 가중치 0.5
+  var totalWeight=dedup.reduce(function(sum,x){ return sum+x.weight; }, 0);
+  var cumulative=0;
+  var stops=dedup.map(function(x){
+    var pos=(cumulative/totalWeight)*100;
+    cumulative+=x.weight;
+    return x.color+' '+pos.toFixed(0)+'%';
+  });
+  return {inline:true, style:'background:linear-gradient(180deg,'+stops.join(',')+');'};
 }
 
 // 로스트 레벨 → 1-5 인덱스 (정규화)
@@ -1191,13 +1241,13 @@ const fdD = async id => deleteDoc(doc(db,"diary",id));
 function showToast(m){S.toast=m;if(S.toastT)clearTimeout(S.toastT);S.toastT=setTimeout(()=>{S.toast="";render();},2400);render();}
 
 // 플레이버 → 아이콘 resolver
-// 우선순위: (1) CupNotes Strict (매칭 시에만) → (2) icons-v4/v5 → (3) EMO/SVG_ICONS → ✨ 최종 폴백
-// CupNotes에 매칭 없으면 null 반환 → v4/v5 풍부한 사전(약 600+ 키워드) 활용 가능
+// 우선순위: (1) CupNoteDict Strict (매칭 시에만) → (2) icons-v4/v5 → (3) EMO/SVG_ICONS → ✨ 최종 폴백
+// CupNoteDict에 매칭 없으면 null 반환 → v4/v5 풍부한 사전(약 600+ 키워드) 활용 가능
 // 반환: {type:'svg'|'emoji', content:string}
 function flavorIconResolve(f, size){
-  // (1) CupNotes Strict — Phase 2-C 디자인 우선, 매칭 실패 시 null
-  if(typeof window!=='undefined' && window.CupNotes && typeof window.CupNotes.resolveIconOrNull==='function'){
-    var cn = window.CupNotes.resolveIconOrNull(f, size);
+  // (1) CupNoteDict Strict — Phase 3 25개 카테고리 디자인 우선, 매칭 실패 시 null
+  if(typeof window!=='undefined' && window.CupNoteDict && typeof window.CupNoteDict.resolveIconOrNull==='function'){
+    var cn = window.CupNoteDict.resolveIconOrNull(f, size);
     if(cn && cn.content) return cn;
   }
   // (2) icons-v4/v5 (자스민/장미/감귤/오렌지블라썸 등 광범위 키워드 커버)
@@ -1931,11 +1981,9 @@ function rMenu(){
   html+='<div class="card-list-wrap" style="padding:0 14px 88px;">';
   if(!filtered.length&&!hasFilter) html+='<div style="text-align:center;padding:80px 0;color:var(--t3);">☕<br><br>오늘은 원두가 없어요</div>';
   filtered.forEach(function(b,i){
-    // 썸네일 배경 — 컵노트 메쉬 우선, 산지 fallback
-    var thumb = getThumbBg(b);
-    var thumbAttr = thumb.inline
-      ? 'class="bn-thumb" style="'+thumb.style+'"'
-      : 'class="bn-thumb '+thumb.cls+'"';
+    // Phase 4: 12px 캡슐 마커 — 컵노트 사전 색상
+    var marker = getMarkerBg(b);
+    var markerAttr = 'class="marker" style="'+marker.style+'"';
 
     var dg = getDegasInfo(b);
     var isDegas = b.status==='available' && dg.status==='degassing';
@@ -2000,7 +2048,7 @@ function rMenu(){
       + (isEmpty?' bn-empty':'');
 
     html += '<div class="'+cardCls+'" onclick="openDetail(\''+b.id+'\')" style="animation-delay:'+(i*.06)+'s;">'
-      +'<div '+thumbAttr+'><div class="bn-thumb-ov"></div></div>'
+      +'<div '+markerAttr+'></div>'
       +'<div class="bn-info">'
         +'<div class="bn-info-top">'
           +'<div class="bn-label">'+labelTxt+'</div>'
@@ -2063,11 +2111,9 @@ function rArchive(){
     +'</div></div><div style="padding:8px 14px 96px;">';
   if(!fil.length) html+='<div style="text-align:center;padding:60px 0;color:var(--t3);"><div style="font-size:36px;margin-bottom:12px;">📭</div>아직 기록이 없어요</div>';
   fil.forEach(function(b,i){
-    // 썸네일 — 컵노트 메쉬 우선, 산지 fallback
-    var thumb = getThumbBg(b);
-    var thumbAttr = thumb.inline
-      ? 'class="bn-thumb" style="'+thumb.style+'"'
-      : 'class="bn-thumb '+thumb.cls+'"';
+    // Phase 4: 8px 캡슐 마커 (컴팩트) — 컵노트 사전 색상
+    var marker = getMarkerBg(b);
+    var markerAttr = 'class="marker" style="'+marker.style+'"';
 
     var dg = getDegasInfo(b);
     var isDegas = b.status==='available' && dg.status==='degassing';
@@ -2112,7 +2158,7 @@ function rArchive(){
       + (isEmpty?' bn-empty':'');
 
     html += '<div class="'+cardCls+'" onclick="openDetail(\''+b.id+'\')" style="animation-delay:'+(i*.05)+'s;">'
-      +'<div '+thumbAttr+'><div class="bn-thumb-ov"></div></div>'
+      +'<div '+markerAttr+'></div>'
       +'<div class="bn-info">'
         +'<div class="bn-info-top">'
           +'<div class="bn-label">'+labelTxt+'</div>'
