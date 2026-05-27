@@ -11,7 +11,7 @@
 <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&family=Noto+Sans+KR:wght@200;300;400&display=swap" rel="stylesheet"></noscript>
 <script defer src="/assets/icons-v4.js"></script>
 <script defer src="/assets/icons-v5-ext.js"></script>
-<script defer src="/assets/cup-notes.js"></script>
+<script type="module" src="/assets/cupNoteDictionary.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -915,12 +915,12 @@ const FLAVOR_COLOR = [
 
 function getFlavorColor(name){
   if(!name) return "#b89070";
-  // (1) CupNotes 우선 — Phase 2-B 다크/라이트 hex
-  if(typeof window!=='undefined' && window.CupNotes){
-    var cat=window.CupNotes.getCategoryForNote(name);
+  // (1) CupNoteDict 우선 — Phase 3 25개 카테고리 다크/라이트 hex
+  if(typeof window!=='undefined' && window.CupNoteDict){
+    var cat=window.CupNoteDict.getNoteCategoryOrNull(name);
     if(cat){
       var isLight=(typeof document!=='undefined' && document.body && document.body.classList.contains('light'));
-      var hex=window.CupNotes.pickColor(cat, isLight?'light':'dark');
+      var hex=window.CupNoteDict.getCategoryColor(cat, isLight?'light':'dark');
       if(hex) return hex;
     }
   }
@@ -950,7 +950,7 @@ function getFlavorBg(flavors){
 }
 
 // 컵노트 메쉬 그라데이션 (Phase 2-C Section E 알고리즘)
-// 우선순위: CupNotes (다크/라이트 hex + mouthfeel 50% opacity) → 레거시 getFlavorColor fallback
+// 우선순위: CupNoteDict (다크/라이트 hex + mouthfeel 50% opacity) → 레거시 getFlavorColor fallback
 // document.body.classList.contains('light') 시 라이트 hex 사용
 function _hexToRgb(hex){
   var m=String(hex).replace('#','').match(/.{2}/g);
@@ -984,7 +984,7 @@ function flavorMeshGradient(flavors){
 
   var isLight = (typeof document!=='undefined' && document.body && document.body.classList.contains('light'));
   var mode = isLight ? 'light' : 'dark';
-  var hasCN = (typeof window!=='undefined' && window.CupNotes);
+  var hasCN = (typeof window!=='undefined' && window.CupNoteDict);
 
   // 색상 + mouthfeel 마스크 추출 (최대 5개)
   var hexArr=[];
@@ -993,13 +993,13 @@ function flavorMeshGradient(flavors){
     var f=flavors[i];
     var hex=null, isMf=false;
     if(hasCN){
-      var cat=window.CupNotes.getCategoryForNote(f);
+      var cat=window.CupNoteDict.getNoteCategoryOrNull(f);
       if(cat){
-        hex=window.CupNotes.pickColor(cat, mode);
+        hex=window.CupNoteDict.getCategoryColor(cat, mode);
         isMf=(cat==='mouthfeel');
       }
     }
-    // CupNotes 매칭 안 되면 레거시 getFlavorColor
+    // CupNoteDict 매칭 안 되면 레거시 getFlavorColor
     if(!hex){
       var legacy=getFlavorColor(f);
       if(legacy && legacy!=='#b89070') hex=legacy;
@@ -1191,13 +1191,13 @@ const fdD = async id => deleteDoc(doc(db,"diary",id));
 function showToast(m){S.toast=m;if(S.toastT)clearTimeout(S.toastT);S.toastT=setTimeout(()=>{S.toast="";render();},2400);render();}
 
 // 플레이버 → 아이콘 resolver
-// 우선순위: (1) CupNotes Strict (매칭 시에만) → (2) icons-v4/v5 → (3) EMO/SVG_ICONS → ✨ 최종 폴백
-// CupNotes에 매칭 없으면 null 반환 → v4/v5 풍부한 사전(약 600+ 키워드) 활용 가능
+// 우선순위: (1) CupNoteDict Strict (매칭 시에만) → (2) icons-v4/v5 → (3) EMO/SVG_ICONS → ✨ 최종 폴백
+// CupNoteDict에 매칭 없으면 null 반환 → v4/v5 풍부한 사전(약 600+ 키워드) 활용 가능
 // 반환: {type:'svg'|'emoji', content:string}
 function flavorIconResolve(f, size){
-  // (1) CupNotes Strict — Phase 2-C 디자인 우선, 매칭 실패 시 null
-  if(typeof window!=='undefined' && window.CupNotes && typeof window.CupNotes.resolveIconOrNull==='function'){
-    var cn = window.CupNotes.resolveIconOrNull(f, size);
+  // (1) CupNoteDict Strict — Phase 3 25개 카테고리 디자인 우선, 매칭 실패 시 null
+  if(typeof window!=='undefined' && window.CupNoteDict && typeof window.CupNoteDict.resolveIconOrNull==='function'){
+    var cn = window.CupNoteDict.resolveIconOrNull(f, size);
     if(cn && cn.content) return cn;
   }
   // (2) icons-v4/v5 (자스민/장미/감귤/오렌지블라썸 등 광범위 키워드 커버)
