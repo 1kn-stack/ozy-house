@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <title>OZY HOUSE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -315,6 +315,45 @@ body.light .hdr-count{color:#1a0e08!important;}
 
 /* ── 라이트 다이어리 ── */
 body.light .diary-mc-hdr{filter:saturate(1.4) brightness(0.96);}
+
+/* ── STATS 탭 ── */
+.st-body{padding:16px 20px calc(96px + env(safe-area-inset-bottom));}
+.st-scope{display:flex;gap:4px;background:var(--ibg);border-radius:100px;padding:3px;margin-bottom:24px;}
+.st-scope-btn{flex:1;padding:8px 0;text-align:center;font-family:'Bebas Neue',sans-serif;letter-spacing:0.1em;font-size:11px;color:var(--t3);border-radius:100px;cursor:pointer;border:none;background:transparent;transition:all .18s;}
+.st-scope-btn.on{background:var(--ac);color:#fff;}
+.st-summary{display:flex;gap:8px;margin-bottom:24px;}
+.st-card{flex:1;background:var(--card);border:0.5px solid var(--ib);border-radius:12px;padding:12px;text-align:center;}
+.st-num{font-family:var(--font-serif);font-style:italic;font-size:26px;color:var(--t1);line-height:1;}
+.st-cap{font-family:'Bebas Neue',sans-serif;letter-spacing:0.1em;font-size:8px;color:var(--t3);margin-top:4px;}
+.st-section{margin-bottom:32px;}
+.st-label{font-family:'Bebas Neue',sans-serif;letter-spacing:0.2em;font-size:10px;color:var(--ac);margin-bottom:14px;}
+.st-sublabel{font-size:10px;color:var(--t3);margin-left:6px;letter-spacing:0;font-family:var(--font-body);}
+.st-track{background:var(--ibg);border-radius:100px;overflow:hidden;}
+.st-fill{height:100%;border-radius:100px;transition:width .5s var(--ease);}
+.st-count{font-size:10px;color:var(--t3);text-align:right;font-variant-numeric:tabular-nums;}
+.st-frow{display:grid;grid-template-columns:20px 64px 1fr 28px;align-items:center;gap:8px;padding:5px 0;}
+.st-femoji{font-size:14px;text-align:center;}
+.st-fname{font-family:'Bebas Neue',sans-serif;letter-spacing:0.04em;font-size:10px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.st-topcats{display:flex;flex-direction:column;gap:8px;}
+.st-topcat{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--card);border:0.5px solid var(--ib);border-radius:12px;}
+.st-tc-rank{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--ac);width:18px;}
+.st-tc-emoji{font-size:22px;}
+.st-tc-info{flex:1;min-width:0;}
+.st-tc-name{font-family:'Bebas Neue',sans-serif;letter-spacing:0.08em;font-size:13px;color:var(--t1);}
+.st-tc-bar{height:4px;background:var(--ibg);border-radius:100px;margin-top:5px;overflow:hidden;}
+.st-tc-fill{height:100%;border-radius:100px;transition:width .5s var(--ease);}
+.st-tc-count{font-size:11px;color:var(--t2);font-variant-numeric:tabular-nums;}
+.st-brow{display:grid;grid-template-columns:1fr 70px 28px;align-items:center;gap:8px;padding:6px 0;}
+.st-bname{font-size:11px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.st-bfill{height:100%;background:var(--ac);border-radius:100px;opacity:0.7;transition:width .5s var(--ease);}
+.st-roast{display:flex;flex-direction:column;gap:8px;}
+.st-rrow{display:grid;grid-template-columns:60px 1fr 28px;align-items:center;gap:8px;}
+.st-rname{font-size:10px;color:var(--t2);display:flex;align-items:center;gap:4px;}
+.st-rdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.st-ratrow{display:grid;grid-template-columns:70px 1fr 28px;align-items:center;gap:8px;padding:4px 0;}
+.st-stars{font-size:10px;color:var(--ac);letter-spacing:0.02em;}
+.st-ratfill{height:100%;background:var(--ac);border-radius:100px;opacity:0.6;transition:width .5s var(--ease);}
+.st-empty{text-align:center;padding:60px 0;color:var(--t3);font-size:13px;line-height:1.5;}
 </style>
 </head>
 <body>
@@ -367,7 +406,7 @@ let ownerCheckCache = { slug: null, ownerUid: null };
 // Phase 2-B: 공개 필드 (방문자에게 보여줄 필드 토글)
 const DEFAULT_PUBLIC_FIELDS = {
   roastDate: true, degasDays: true, rating: true,
-  myNote: false, recipe: false, startDate: false, diary: false
+  myNote: false, recipe: false, startDate: false, diary: false, stats: false
 };
 const ALWAYS_PUBLIC_FIELDS = ['name','roaster','origin','region','variety','process','roastLevel','flavor'];
 const TOGGLEABLE_FIELDS = [
@@ -377,13 +416,14 @@ const TOGGLEABLE_FIELDS = [
   ['myNote','나의 소감'],
   ['recipe','드립 레시피'],
   ['startDate','개봉일'],
-  ['diary','다이어리']
+  ['diary','다이어리'],
+  ['stats','통계']
 ];
 const FIELD_LABELS = {
   name:'원두 이름', roaster:'로스터', origin:'원산지', region:'지역',
   variety:'품종', process:'가공방식', roastLevel:'배전도', flavor:'플레이버',
   roastDate:'로스팅 일자', degasDays:'디개싱 기간', rating:'평점',
-  myNote:'나의 소감', recipe:'드립 레시피', startDate:'개봉일', diary:'다이어리'
+  myNote:'나의 소감', recipe:'드립 레시피', startDate:'개봉일', diary:'다이어리', stats:'통계'
 };
 let publicFields = Object.assign({}, DEFAULT_PUBLIC_FIELDS);
 
@@ -1016,12 +1056,14 @@ function flavorMeshGradient(flavors){
          + base;
   }
 
-  // 다색상: 5포지션 라디얼 + mouthfeel 50% opacity + non-mouthfeel 평균을 베이스
-  var positions=['20% 25%','80% 25%','80% 75%','20% 75%','50% 50%'];
+  // 다색상: 컵노트 순서대로 Y축 위→아래(20%~85%) 배치 — 카드 캡슐 색 흐름과 일치.
+  // X축은 좌우 교차(35%/65%)로 메쉬 느낌 유지, mouthfeel 50% opacity 보존.
+  var n=hexArr.length;
   var layers=hexArr.map(function(hex,i){
     var opa = mfMask[i] ? 0.5 : 1.0;
-    var pos = positions[i] || '50% 50%';
-    return 'radial-gradient(circle at '+pos+','+_hexToRgba(hex,opa)+' 0%,transparent 55%)';
+    var yPct = n>1 ? Math.round(20 + (i/(n-1))*65) : 50;
+    var xPct = (i % 2 === 0) ? 35 : 65;
+    return 'radial-gradient(circle at '+xPct+'% '+yPct+'%,'+_hexToRgba(hex,opa)+' 0%,transparent 55%)';
   });
   var nonMf = hexArr.filter(function(_,i){return !mfMask[i];});
   var base2 = _avgHex(nonMf.length ? nonMf : hexArr);
@@ -1196,6 +1238,7 @@ let S = {
   diaryEditId:null,
   showDegasEdit:false, degasEdit:null,
   showAdmin:false, adminTab:"cafe",
+  statsScope:"all",
   migrateState:"idle", migrateLog:"",
   toast:"", toastT:null,
   titleTap:0, titleTapT:null,
@@ -1978,7 +2021,7 @@ function rMenu(){
     return html+'</div>';
   }
 
-  html+='<div class="card-list-wrap" style="padding:0 14px 88px;">';
+  html+='<div class="card-list-wrap" style="padding:0 14px calc(88px + env(safe-area-inset-bottom));">';
   if(!filtered.length&&!hasFilter) html+='<div style="text-align:center;padding:80px 0;color:var(--t3);">☕<br><br>오늘은 원두가 없어요</div>';
   filtered.forEach(function(b,i){
     // Phase 4: 12px 캡슐 마커 — 컵노트 사전 색상
@@ -2108,7 +2151,7 @@ function rArchive(){
       var on=S.filter===f.v;
       return '<button onclick="setFilter(\''+f.v+'\')" style="background:'+(on?'var(--ac)':'var(--ibg)')+';color:'+(on?'#fff':'var(--t2)')+';border:0.5px solid '+(on?'var(--ac)':'var(--ib)')+';border-radius:20px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:inherit;font-weight:'+(on?'600':'400')+';">'+f.l+'</button>';
     }).join("")
-    +'</div></div><div style="padding:8px 14px 96px;">';
+    +'</div></div><div style="padding:8px 14px calc(96px + env(safe-area-inset-bottom));">';
   if(!fil.length) html+='<div style="text-align:center;padding:60px 0;color:var(--t3);"><div style="font-size:36px;margin-bottom:12px;">📭</div>아직 기록이 없어요</div>';
   fil.forEach(function(b,i){
     // Phase 4: 8px 캡슐 마커 (컴팩트) — 컵노트 사전 색상
@@ -2646,7 +2689,7 @@ function rDiary(){
     +'<span style="font-size:24px;">'+(streak>=7?"🏆":streak>=3?"🔥":"☕")+'</span>'
     +'<div><div style="font-size:13px;font-weight:600;color:var(--t1);">'+sm+'</div>'
     +'<div style="font-size:11px;color:var(--t3);margin-top:2px;">총 '+diaries.length+'개의 기록</div></div>'
-    +'</div></div><div style="padding:8px 14px 96px;">';
+    +'</div></div><div style="padding:8px 14px calc(96px + env(safe-area-inset-bottom));">';
 
   if(!te){
     html+='<div style="background:var(--card);border-radius:14px;margin-bottom:10px;padding:22px;text-align:center;border:0.5px solid var(--ib);">'
@@ -3256,16 +3299,194 @@ function rFilterSheet(){
 
 function rNav(){
   var showDiary = isOwner || !!publicFields.diary;
+  var showStats = isOwner || !!publicFields.stats;
   var tabs=[["menu","Lineup","☕"],["archive","Archive","📦"]];
   if(showDiary) tabs.push(["diary","Diary","📓"]);
+  if(showStats) tabs.push(["stats","Stats","📊"]);
   var longPress = isOwner ? ' oncontextmenu="event.preventDefault();openAdmin()" ontouchstart="navLongStart(event)" ontouchend="navLongEnd()" ontouchcancel="navLongEnd()"' : '';
   return '<div class="bnav">'+tabs.map(function(x){
     return '<button class="nbtn'+(S.tab===x[0]?' on':'')+'" onclick="setTab(\'' + x[0] + '\')"'+longPress+'><div style="font-size:18px;margin-bottom:2px;">'+x[2]+'</div>'+x[1]+'</button>';
   }).join('')+'</div>';
 }
 
+// ════════ STATS 탭 — 집계 + 렌더 (window.CupNoteDict 읽기 전용) ════════
+// 컵노트 카테고리 한/영 표시명 (사전엔 라벨이 없어 로컬 정의 — 사전 미수정)
+var CATEGORY_LABELS = {
+  'fruity-citrus':{ko:'감귤',en:'CITRUS'}, 'fruity-stone':{ko:'핵과',en:'STONE FRUIT'},
+  'fruity-berry-red':{ko:'레드베리',en:'RED BERRY'}, 'fruity-berry-dark':{ko:'다크베리',en:'DARK BERRY'},
+  'fruity-tropical':{ko:'열대과일',en:'TROPICAL'}, 'fruity-grape':{ko:'포도',en:'GRAPE'},
+  'fruity-grape-green':{ko:'청포도',en:'GREEN GRAPE'}, 'other-fruit':{ko:'기타 과일',en:'OTHER FRUIT'},
+  'floral':{ko:'플로럴',en:'FLORAL'}, 'floral-bergamot':{ko:'베르가못',en:'BERGAMOT'},
+  'herb':{ko:'허브',en:'HERB'}, 'tea':{ko:'티',en:'TEA'},
+  'nutty-cocoa-dark':{ko:'다크 코코아',en:'DARK COCOA'}, 'nutty-cocoa-light':{ko:'너트',en:'NUTTY'},
+  'roasted':{ko:'로스티드',en:'ROASTED'}, 'sweet-caramel':{ko:'캐러멜',en:'CARAMEL'},
+  'sweet-honey':{ko:'꿀',en:'HONEY'}, 'sweet-vanilla':{ko:'바닐라',en:'VANILLA'},
+  'sour-fermented':{ko:'발효',en:'FERMENTED'}, 'spices':{ko:'향신료',en:'SPICES'},
+  'savory':{ko:'세이보리',en:'SAVORY'}, 'dried-fruit':{ko:'건과일',en:'DRIED FRUIT'},
+  'green-vegetative':{ko:'식물성',en:'VEGETATIVE'}, 'mouthfeel':{ko:'마우스필',en:'MOUTHFEEL'},
+  'other':{ko:'기타',en:'OTHER'}
+};
+var ROAST_BUCKETS = [['라이트','#d4a85a'],['미디엄','#a86838'],['다크','#58382a']];
+
+function beanFlavors(b){
+  var f=b.flavor;
+  if(Array.isArray(f)) return f.filter(Boolean);
+  if(typeof f==='string') return f.split(',').map(function(s){return s.trim();}).filter(Boolean);
+  return [];
+}
+function getStatsBeans(scope){
+  return scope==='lineup' ? beans.filter(function(b){return b.status==='available';}) : beans.slice();
+}
+function statsMode(){ return (typeof document!=='undefined'&&document.body&&document.body.classList.contains('light'))?'light':'dark'; }
+
+function aggFlavor(bs, mode){
+  var hasCN=(typeof window!=='undefined'&&window.CupNoteDict);
+  var counts={};
+  bs.forEach(function(b){ beanFlavors(b).forEach(function(f){
+    var cat=hasCN?window.CupNoteDict.getNoteCategory(f):'other';
+    counts[cat]=(counts[cat]||0)+1;
+  });});
+  return Object.keys(counts).map(function(cat){
+    return {cat:cat, count:counts[cat], label:(CATEGORY_LABELS[cat]||{ko:cat,en:cat}),
+      color:hasCN?window.CupNoteDict.getCategoryColor(cat,mode):'#7a6e5e',
+      emoji:hasCN?window.CupNoteDict.getCategoryEmoji(cat):'☕'};
+  }).sort(function(a,b){return b.count-a.count;});
+}
+function aggBy(bs, keyFn){
+  var counts={};
+  bs.forEach(function(b){ var k=keyFn(b); if(k){counts[k]=(counts[k]||0)+1;} });
+  return Object.keys(counts).map(function(k){return {key:k,count:counts[k]};}).sort(function(a,b){return b.count-a.count;});
+}
+function aggRoast(bs){
+  var m={'라이트':0,'미디엄':0,'다크':0};
+  bs.forEach(function(b){ var i=roastLevelIndex(b.roastLevel); if(!i)return; m[i<=2?'라이트':(i===3?'미디엄':'다크')]++; });
+  return m;
+}
+function aggRating(bs){
+  var h={5:0,4:0,3:0,2:0,1:0};
+  bs.forEach(function(b){ var r=Math.round(b.rating||0); if(r>=1&&r<=5)h[r]++; });
+  return h;
+}
+
+window.setStatsScope=function(s){ S.statsScope=s; render(); };
+
+function rStats(){
+  var scope=S.statsScope||'all';
+  var bs=getStatsBeans(scope);
+  var mode=statsMode();
+  var head='<div class="st-scope">'
+    +'<button class="st-scope-btn'+(scope==='all'?' on':'')+'" onclick="setStatsScope(\'all\')">전체</button>'
+    +'<button class="st-scope-btn'+(scope==='lineup'?' on':'')+'" onclick="setStatsScope(\'lineup\')">라인업</button>'
+    +'</div>';
+  var wrap=function(inner){ return '<div style="background:var(--bg);min-height:100vh;"><div class="st-body">'+head+inner+'</div></div>'; };
+
+  if(!bs.length) return wrap('<div class="st-empty">📊<br><br>아직 기록된 원두가 없어요</div>');
+
+  var html='';
+
+  // 요약 카드 3개
+  var roasters={}; bs.forEach(function(b){ if(b.roaster)roasters[b.roaster]=1; });
+  var rated=bs.filter(function(b){return b.rating;});
+  var avg=rated.length?(rated.reduce(function(s,b){return s+(b.rating||0);},0)/rated.length):0;
+  html+='<div class="st-summary">'
+    +'<div class="st-card"><div class="st-num">'+bs.length+'</div><div class="st-cap">TOTAL BEANS</div></div>'
+    +'<div class="st-card"><div class="st-num">'+Object.keys(roasters).length+'</div><div class="st-cap">ROASTERS</div></div>'
+    +'<div class="st-card"><div class="st-num">'+(avg?avg.toFixed(1):'–')+'</div><div class="st-cap">AVG RATING</div></div>'
+    +'</div>';
+
+  // 1. 플레이버 분포 + 2. TOP 카테고리
+  var fl=aggFlavor(bs,mode);
+  if(fl.length){
+    var totalNotes=fl.reduce(function(s,x){return s+x.count;},0);
+    var fmax=fl[0].count||1;
+    html+='<div class="st-section"><div class="st-label">FLAVOR DISTRIBUTION<span class="st-sublabel">컵노트 '+totalNotes+'개</span></div>';
+    fl.forEach(function(x){
+      var w=Math.round(x.count/fmax*100);
+      html+='<div class="st-frow"><span class="st-femoji">'+x.emoji+'</span>'
+        +'<span class="st-fname">'+esc(x.label.ko)+'</span>'
+        +'<div class="st-track" style="height:12px;"><div class="st-fill" style="width:'+w+'%;background:'+x.color+';"></div></div>'
+        +'<span class="st-count">'+x.count+'</span></div>';
+    });
+    html+='</div>';
+
+    var top=fl.slice(0,3), tmax=top[0].count||1;
+    html+='<div class="st-section"><div class="st-label">TOP CATEGORIES</div><div class="st-topcats">';
+    top.forEach(function(x,i){
+      var pct=totalNotes?Math.round(x.count/totalNotes*100):0;
+      var w=Math.round(x.count/tmax*100);
+      html+='<div class="st-topcat"><span class="st-tc-rank">'+(i+1)+'</span>'
+        +'<span class="st-tc-emoji">'+x.emoji+'</span>'
+        +'<div class="st-tc-info"><div class="st-tc-name">'+esc(x.label.ko)+' '+esc(x.label.en)+'</div>'
+        +'<div class="st-tc-bar"><div class="st-tc-fill" style="width:'+w+'%;background:'+x.color+';"></div></div></div>'
+        +'<span class="st-tc-count">'+pct+'%</span></div>';
+    });
+    html+='</div></div>';
+  }
+
+  // 3. 로스터별 분포 (상위 6)
+  var ro=aggBy(bs,function(b){return b.roaster;}).slice(0,6);
+  if(ro.length){
+    var romax=ro[0].count||1;
+    html+='<div class="st-section"><div class="st-label">BY ROASTER</div>';
+    ro.forEach(function(x){
+      var w=Math.round(x.count/romax*100);
+      html+='<div class="st-brow"><span class="st-bname">'+esc(x.key)+'</span>'
+        +'<div class="st-track" style="height:8px;"><div class="st-bfill" style="width:'+w+'%;"></div></div>'
+        +'<span class="st-count">'+x.count+'</span></div>';
+    });
+    html+='</div>';
+  }
+
+  // 4. 산지별 분포 (상위 6)
+  var og=aggBy(bs,function(b){return b.origin;}).slice(0,6);
+  if(og.length){
+    var ogmax=og[0].count||1;
+    html+='<div class="st-section"><div class="st-label">BY ORIGIN</div>';
+    og.forEach(function(x){
+      var w=Math.round(x.count/ogmax*100);
+      html+='<div class="st-brow"><span class="st-bname">'+gFL(x.key)+' '+esc(x.key)+'</span>'
+        +'<div class="st-track" style="height:8px;"><div class="st-bfill" style="width:'+w+'%;"></div></div>'
+        +'<span class="st-count">'+x.count+'</span></div>';
+    });
+    html+='</div>';
+  }
+
+  // 5. 로스팅 레벨 분포
+  var rl=aggRoast(bs);
+  var rlTotal=ROAST_BUCKETS.reduce(function(s,p){return s+rl[p[0]];},0);
+  if(rlTotal){
+    var rlmax=Math.max(rl['라이트'],rl['미디엄'],rl['다크'])||1;
+    html+='<div class="st-section"><div class="st-label">ROAST LEVEL</div><div class="st-roast">';
+    ROAST_BUCKETS.forEach(function(p){
+      var name=p[0], color=p[1], cnt=rl[name], w=Math.round(cnt/rlmax*100);
+      html+='<div class="st-rrow"><span class="st-rname"><span class="st-rdot" style="background:'+color+';"></span>'+name+'</span>'
+        +'<div class="st-track" style="height:8px;"><div class="st-fill" style="width:'+w+'%;background:'+color+';"></div></div>'
+        +'<span class="st-count">'+cnt+'</span></div>';
+    });
+    html+='</div></div>';
+  }
+
+  // 6. 평점 분포
+  var rh=aggRating(bs);
+  var rhTotal=[1,2,3,4,5].reduce(function(s,k){return s+rh[k];},0);
+  if(rhTotal){
+    var rhmax=Math.max(rh[5],rh[4],rh[3],rh[2],rh[1])||1;
+    html+='<div class="st-section"><div class="st-label">RATING DISTRIBUTION</div>';
+    [5,4,3,2,1].forEach(function(star){
+      var cnt=rh[star], w=Math.round(cnt/rhmax*100), stars='';
+      for(var i=1;i<=5;i++){ stars+= (i<=star?'★':'☆'); }
+      html+='<div class="st-ratrow"><span class="st-stars">'+stars+'</span>'
+        +'<div class="st-track" style="height:10px;"><div class="st-ratfill" style="width:'+w+'%;"></div></div>'
+        +'<span class="st-count">'+cnt+'</span></div>';
+    });
+    html+='</div>';
+  }
+
+  return wrap(html);
+}
+
 // ── Router ──────────────────────────────────────────
-var VALID_TABS = ['menu','archive','diary'];
+var VALID_TABS = ['menu','archive','diary','stats'];
 function parseRoute(){
   var seg=location.pathname.replace(/^\/+|\/+$/g,"");
   if(seg==="") return {type:"landing"};
@@ -3399,10 +3620,12 @@ function render(){
 
   // rt.type === "cafe" → 기존 카페 메뉴판 렌더
   if(S.tab==="diary" && !isOwner && !publicFields.diary) S.tab="menu";
+  if(S.tab==="stats" && !isOwner && !publicFields.stats) S.tab="menu";
   var body="";
   if(S.detail) body=rDetail(S.detail);
   else if(S.tab==="menu") body=rMenu();
   else if(S.tab==="diary") body=rDiary();
+  else if(S.tab==="stats") body=rStats();
   else body=rArchive();
   appEl.innerHTML=
     body+rNav()
