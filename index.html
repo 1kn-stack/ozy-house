@@ -322,7 +322,7 @@ body.light .diary-mc-hdr{filter:saturate(1.4) brightness(0.96);}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, doc, getDoc, addDoc, updateDoc, deleteDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+// firebase-auth 는 ensureAuth()에서 동적 import — 방문자에게는 로딩하지 않음 (perf-lazy-auth)
 
 const WK = "https://ozy-house-proxy.okgo-levelup.workers.dev";
 
@@ -352,9 +352,11 @@ const BC = collection(db,"beans");
 const DC = collection(db,"diary");
 const SC = doc(db,"settings","admin");
 
-// ── Auth 초기화 & 전역 상태
-const auth = getAuth(app);
-const googleProvider = new GoogleAuthProvider();
+// ── Auth (지연 초기화) — 로그인/세션복원 시점까지 firebase-auth 로딩 보류
+let auth = null;
+let googleProvider = null;
+let _authReady = null;   // ensureAuth() 진행/완료 Promise 캐시
+let _authMod = null;     // 동적 로딩된 firebase-auth 모듈 (signInWithPopup/signOut)
 
 // 로그인 유저 정보 (전역)
 let currentUser = null;  // {uid, email, displayName, photoURL} or null
@@ -393,31 +395,77 @@ function isFieldVisible(key){
   return !!publicFields[key];
 }
 
-// Auth 상태 변화 감지 → 자동 리렌더링
-onAuthStateChanged(auth, async (user) => {
-  currentUser = user ? {
-    uid: user.uid,
-    email: user.email,
-    displayName: user.displayName || "",
-    photoURL: user.photoURL || ""
-  } : null;
-  // 카페 라우트면 isOwner 재계산, 아니면 false
-  if (typeof S !== "undefined" && S.route && S.route.type === "cafe" && typeof setOwnerFlag === "function") {
-    // Phase 2-B: 같은 slug라도 로그인 상태가 바뀌면 publicFields 재로드
-    ownerCheckCache = { slug: null, ownerUid: null };
-    await setOwnerFlag(S.route.slug, null);
-  } else {
-    isOwner = false;
-    publicFields = Object.assign({}, DEFAULT_PUBLIC_FIELDS);
-  }
-  // 로그인 상태 바뀌면 화면 다시 그리기
-  if (typeof render === "function") render();
-});
+// firebase-auth 동적 로딩 + 1회 초기화 (onAuthStateChanged 등록 포함).
+// 로그인 버튼 클릭 또는 저장된 세션 복원 시점에만 호출 → 방문자는 gapi/Auth 로딩 0.
+function ensureAuth(){
+  if (_authReady) return _authReady;
+  _authReady = (async () => {
+    const mod = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+    _authMod = mod;
+    auth = mod.getAuth(app);
+    googleProvider = new mod.GoogleAuthProvider();
+    // Auth 상태 변화 감지 → 자동 리렌더링
+    mod.onAuthStateChanged(auth, async (user) => {
+      currentUser = user ? {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName || "",
+        photoURL: user.photoURL || ""
+      } : null;
+      // 카페 라우트면 isOwner 재계산, 아니면 false
+      if (typeof S !== "undefined" && S.route && S.route.type === "cafe" && typeof setOwnerFlag === "function") {
+        // Phase 2-B: 같은 slug라도 로그인 상태가 바뀌면 publicFields 재로드
+        ownerCheckCache = { slug: null, ownerUid: null };
+        await setOwnerFlag(S.route.slug, null);
+      } else {
+        isOwner = false;
+        publicFields = Object.assign({}, DEFAULT_PUBLIC_FIELDS);
+      }
+      // 로그인 상태 바뀌면 화면 다시 그리기
+      if (typeof render === "function") render();
+    });
+    return auth;
+  })();
+  return _authReady;
+}
+
+// gapi 로딩 없이 IndexedDB에서 저장된 Firebase 세션 존재 여부만 확인.
+// 존재하면(=이미 로그인한 오너) 호출부에서 ensureAuth()를 백그라운드로 돌려 세션 복원.
+function hasStoredAuthSession(){
+  return new Promise((resolve) => {
+    var done = false;
+    var finish = function(v){ if (!done) { done = true; resolve(v); } };
+    try {
+      if (typeof indexedDB === "undefined") { finish(false); return; }
+      var req = indexedDB.open("firebaseLocalStorageDb");
+      req.onupgradeneeded = function(){
+        // DB가 없던 경우 → 세션 없음. 빈 DB가 생성되지 않도록 중단.
+        try { req.transaction.abort(); } catch(_){}
+        finish(false);
+      };
+      req.onsuccess = function(){
+        var dbi = req.result;
+        try {
+          if (!dbi.objectStoreNames.contains("firebaseLocalStorage")) { dbi.close(); finish(false); return; }
+          var keysReq = dbi.transaction("firebaseLocalStorage", "readonly").objectStore("firebaseLocalStorage").getAllKeys();
+          keysReq.onsuccess = function(){
+            var keys = keysReq.result || [];
+            var found = keys.some(function(k){ return String(k).indexOf("firebase:authUser:") === 0; });
+            dbi.close(); finish(found);
+          };
+          keysReq.onerror = function(){ dbi.close(); finish(false); };
+        } catch(e){ try { dbi.close(); } catch(_){} finish(false); }
+      };
+      req.onerror = function(){ finish(false); };
+    } catch(e){ finish(false); }
+  });
+}
 
 // 구글 로그인
 window.signInGoogle = async function() {
   try {
-    var cred = await signInWithPopup(auth, googleProvider);
+    await ensureAuth();
+    var cred = await _authMod.signInWithPopup(auth, googleProvider);
     if (typeof showToast === "function") showToast("로그인 성공");
     // 유저 slug 조회 → /{slug}로 이동 (이미 그 경로면 skip)
     try {
@@ -441,11 +489,19 @@ window.signInGoogle = async function() {
 // 로그아웃
 window.signOutUser = async function() {
   try {
-    await signOut(auth);
+    await ensureAuth();
+    await _authMod.signOut(auth);
     if (typeof showToast === "function") showToast("로그아웃 완료");
   } catch (err) {
     console.error("로그아웃 실패:", err);
   }
+};
+
+// 자동 로그인 (기기 단위 설정, 기본 ON). 끄면 부팅 시 저장세션 자동 복원을 건너뜀.
+function isAutoLoginOn(){ return localStorage.getItem("ozy-auto-login") !== "off"; }
+window.toggleAutoLogin = function(){
+  localStorage.setItem("ozy-auto-login", isAutoLoginOn() ? "off" : "on");
+  if (typeof render === "function") render();
 };
 
 const EMO = {
@@ -2873,6 +2929,14 @@ function rAuthSection() {
         + '</div>'
         + '<button onclick="signOutUser()" style="flex-shrink:0;background:var(--ibg);border:0.5px solid var(--ib);color:var(--t2);border-radius:10px;padding:8px 14px;font-size:12px;font-family:inherit;cursor:pointer;">로그아웃</button>'
       + '</div>'
+      + '<div style="height:0.5px;background:var(--ib);margin:14px 0;"></div>'
+      + '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">'
+        + '<div style="flex:1;min-width:0;">'
+          + '<div style="font-size:14px;color:var(--t1);font-weight:500;">자동 로그인</div>'
+          + '<div style="font-size:12px;color:var(--t3);margin-top:2px;line-height:1.5;">이 기기에서 재방문 시 자동으로 로그인 상태로 시작 (끄면 방문자처럼 빠르게 로딩)</div>'
+        + '</div>'
+        + mkToggle(isAutoLoginOn(), "toggleAutoLogin()")
+      + '</div>'
     + '</div>';
   } else {
     // 비로그인 상태
@@ -3415,6 +3479,11 @@ function render(){
     +(S.toast?'<div class="toast">'+S.toast+'</div>':"");
 }
 resolveRoute();
+
+// 자동로그인 ON + 저장된 오너 세션이 있을 때만 auth 백그라운드 복원 (방문자/OFF는 gapi 로딩 0, 비블로킹)
+if (isAutoLoginOn()) {
+  hasStoredAuthSession().then(function(has){ if (has) ensureAuth(); });
+}
 
 // ── History API — SPA 뒤로가기 처리
 function getHistoryState(){
