@@ -920,6 +920,7 @@ function localDateStr(d) {
   return y + '-' + m + '-' + day;
 }
 function getDegasInfo(b){
+  if(b.startDate) return {status:"none"}; // 개봉(startDate) 시점부터 디개싱 추적 종료 → LINEUP 즉시 등장
   var roastDate = b.degasDate || b.roastDate; // degasDate 수동 설정 우선
   if(!roastDate) return {status:"none"};
   var roast = new Date(roastDate);
@@ -2172,6 +2173,8 @@ function rArchive(){
     fil=beans.filter(function(b){return b.status==="available"&&getDegasInfo(b).status==="degassing";});
   } else if(S.filter==="all"){
     fil=beans;
+  } else if(S.filter==="available"){
+    fil=beans.filter(function(b){return b.status==="available"&&getDegasInfo(b).status!=="degassing";});
   } else {
     fil=beans.filter(function(b){return b.status===S.filter;});
   }
@@ -3399,7 +3402,9 @@ function beanFlavors(b){
   return [];
 }
 function getStatsBeans(scope){
-  return scope==='lineup' ? beans.filter(function(b){return b.status==='available';}) : beans.slice();
+  return scope==='lineup'
+    ? beans.filter(function(b){return b.status==='available' && getDegasInfo(b).status!=='degassing';})
+    : beans.slice();
 }
 function statsMode(){ return (typeof document!=='undefined'&&document.body&&document.body.classList.contains('light'))?'light':'dark'; }
 
